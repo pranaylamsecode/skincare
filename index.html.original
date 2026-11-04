@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="At-home skincare by FMZ India. A certified woman specialist brings professional Nu Skin care to your home in Ahmedabad.">
+<meta name="theme-color" content="#7a2e2e">
+<title>FMZ Glow | At-Home Skincare by FMZ India</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --topbar:#7a2e2e; --red:#b60a0a; --red-dark:#8f0808; --maroon:#7a2e2e; --deep:#52201f;
+  --bg:#fff8f5; --blush:#fbeded; --blush-2:#faebea; --ph:#f3e5e2; --ph-line:#c9a9a6;
+  --ink:#2b1514; --muted:#5e4a48; --line:#f1e0dc; --tan:#d9b48f; --white:#fff;
+  --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --sans:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;overflow-x:clip}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3,p{margin-top:0}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:500;line-height:1.1;letter-spacing:-.01em}
+.wrap{width:min(1080px,calc(100% - 40px));margin-inline:auto}
+.eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--maroon);margin-bottom:14px}
+.head{text-align:center;max-width:640px;margin:0 auto 44px}
+.head h2{font-size:clamp(2.1rem,4vw,2.9rem);margin-bottom:14px}
+.head p{color:var(--muted);margin:0}
+section{padding:clamp(56px,8vw,90px) 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:999px;border:1.5px solid var(--red);background:var(--red);color:#fff;font:700 .85rem var(--sans);text-decoration:none;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.btn:hover{background:var(--red-dark);border-color:var(--red-dark)}
+.btn:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.btn-line{background:transparent;color:var(--maroon);border-color:var(--maroon)}
+.btn-line:hover{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.btn-maroon{background:var(--maroon);border-color:var(--maroon)}
+.btn-maroon:hover{background:var(--deep);border-color:var(--deep)}
+.btn-tan{background:var(--tan);border-color:var(--tan);color:var(--deep)}
+.btn-tan:hover{background:#e4c3a2;border-color:#e4c3a2}
+.link{font-weight:700;font-size:.82rem;color:var(--red);text-decoration:none}
+.link:hover{text-decoration:underline}
+.ph{position:relative;overflow:hidden;background:var(--ph);border:1.5px dashed var(--ph-line);border-radius:var(--r);display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted);font-size:.8rem}
+
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wa-float{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.28);transition:transform .2s,box-shadow .2s;text-decoration:none}
+.wa-float:hover{transform:scale(1.08);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.wa-float svg{width:32px;height:32px;fill:#fff}
+.wa-float::before{content:"";position:absolute;inset:0;border-radius:50%;background:#25D366;opacity:.5;z-index:-1;animation:waPulse 2.2s ease-out infinite}
+@keyframes waPulse{to{transform:scale(1.6);opacity:0}}
+.wa-float:focus-visible{outline:3px solid var(--maroon);outline-offset:3px}
+/* top bar + header */
+.topbar{background:var(--topbar);color:#fff;text-align:center;font-size:.74rem;font-weight:500;padding:8px 14px}
+.topbar b{font-weight:800}.topbar s{opacity:.8}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:68px}
+.logo img{height:46px;width:auto}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font-size:.8rem;font-weight:600;text-decoration:none;color:var(--ink)}
+.nav-links a:hover{color:var(--red)}
+.nav-links .btn{color:#fff;padding:11px 22px}
+.nav-links .btn:hover{color:#fff}
+.menu-btn{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.menu-btn span{width:20px;height:2px;background:var(--maroon);border-radius:2px}
+.mobile-menu{display:none;background:#fff;border-top:1px solid var(--line)}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:15px 22px;font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--line)}
+
+/* hero */
+.hero{background:linear-gradient(180deg,var(--blush) 0%,#fff7f4 100%);padding:70px 0 90px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start}
+.hero h1{font-size:clamp(3rem,6vw,4.3rem);margin-bottom:22px;font-weight:500}
+.hero h1 em{font-style:italic;color:var(--maroon)}
+.hero .lead{font-size:1.02rem;color:var(--muted);max-width:430px;line-height:1.85;margin-bottom:22px}
+.tagline{font-family:var(--serif);font-style:italic;font-size:1.4rem;color:var(--maroon);margin-bottom:22px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.chips{display:flex;gap:10px;flex-wrap:wrap;max-width:440px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:.7rem;font-weight:600}
+.hero-photo{min-height:430px;border-radius:999px 999px 20px 20px;margin-top:6px;overflow:hidden}
+.hero-photo{border-radius:240px 240px 20px 20px}
+.hero-photo span{max-width:300px}
+
+/* concerns */
+.concerns{background:var(--bg)}
+.concern-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.concern{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 24px;display:flex;flex-direction:column}
+.concern h3{font-size:1.35rem;margin-bottom:10px;font-weight:600}
+.concern p{font-size:.8rem;color:var(--muted);margin-bottom:12px;flex:1}
+.concern.dark{background:var(--maroon);border-color:var(--maroon);color:#fff}
+.concern.dark p{color:#f3dcd8}
+.concern.dark .link{color:#fff}
+
+/* how it works */
+.how{background:#fff}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step{background:var(--bg);border-radius:var(--r);padding:26px 26px 30px}
+.step .n{font-family:var(--serif);font-size:2.4rem;color:var(--tan);line-height:1;margin-bottom:12px}
+.step h3{font-family:var(--sans);font-weight:700;font-size:1rem;margin-bottom:8px;letter-spacing:0}
+.step p{font-size:.85rem;color:var(--muted);margin:0}
+
+/* services */
+.services{background:var(--bg)}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+.svc{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.svc.feat{border:2px solid var(--red)}
+.svc .ph{border-radius:0;border:0;border-bottom:0;height:200px;font-size:.72rem}
+.svc-body{padding:20px 22px 24px;display:flex;flex-direction:column;flex:1}
+.tag{align-self:flex-start;font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:14px;background:var(--blush);color:var(--red)}
+.tag.tan{background:var(--tan);color:var(--deep)}
+.tag.dark{background:var(--maroon);color:#fff}
+.svc h3{font-size:1.65rem;margin-bottom:12px;font-weight:600}
+.svc p{font-size:.82rem;color:var(--muted)}
+.svc ul{margin:4px 0 18px;padding-left:18px;font-size:.8rem;flex:1}
+.svc li{margin:3px 0}
+.price{font-weight:800;font-size:1.7rem;margin-bottom:10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-family:var(--sans)}
+.price s{font-size:.8rem;font-weight:500;color:var(--muted)}
+.price small{font-size:.72rem;font-weight:700;color:var(--red)}
+.svc .btn{width:100%}
+.coming{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px 22px}
+.coming-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.coming h3{font-size:1.6rem;margin:0;font-weight:600}
+.coming-top span{font-size:.76rem;color:var(--muted)}
+.coming-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.coming-grid div{background:var(--bg);border-radius:14px;padding:14px 16px}
+.coming-grid b{display:block;font-size:.8rem;margin-bottom:4px}
+.coming-grid span{font-size:.74rem;color:var(--muted);line-height:1.5;display:block}
+.fine{text-align:center;font-size:.7rem;color:var(--muted);max-width:820px;margin:28px auto 0}
+
+/* plans */
+.plans{background:var(--blush-2)}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start}
+.plans-copy h2{font-size:clamp(2.1rem,4vw,2.8rem);margin-bottom:14px}
+.plans-copy p{color:var(--muted)}
+.plans-copy .eyebrow{margin-bottom:12px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.plan.first{border:2px solid var(--maroon)}
+.plan .tag{margin-bottom:12px;font-size:.58rem}
+.plan h3{font-family:var(--sans);font-weight:800;font-size:1.05rem;margin-bottom:10px;letter-spacing:0;line-height:1.25}
+.plan .price{font-size:1.7rem;margin-bottom:10px}
+.plan .price small{color:var(--muted);font-weight:500}
+.plan p{font-size:.78rem;color:var(--muted)}
+
+/* expert */
+.expert{background:var(--deep);color:#fff;padding:60px 0}
+.expert-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;width:min(960px,calc(100% - 40px));margin-inline:auto}
+.expert .eyebrow{color:var(--tan)}
+.expert h2{font-size:clamp(2rem,4vw,2.7rem);margin-bottom:14px;font-weight:500}
+.expert p{font-size:.85rem;color:#f3e4e0;margin:0}
+.expert-cta{text-align:center}
+.expert-cta .btn{width:100%;padding:16px 24px}
+.expert-cta small{display:block;margin-top:12px;font-size:.72rem;color:#f3e4e0}
+
+/* products */
+.products{background:var(--bg)}
+.sub{font-weight:700;font-size:.95rem;color:var(--maroon);margin:0 0 14px}
+.daily{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:36px}
+.prod{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 12px 16px}
+.prod .ph{height:100px;border-radius:12px;font-size:.66rem;padding:8px;margin-bottom:12px}
+.prod small{display:block;font-size:.58rem;font-weight:800;letter-spacing:.1em;color:var(--maroon)}
+.prod b{font-size:.82rem;line-height:1.3;display:block;margin-top:2px}
+.wellness{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.well{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.well b{display:block;font-size:.86rem;margin-bottom:4px}
+.well p{font-size:.76rem;color:var(--muted);margin:0}
+.notice{background:var(--blush-2);border-radius:16px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.notice p{margin:0;font-size:.74rem;color:var(--muted);max-width:520px}
+
+/* promise */
+.promise{background:#fff}
+.promise-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.promise-card{background:var(--bg);border-radius:var(--r);padding:24px 22px 28px}
+.promise-card h3{font-size:1.5rem;color:var(--maroon);margin-bottom:10px;font-weight:600}
+.promise-card p{font-size:.82rem;color:var(--muted);margin:0}
+
+/* science */
+.science{background:var(--bg)}
+.sci-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.sci-grid .ph{min-height:300px}
+.sci-copy h2{font-size:clamp(2rem,3.6vw,2.6rem);margin-bottom:14px}
+.sci-copy p{color:var(--muted);font-size:.88rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0 14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat .serif{font-size:1.5rem;color:var(--maroon);display:block;line-height:1.15;font-weight:600}
+.stat span:last-child{font-size:.7rem;color:var(--muted)}
+.sci-copy .note{font-size:.68rem;color:var(--muted);margin:0}
+
+/* specialists */
+.specialists{background:var(--blush-2)}
+.spec-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+.spec-tag{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.7rem;font-weight:600;color:var(--maroon)}
+.spec-tag::before{content:"\2713  ";color:var(--red);font-weight:700}
+.spec-filter{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+.spec-filter button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 20px;border-radius:999px;cursor:pointer;font:600 .78rem var(--sans);transition:background .2s,color .2s,border-color .2s}
+.spec-filter button:hover,.spec-filter button.active{background:var(--maroon);color:#fff;border-color:var(--maroon)}
+.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.spec{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.spec:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(122,46,46,.1)}
+.spec-top{position:relative;overflow:hidden;height:220px;background:var(--ph);display:grid;place-items:center}
+.spec-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+.spec-pill{position:absolute;z-index:2;left:12px;bottom:12px;background:#fff;color:var(--maroon);font-size:.64rem;font-weight:700;padding:5px 11px;border-radius:999px}
+.spec-body{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1}
+.spec-body h3{font-size:1.45rem;font-weight:600;margin-bottom:4px}
+.spec-qual{font-size:.74rem;font-weight:700;color:var(--red);margin-bottom:12px}
+.spec-loc{font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.spec-loc b{color:var(--ink);font-weight:700}
+.spec-langs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.spec-langs span{font-size:.66rem;font-weight:600;background:var(--blush);color:var(--maroon);padding:3px 10px;border-radius:999px}
+.spec-body .btn{margin-top:auto;width:100%;padding:11px 16px;font-size:.78rem}
+
+/* safety + reviews */
+.safety{background:var(--bg)}
+.safe-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.safe-grid h2{font-size:clamp(1.9rem,3.2vw,2.4rem);margin-bottom:18px;font-weight:500}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.checks div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-weight:700;font-size:.76rem}
+.safe-note{font-size:.72rem;color:var(--muted);margin:0}
+.review{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+.review p{font-family:var(--serif);font-style:italic;font-size:1.15rem;line-height:1.35;margin-bottom:10px}
+.review b{font-size:.72rem;color:var(--maroon)}
+
+/* booking */
+.booking{background:var(--deep);color:#fff}
+.book-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:50px;align-items:start}
+.booking .eyebrow{color:var(--tan)}
+.booking h2{font-size:clamp(2.2rem,4vw,3rem);font-weight:500;margin-bottom:14px}
+.booking p {
+    color: #52201f;
+    font-size: .88rem;
+}
+.form{background:#fff;color:var(--ink);border-radius:24px;padding:28px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+label{font-size:.74rem;font-weight:700}
+input,select,textarea{width:100%;font:inherit;font-size:.85rem;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:.72rem;font-weight:400;color:var(--muted);margin:16px 0}
+.consent input{width:auto;margin-top:3px;accent-color:var(--red)}
+.form .btn{width:100%;padding:15px}
+.form-note{font-size:.7rem;color:var(--muted);margin:12px 0 0}
+.success{display:none;margin-top:12px;padding:12px 14px;border-radius:12px;background:#eaf6ea;color:#1f5d1f;font-size:.8rem}
+
+/* faq + footer */
+.faq{background:var(--bg)}
+.faq-list{max-width:780px;margin:0 auto}
+details{border-bottom:1px solid var(--line);padding:18px 0}
+summary{font-weight:700;font-size:.92rem;cursor:pointer}
+summary:hover{color:var(--red)}
+details p{margin:10px 0 0;color:var(--muted);font-size:.85rem}
+footer{background:#fff;border-top:1px solid var(--line);padding:30px 0}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot img{height:38px;width:auto}
+.foot nav{display:flex;gap:18px;flex-wrap:wrap}
+.foot a{font-size:.76rem;color:var(--muted);text-decoration:none}
+.foot a:hover{color:var(--red)}
+.foot p{margin:0;font-size:.74rem;color:var(--muted)}
+.mobile-cta{display:none}
+
+/* prysm scan */
+.scan{background:var(--blush)}
+.scan-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.scan .eyebrow{display:inline-block;background:var(--blush-2);border-radius:999px;padding:9px 18px;font-size:.78rem;letter-spacing:0;text-transform:none;font-weight:500;margin-bottom:22px}
+.scan h2{font-size:clamp(2.3rem,4.6vw,3.3rem);margin-bottom:18px}
+.badge-soon{display:inline-block;vertical-align:middle;background:#c4985c;color:var(--deep);font:800 .72rem var(--sans);padding:6px 14px;border-radius:999px;letter-spacing:0;margin-left:6px}
+.scan .lead{color:var(--muted);max-width:480px;font-size:.95rem;margin-bottom:22px}
+.scan-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px}
+.scan-stat{background:var(--blush-2);border-radius:16px;padding:14px 18px;min-width:108px}
+.scan-stat .serif{display:block;font-size:1.35rem;color:var(--maroon);font-weight:600;line-height:1.2}
+.scan-stat span:last-child{font-size:.74rem;color:var(--muted)}
+.score-card{background:var(--blush-2);border-radius:28px;padding:34px 32px 28px;text-align:center}
+.score-card h3{font-size:1.4rem;font-weight:600;margin-bottom:18px}
+.score-num{font-family:var(--serif);font-size:4rem;font-weight:600;color:var(--maroon);line-height:1}
+.score-label{font-weight:800;font-size:1.05rem;margin:6px 0 18px}
+.score-bands{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:center;margin-bottom:16px}
+.score-bands i{height:14px;border-radius:999px;background:#ead5d1;display:block}
+.score-bands i:nth-child(2){background:#e8c9c5}
+.score-bands i:nth-child(3){background:#c27a76;height:22px}
+.score-bands i:nth-child(4){background:#ddb2ae}
+.score-bands i:nth-child(5){background:#d9aaa6}
+.score-bands i:nth-child(6){background:#c9a2a0}
+.score-track{position:relative;height:8px;border-radius:999px;background:#eadcd9;margin:0 4px 18px}
+.score-track::before{content:"";position:absolute;left:0;top:0;bottom:0;width:53%;border-radius:999px;background:var(--maroon)}
+.score-track::after{content:"";position:absolute;left:53%;top:50%;width:18px;height:18px;border-radius:50%;background:var(--maroon);transform:translate(-50%,-50%)}
+.score-card small{font-size:.76rem;color:var(--muted)}
+
+/* powered by nu skin */
+.powered{padding:clamp(40px,6vw,70px) 0;background:var(--bg)}
+.powered-box{position:relative;overflow:hidden;background:linear-gradient(180deg,#fdf1ed 0%,#fff7f4 100%);border:1px solid var(--line);border-radius:36px;padding:clamp(32px,5vw,56px) clamp(24px,5vw,56px)}
+.powered-box::before{content:"";position:absolute;right:-60px;top:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,#f3cfc8 0%,rgba(243,207,200,0) 70%);pointer-events:none}
+.powered-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.pill-dark{display:inline-block;background:var(--maroon);color:#fff;font-size:.78rem;font-weight:700;padding:8px 16px;border-radius:999px;margin-bottom:22px}
+.powered h2{font-size:clamp(2.4rem,5vw,3.6rem);margin-bottom:18px}
+.powered .sub-i{font-family:var(--serif);font-style:italic;font-size:clamp(1.5rem,2.6vw,2rem);color:var(--maroon);line-height:1.4;margin-bottom:18px}
+.powered .lead{color:var(--muted);font-size:.95rem;max-width:470px;margin-bottom:20px}
+.powered .chips{margin-bottom:26px}
+.powered .chip{font-size:.82rem;font-weight:500;padding:8px 16px}
+.powered .chip::before{content:"✓ ";color:var(--red);font-weight:700}
+.arch-wrap{position:relative;max-width:420px;margin-inline:auto;width:100%}
+.arch{position:relative;aspect-ratio:4/5;border:6px solid #fff;border-radius:999px 999px 8px 8px;background:#5f1220;overflow:hidden;box-shadow:0 24px 50px rgba(122,46,46,.18);display:grid;place-items:center;text-align:center;padding:20px;color:#f3dcd8;font-size:.82rem}
+.arch img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.float-pill{position:absolute;top:12%;right:-14px;z-index:2;background:#fff;color:var(--maroon);font-weight:700;font-size:.8rem;padding:12px 18px;border-radius:16px;box-shadow:0 8px 22px rgba(0,0,0,.12)}
+.float-card{position:absolute;left:-18px;bottom:9%;z-index:2;background:#fff;border-radius:16px;padding:12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 22px rgba(0,0,0,.12);font-size:.74rem;color:var(--muted);line-height:1.35}
+.float-card .serif{font-size:1.9rem;color:var(--maroon);font-weight:600}
+.powered .fine{margin-top:22px;text-align:left;max-width:none}
+@media(max-width:820px){
+  .powered-grid{grid-template-columns:1fr;gap:36px}
+  .float-pill{right:6px}.float-card{left:6px}
+}
+
+/* scan steps */
+.scan-steps{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:12px;max-width:520px}
+.scan-steps li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #f3dbd8;
+    border-radius: 22px;
+    padding: 16px 20px;
+}
+.scan-steps .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--maroon);color:#fff;font-weight:700;font-size:.9rem;display:grid;place-items:center}
+.scan-steps b{display:block;font-size:.98rem;line-height:1.3;margin-bottom:2px}
+.scan-steps span.d{display:block;font-size:.86rem;color:var(--muted);line-height:1.45}
+
+/* devices */
+.devices{background:var(--bg)}
+.devices .head h2{font-size:clamp(2.1rem,4vw,2.9rem)}
+.devices .head p{font-family:var(--serif);font-style:italic;font-size:1.25rem;color:var(--maroon)}
+.dev-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 22px;
+    max-width: 900px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+.dev-grid > * {
+    height: 100%;
+}
+.dev{background:#fff;border:1px solid var(--line);border-radius:24px;padding:12px 12px 20px;box-shadow:0 10px 30px rgba(122,46,46,.06)}
+.dev.mid{margin-top:-14px}
+.dev .ph{height:230px;border-radius:18px;border:0;margin-bottom:16px}
+.dev-pill{position:absolute;left:12px;bottom:12px;z-index:2;background:#fff;color:var(--ink);font-size:.68rem;font-weight:700;padding:5px 12px;border-radius:999px}
+.dev-body{padding:0 8px}
+.dev h3{font-size:1.45rem;font-weight:600;margin-bottom:6px}
+.dev p{font-size:.76rem;color:var(--muted);margin-bottom:12px}
+.dev ul{list-style:none;margin:0;padding:0}
+.dev li{position:relative;padding-left:26px;font-size:.76rem;margin-bottom:9px;line-height:1.45}
+.dev li::before{content:"✓";position:absolute;left:0;top:1px;width:16px;height:16px;border-radius:50%;background:var(--blush);color:var(--red);font-size:.58rem;font-weight:800;display:grid;place-items:center}
+
+/* before after */
+.results{background:var(--bg)}
+.results .head{text-align:left;margin-left:0;max-width:560px}
+.results .head h2{font-size:clamp(2.2rem,4.4vw,3.2rem)}
+.results .eyebrow{display:inline-block;background:var(--blush);border-radius:999px;padding:7px 16px;font-size:.74rem;letter-spacing:0;text-transform:none;font-weight:500}
+.ba-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.ba-card{background:#fff;border:1px solid var(--line);border-radius:28px;overflow:hidden}
+.ba{position:relative;height:auto;overflow:hidden;background:#f7e6df;user-select:none;touch-action:pan-y}
+.ba-layer{position:relative;inset:0;display:grid;place-items:center;text-align:center;padding:0px;font-size:.78rem;color:var(--muted)}
+.ba-layer img{position:relative;inset:0;width:100%;height:100%;object-fit:cover}
+.ba-after{background:repeating-linear-gradient(135deg,#fdeee6 0 22px,#f8ddd0 22px 44px)}
+.ba-before{background:repeating-linear-gradient(135deg,#ead7cf 0 22px,#e1c9c0 22px 44px);clip-path:inset(0 calc(100% - var(--pos,50%)) 0 0)}
+.ba-lab{position:absolute;top:14px;z-index:3;background:#5e4a48;color:#fff;font-size:.7rem;font-weight:600;padding:5px 14px;border-radius:999px}
+.ba-lab.l{left:12px}.ba-lab.r{right:12px}
+.ba-handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:3px;background:#fff;transform:translateX(-50%);z-index:3;pointer-events:none}
+.ba-handle span{position:absolute;top:50%;left:50%;width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);transform:translate(-50%,-50%);display:grid;place-items:center;font-size:.9rem;color:var(--maroon)}
+.ba input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:4;margin:0;padding:0;border:0}
+.ba:focus-within .ba-handle span{outline:2px solid var(--red);outline-offset:2px}
+.ba-info{padding:22px 24px 26px}
+.ba-info h3{font-size:1.6rem;font-weight:600;margin-bottom:10px}
+.ba-info .tag {
+    background: var(--maroon);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    margin-bottom: 14px;
+    display: inline-block;
+}
+.ba-info dl{display:grid;grid-template-columns:76px 1fr;gap:8px 12px;margin:0 0 16px;font-size:.82rem}
+.ba-info dt{color:var(--muted)}
+.ba-info dd{margin:0;font-weight:500}
+.ba-info blockquote{margin:0;padding-top:16px;border-top:1px solid var(--line);font-style:italic;color:var(--muted);font-size:.86rem}
+.results .fine{text-align:left;margin:22px 0 0;max-width:640px}
+
+@media(max-width:960px){
+  .scan-grid{grid-template-columns:1fr}
+  .dev-grid,.ba-grid{grid-template-columns:1fr;max-width:420px}
+  .dev.mid{margin-top:0}
+}
+@media(max-width:960px){
+  .concern-grid{grid-template-columns:repeat(2,1fr)}
+  .svc-grid{grid-template-columns:1fr}
+  .coming-grid{grid-template-columns:repeat(2,1fr)}
+  .plans-grid{grid-template-columns:1fr 1fr}.plans-copy{grid-column:1/-1}
+  .daily{grid-template-columns:repeat(3,1fr)}
+  .promise-grid,.spec-grid{grid-template-columns:repeat(2,1fr)}
+  .book-grid,.sci-grid,.safe-grid{grid-template-columns:1fr}
+}
+@media(max-width:820px){
+  .nav-links{display:none}.menu-btn{display:flex}
+  .hero-grid,.expert-grid{grid-template-columns:1fr;gap:36px}
+  .hero{padding:44px 0 60px}
+  .hero-photo{min-height:340px}
+  .steps,.wellness{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .wrap{width:calc(100% - 32px)}
+  .concern-grid,.plans-grid,.stats,.checks,.spec-grid{grid-template-columns:1fr}
+  .coming-grid{grid-template-columns:1fr}
+  .daily{grid-template-columns:repeat(2,1fr)}
+  .form{padding:20px}.form-grid{grid-template-columns:1fr}
+  input,select,textarea{font-size:16px}
+  .actions .btn{flex:1 1 100%}
+  .topbar{font-size:.66rem}
+  .wa-float{right:14px;bottom:calc(78px + env(safe-area-inset-bottom));width:54px;height:54px}
+  .mobile-cta{display:block;position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+  .mobile-cta.hide{display:none}
+  .mobile-cta .btn{width:100%}
+  footer{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){.wa-float::before{animation:none;display:none}html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="topbar">Launch offer: Nu Skin LumiSpa Glow Facial <b>₹999</b> <s>₹1,199</s> · limited period · T&amp;C apply</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#" aria-label="FMZ Glow home"><img src="images/FMZ logo.jpg" alt="FMZ Glow" width="143" height="46"></a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#skin">Your skin</a>
+      <a href="#services">Services</a>
+      <a href="#plans">Plans</a>
+      <a href="#products">Products</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn" href="#book">Book a visit</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+    <a href="#skin">Your skin</a><a href="#services">Services</a><a href="#plans">Plans</a><a href="#products">Products</a><a href="#how">How it works</a><a href="#faq">FAQ</a><a href="#book">Book a visit</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">At-home skincare by FMZ India</div>
+      <h1>Skincare that<br><em>understands</em> you.</h1>
+      <p class="lead">We listen to your skin concerns first. Then a certified woman specialist brings professional Nu Skin care to your home, explains every step, and leaves you with a routine that fits your life.</p>
+      <p class="tagline">Your Glow. Your Home. Your Time.</p>
+      <div class="actions">
+        <a class="btn" href="#book">Book your glow</a>
+        <a class="btn btn-line" href="#expert">Get free skin guidance</a>
+      </div>
+      <div class="chips">
+        <span class="chip">Women specialists only</span><span class="chip">Genuine Nu Skin products</span>
+        <span class="chip">Clear prices, no pressure</span><span class="chip">Pay after your visit</span>
+      </div>
+    </div>
+    <div class="ph hero-photo"><img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=85" alt="Woman relaxing at home during a facial" loading="lazy" onerror="this.remove()"><span>Photo direction: an Indian woman relaxing at home with eyes closed, a specialist’s hands gently applying care. Soft natural light, warm tones, real skin, no heavy retouching.</span></div>
+  </div>
+</section>
+
+<section class="concerns" id="skin">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">What’s on your mind?</div>
+      <h2>Tell us how your skin feels</h2>
+      <p>Every woman’s skin is different. Pick what sounds like you, and we’ll suggest where to start.</p>
+    </div>
+    <div class="concern-grid">
+      <article class="concern"><h3>“My skin looks dull and tired”</h3><p>Try the Nu Skin LumiSpa Glow Facial for a fresh, bright look.</p><a class="link" href="#services">See the facial →</a></article>
+      <article class="concern"><h3>“I want a gentle first step”</h3><p>Start with the FMZ Glow Cleanse: simple cleansing, hydration and advice.</p><a class="link" href="#services">See the cleanse →</a></article>
+      <article class="concern"><h3>“I deserve a proper pamper”</h3><p>The Nu Skin Radiance Ritual is our most complete experience.</p><a class="link" href="#services">See the ritual →</a></article>
+      <article class="concern"><h3>“I have an event coming up”</h3><p>Event-ready skincare is coming soon. Ask us what works best for now.</p><a class="link" href="#expert">Ask us →</a></article>
+      <article class="concern"><h3>“I need a routine I can keep”</h3><p>Get a simple daily routine with products chosen for your skin.</p><a class="link" href="#products">Build my routine →</a></article>
+      <article class="concern dark"><h3>“I’m not sure what my skin needs”</h3><p>That’s completely fine. Chat with us first, free, no obligation.</p><a class="link" href="#expert">Get guidance →</a></article>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">How it works</div>
+      <h2>Simple, from start to finish</h2>
+    </div>
+    <div class="steps">
+      <article class="step"><div class="n">01</div><h3>Tell us what you need</h3><p>Share your skin concern, the service you like, your pincode and a time that suits you, on WhatsApp or the form.</p></article>
+      <article class="step"><div class="n">02</div><h3>We match your specialist</h3><p>We assign a certified woman specialist near you, and confirm her name, your time and the total price in writing.</p></article>
+      <article class="step"><div class="n">03</div><h3>Relax, then pay</h3><p>She brings everything needed. Enjoy your care, get your routine, and pay by UPI or cash afterwards.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Our services</div>
+      <h2>Choose your experience</h2>
+      <p>Every visit starts with a conversation about your skin. Your specialist checks what suits you before she begins, and explains each step.</p>
+    </div>
+    <div class="svc-grid">
+      <!-- Package 1 -->
+<article class="svc">
+    <div class="ph">
+        Photo: gentle cleansing at home
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=900&q=80"
+             alt="Gentle facial cleansing"
+             loading="lazy"
+             onerror="this.remove()">
+    </div>
+
+    <div class="svc-body">
+        <span class="tag">A gentle start</span>
+        <h3>FMZ Glow Cleanse</h3>
+
+        <p>A refreshing cleansing and hydration-focused care, using approved products suited to your skin.</p>
+
+        <ul>
+            <li>Skin and product suitability consultation</li>
+            <li>Gentle cleansing with LumiSpa iO</li>
+            <li>Helps remove daily dirt and impurities</li>
+            <li>Skin feels clean, soft and refreshed</li>
+            <li>Moisturising finish</li>
+            <li>Simple aftercare and skincare tips</li>
+        </ul>
+
+        <div class="price">₹799</div>
+
+        <a class="btn btn-line pkg" href="#book" data-pkg="FMZ Glow Cleanse">
+            Book this service
+        </a>
+    </div>
+</article>
+
+
+<!-- Package 2 -->
+<article class="svc feat">
+    <div class="ph">
+        Approved Nu Skin image: LumiSpa iO in use
+        <img src="images/fmz-glow-facial.png"
+             alt="Device-assisted facial cleansing"
+             loading="lazy"
+             onerror="this.remove()">
+    </div>
+
+    <div class="svc-body">
+        <span class="tag tan">Signature · Launch offer</span>
+        <h3>FMZ Galvanic Glow Facial</h3>
+
+        <p>A premium facial experience using the Nu Skin Galvanic Spa device and selected skincare products.</p>
+
+        <ul>
+            <li>Skin consultation and suitability check</li>
+            <li>Facial treatment using the Galvanic Spa device</li>
+            <li>Uses selected Nu Skin skincare products</li>
+            <li>Helps skin feel soft and smooth</li>
+            <li>Leaves skin feeling refreshed and nourished</li>
+            <li>Moisturising finish and home-care tips</li>
+        </ul>
+
+        <div class="price">
+            ₹999 <s>₹1,199</s> <small>launch price</small>
+        </div>
+
+        <a class="btn pkg" href="#book" data-pkg="Nu Skin Galvanic Glow Facial">
+            Book this service
+        </a>
+    </div>
+</article>
+
+
+<!-- Package 3 -->
+<article class="svc">
+    <div class="ph">
+        Approved Nu Skin image: Prysm iO experience
+        <img src="images/fmz-radiance-ritual.png"
+             alt="Premium facial skincare ritual"
+             loading="lazy"
+             onerror="this.remove()">
+    </div>
+
+    <div class="svc-body">
+        <span class="tag dark">Premium</span>
+        <h3>FMZ Prysm iO Radiance Ritual</h3>
+
+        <p>A personalised wellness experience combining a quick skin antioxidant scan with tailored skincare and wellness guidance.</p>
+
+        <ul>
+            <li>Extended personal consultation</li>
+            <li>Quick 15-second finger scan</li>
+            <li>Get your personal Prysm Score</li>
+            <li>Understand your skin's antioxidant level</li>
+            <li>Track changes in your score over time</li>
+            <li>Personalised wellness and skincare guidance</li>
+        </ul>
+
+        <div class="price">₹1,699</div>
+
+        <a class="btn btn-line pkg" href="#book" data-pkg="Nu Skin Prysm iO Radiance Ritual">
+            Book this service
+        </a>
+    </div>
+</article>
+    </div>
+
+    <div class="coming">
+      <div class="coming-top"><h3>Coming soon</h3><span>Opening as our specialists complete training for each one</span></div>
+      <div class="coming-grid">
+        <div><b>Glow Facial + Prysm iO Wellness Insight</b><span>Your Glow Facial plus a skin carotenoid reading, explained</span></div>
+        <div><b>Basic cleanup</b><span>A quick refresh between facials</span></div>
+        <div><b>Hydration-focused facial</b><span>For skin that feels dry or tight</span></div>
+        <div><b>Event-ready skincare</b><span>Prepare your skin before a special day</span></div>
+        <div><b>Hand and foot care add-on</b><span>Add to any facial visit</span></div>
+      </div>
+      <a class="link" href="#expert">Tell me when these launch →</a>
+    </div>
+ 
+  </div>
+</section>
+
+<section class="plans" id="plans">
+  <div class="wrap plans-grid">
+    <div class="plans-copy">
+      <div class="eyebrow">Glow plans</div>
+      <h2>Beautiful skin is a habit, not a one-off</h2>
+      <p>Regular care with the same trusted specialist keeps your routine on track. Plans save you money and keep your next visit booked.</p>
+    </div>
+    <article class="plan first">
+      <span class="tag tan">First plan</span>
+      <h3>Glow 3-Visit Plan</h3>
+      <div class="price">₹3,299 <small>₹1,100 per visit</small></div>
+      <p>Three LumiSpa Glow Facials, spaced to suit your skin. Valid 90 days. Save ₹298.</p>
+      <a class="link" href="#book">Ask about this plan →</a>
+    </article>
+    <article class="plan">
+      <span class="tag" style="background:var(--bg);color:var(--ink)">Coming soon</span>
+      <h3>Memberships and family plans</h3>
+      <p>Six-visit memberships, monthly plans and bundles for mothers, daughters and friends.</p>
+      <a class="link" href="#expert">Notify me →</a>
+    </article>
+  </div>
+</section>
+
+
+
+<section class="expert" id="expert">
+  <div class="expert-grid">
+    <div>
+      <div class="eyebrow">Expert guidance</div>
+      <h2>Not sure where to start? Just ask us.</h2>
+      <p>Tell us about your skin on WhatsApp. A trained FMZ Glow expert will suggest the right service or routine for you. Free, private and no pressure to book.</p>
+    </div>
+    <div class="expert-cta">
+      <a class="btn btn-tan" href="https://wa.me/+917303706047?text=Hi%20FMZ%20Glow%2C%20I%27d%20like%20to%20know%20more%20about%20your%20at-home%20skincare%20services." rel="noopener">Chat on WhatsApp</a>
+  
+    </div>
+  </div>
+</section>
+<section class="scan" id="scan">
+  <div class="wrap scan-grid">
+    <div>
+      <div class="eyebrow">Antioxidant scan by Prysm iO</div>
+      <h2>Know your antioxidant level in 15 seconds </h2>
+      <p class="lead">A quick, painless finger scan measures antioxidant levels in your skin, an indicator of your nutritional wellness. Your specialist explains your score and simple food tips.</p>
+     
+      <ol class="scan-steps">
+        <li><span class="num">1</span><div><b>Place your fingertip</b><span class="d">No needles and no discomfort.</span></div></li>
+        <li><span class="num">2</span><div><b>Hold for 15 seconds</b><span class="d">The device scans using light.</span></div></li>
+        <li><span class="num">3</span><div><b>Get your score explained</b><span class="d">Your specialist shares simple food and routine tips.</span></div></li>
+      </ol>
+      <a class="btn btn-maroon" href="#expert">Tell me when it launches</a>
+    </div>
+    <div class="score-card" aria-label="Sample Prysm Score">
+      <h3>What your score means</h3>
+      <div class="score-num">320</div>
+      <div class="score-label">Moderate</div>
+      <div class="score-bands" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="score-track" aria-hidden="true"></div>
+      <small>Sample only. Higher is better.</small>
+    </div>
+  </div>
+</section>
+<section class="products" id="products">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Continue your glow at home</div>
+      <h2>Products chosen for your skin</h2>
+      <p>Your specialist recommends a simple routine from the Nu Skin range and shows you how to use it. Order through your specialist and get her guidance with every product.</p>
+    </div>
+    <p class="sub">Daily skincare</p>
+    <div class="daily">
+      <div class="prod"><div class="ph">Product photo<img src="images/glow.png" data-fb="images/glow.png" alt="Face Wash" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div><small>CLEANSE</small><b>Face Wash</b></div>
+      <div class="prod"><div class="ph">Product photo<img src="images/Nu-Ski-Glow.jpg" data-fb="images/Nu-Ski-Glow.jpg
+" alt="Glow Toner" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div><small>TONE</small><b>Glow Toner</b></div>
+      <div class="prod"><div class="ph">Product photo<img src="images/products/vitamin-c-serum.jpg" data-fb="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=500&q=80" alt="Vitamin C Serum" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div><small>TREAT</small><b>Vitamin C Serum</b></div>
+      <div class="prod"><div class="ph">Product photo<img src="images/products/light-moisturizer.jpg" data-fb="https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=500&q=80" alt="Light Moisturizer" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div><small>MOISTURISE</small><b>Light Moisturizer</b></div>
+      <div class="prod"><div class="ph">Product photo<img src="images/products/sunright-spf50.jpg" data-fb="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=500&q=80" alt="SunRight SPF 50+" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div><small>PROTECT</small><b>SunRight SPF 50+</b></div>
+      <div class="prod"><div class="ph">Product photo<img src="images/serenu-professional-lumispa-io-system-silo-image.jpg" data-fb="images/serenu-professional-lumispa-io-system-silo-image.jpg" alt="LumiSpa iO for home" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div><small>DEVICE</small><b>LumiSpa iO for home</b></div>
+    </div>
+    <p class="sub">Wellness from within</p>
+    <div class="wellness">
+      <div class="well"><b>Pharmanex LifePak Elements</b><p>Daily vitamins and minerals designed for common Indian dietary gaps.</p></div>
+      <div class="well"><b>Pharmanex Optimum Omega</b><p>Omega-3 from fish oil as part of a balanced diet.</p></div>
+      <div class="well"><b>TRMe weight wellness</b><p>A balanced eating and lifestyle programme. Coming soon.</p></div>
+    </div>
+    <div class="notice">
+      <p>Supplements are not a substitute for a varied diet and are not meant to diagnose, treat or prevent any disease. Speak to your doctor before starting any supplement. </p>
+      <a class="btn btn-maroon" href="#expert">Ask about products</a>
+    </div>
+  </div>
+</section>
+
+<section class="promise">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Our promise to you</div>
+      <h2>How every visit should feel</h2>
+    </div>
+    <div class="promise-grid">
+      <article class="promise-card"><h3>Comfortable</h3><p>In your own home, at your pace, with a woman specialist only.</p></article>
+      <article class="promise-card"><h3>Safe</h3><p>Genuine sealed products, a clean kit and a suitability check before anything touches your skin.</p></article>
+      <article class="promise-card"><h3>Confident</h3><p>Honest advice and clear prices. You decide what you want, with no pressure to buy.</p></article>
+      <article class="promise-card"><h3>Connected</h3><p>Ask for the same specialist next time. We follow up to see how your skin feels.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="powered" id="powered">
+  <div class="wrap">
+    <div class="powered-box">
+      <div class="powered-grid">
+        <div>
+          <span class="pill-dark">Powered by Nu Skin</span>
+          <h2>World’s #1 Beauty &amp; Wellness Device System Company*</h2>
+          <p class="sub-i">Next-level skincare and wellness solutions</p>
+          <p class="lead">Your FMZ Glow specialist brings professional Nu Skin devices and products to your home, and explains every step.</p>
+          <div class="chips"><span class="chip">Genuine Nu Skin</span><span class="chip">Smart devices</span><span class="chip">Women specialists</span></div>
+          <a class="btn btn-maroon" href="#book">Book your glow</a>
+        </div>
+        <div class="arch-wrap">
+          <div class="arch">Add approved Nu Skin device photo here<img src="images/device.jpg" alt="Nu Skin LumiSpa iO, Galvanic Spa and Prysm iO devices" loading="lazy" onerror="this.remove()"></div>
+          <div class="float-pill">Nu Skin devices</div>
+          <div class="float-card"><span class="serif">3×</span><span>ranked No. 1<br>three years running*</span></div>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+</section>
+
+<section class="devices" id="devices">
+  <div class="wrap">
+    <div class="head">
+      <h2>Meet the devices behind your glow</h2>
+      <p>Next-level skincare and wellness solutions</p>
+    </div>
+    <div class="dev-grid">
+      <article class="dev">
+        <div class="ph">LumiSpa iO<img src="images/serenu-professional-lumispa-io-system-silo-image.jpg" alt="LumiSpa iO cleansing device with silicone heads" loading="lazy" onerror="this.remove()"><span class="dev-pill">Premium</span></div>
+        <div class="dev-body">
+          <h3>LumiSpa iO</h3>
+          <p>Our signature Glow Facial device, used with the Serenu Professional LumiSpa Cleanser.</p>
+          <ul>
+            <li>Micropulse oscillation with soft silicone heads for a thorough yet gentle cleanse</li>
+            <li>Cleanser with HydraShield Complex helps hydrate and support the moisture barrier</li>
+            <li>Made for face, neck and décolleté. Waterproof, with up to 50 sessions per charge</li>
+          </ul>
+        </div>
+      </article>
+      <article class="dev ">
+        <div class="ph">Galvanic Spa<img src="images/serenu-professional-galvanic-spa-device.png" alt="Galvanic Spa microcurrent facial device" loading="lazy" onerror="this.remove()"><span class="dev-pill">Premium</span></div>
+        <div class="dev-body">
+          <h3>Galvanic Spa</h3>
+          <p>A microcurrent facial device used with Brightening Serum in our Radiance Ritual.</p>
+          <ul>
+            <li>Supports your skin’s natural radiance and a more even-looking tone</li>
+            <li>Helps reduce the appearance of fine lines</li>
+            <li>Helps increase hydration and visible firmness</li>
+          </ul>
+        </div>
+      </article>
+      <article class="dev">
+        <div class="ph">Prysm iO<img src="images/prysm-io-device-silo.png" alt="Prysm iO antioxidant scanner" loading="lazy" onerror="this.remove()"><span class="dev-pill">Premium</span></div>
+        <div class="dev-body">
+          <h3>Prysm iO</h3>
+          <p>A quick, painless fingertip scan of antioxidant levels in your skin.</p>
+          <ul>
+            <li>Results in about 15 seconds, with an AI-powered algorithm</li>
+            <li>Your Prysm Score runs from 0 to 600+, and higher is better</li>
+            <li>Track how diet, supplements and lifestyle change your score over time</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="science">
+  <div class="wrap sci-grid">
+    <div class="ph">Approved Nu Skin image: Serenu Professional kit and devices<img src="images/Burgundy-Luxury-Skincare.png" data-fb="images/Burgundy-Luxury-Skincare.png" alt="Nu Skin Serenu Professional kit and devices" loading="lazy" onerror="var f=this.dataset.fb;if(f){this.removeAttribute('data-fb');this.src=f}else{this.remove()}"></div>
+    <div class="sci-copy">
+      <div class="eyebrow">Powered by Nu Skin science</div>
+      <h2>Global skincare science, delivered with a personal touch</h2>
+      <p>FMZ Glow specialists use Nu Skin products and devices, developed by a global beauty and wellness company with decades of research behind them.</p>
+      <div class="stats">
+        <div class="stat"><span class="serif">[40+ years]</span><span>in beauty and wellness</span></div>
+        <div class="stat"><span class="serif">[~50 markets]</span><span>around the world</span></div>
+        <div class="stat"><span class="serif">Patented</span><span>device technology</span></div>
+      </div>
+     
+    </div>
+  </div>
+</section>
+
+<section class="specialists" id="specialists">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Our specialists</div>
+      <h2>Meet our certified skin specialists</h2>
+      <p>Qualified in science, biochemistry and nursing. Certified to deliver genuine Nu Skin treatments in the comfort of your home.</p>
+      <div class="spec-tags"><span class="spec-tag">Women specialists only</span><span class="spec-tag">Science &amp; formulation trained</span><span class="spec-tag">Pay after service</span></div>
+    </div>
+    <div class="spec-filter" role="group" aria-label="Filter specialists by city">
+      <button type="button" class="active" data-filter="all">All locations</button>
+      <button type="button" data-filter="ahmedabad">Ahmedabad</button>
+      <button type="button" data-filter="gandhinagar">Gandhinagar</button>
+      <button type="button" data-filter="surat">Surat</button>
+      <button type="button" data-filter="rajkot">Rajkot</button>
+    </div>
+    <div class="spec-grid">
+      <article class="spec" data-city="ahmedabad">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Dhruvi.png" alt="Dhruvi Jyani"  >
+            <span class="spec-pill">&#10003; Verified Specialist</span></div>
+        <div class="spec-body">
+          <h3>Dhruvi Jyani</h3>
+          <div class="spec-qual">B.Sc. in Biochemistry</div>
+          <div class="spec-loc"><b>Location:</b> Paldi &amp; Central Ahmedabad (380007)</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Dhruvi Jyani">Book with Dhruvi</a>
+        </div>
+      </article>
+      <article class="spec" data-city="ahmedabad">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Dolly.png" alt="Dolly Patel" >
+            <span class="spec-pill">&#10003; Verified Specialist</span></div>
+        <div class="spec-body">
+          <h3>Dolly Patel</h3>
+          <div class="spec-qual">Master&rsquo;s Graduate (M.Com)</div>
+          <div class="spec-loc"><b>Location:</b> Odhav &amp; East Ahmedabad (382415)</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Dolly Patel">Book with Dolly</a>
+        </div>
+      </article>
+    <article class="spec" data-city="ahmedabad">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Minakshi.png" alt="Minakshi Savaliya" >
+            <span class="spec-pill">&#10003; Verified Specialist</span></div>
+        <div class="spec-body">
+          <h3>Minakshi Savaliya</h3>
+          <div class="spec-qual">B.A. Background</div>
+          <div class="spec-loc"><b>Location:</b> Vastral &amp; Ring Road (382418)</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Minakshi Savaliya">Book with Minakshi</a>
+        </div>
+      </article>
+      <article class="spec" data-city="ahmedabad">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Kelee.png" alt="Kelee Vanzara" >
+            <span class="spec-pill">&#10003; Verified Specialist</span></div>
+        <div class="spec-body">
+          <h3>Kelee Vanzara</h3>
+          <div class="spec-qual">B.Sc. in Chemistry</div>
+          <div class="spec-loc"><b>Location:</b> Navrangpura &amp; University Area (380009)</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Kelee Vanzara">Book with Kelee</a>
+        </div>
+      </article>
+      <article class="spec" data-city="ahmedabad">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Dharvi.jpg" alt="Dharvi Thummar" >
+            <span class="spec-pill">&#10003; Registered Pharmacist</span></div>
+        <div class="spec-body">
+          <h3>Dharvi Thummar</h3>
+          <div class="spec-qual">D.Pharm / B.Pharm</div>
+          <div class="spec-loc"><b>Location:</b> Navrangpura / West Ahmedabad</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Dharvi Thummar">Book with Dharvi</a>
+        </div>
+      </article>
+      <article class="spec" data-city="gandhinagar">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Param.png" alt="Param Patel" >
+            <span class="spec-pill">&#10003; Verified Specialist</span></div>
+        <div class="spec-body">
+          <h3>Param Patel</h3>
+          <div class="spec-qual">B.Sc. in Zoology</div>
+          <div class="spec-loc"><b>Location:</b> PDEU Road, Gandhinagar (382421)</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Param Patel">Book with Param</a>
+        </div>
+      </article>
+      <article class="spec" data-city="surat">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Vishwa.jpg" alt="Vishwa Malaviya" >
+            <span class="spec-pill">&#10003; Registered Pharmacist</span></div>
+        <div class="spec-body">
+          <h3>Vishwa Malaviya</h3>
+          <div class="spec-qual">D.Pharm / B.Pharm</div>
+          <div class="spec-loc"><b>Location:</b> Hirabag, Surat</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Vishwa Malaviya">Book with Vishwa</a>
+        </div>
+      </article>
+      <article class="spec" data-city="rajkot">
+        <div class="spec-top">
+            <img class="spec-photo" src="images/Diya.png" alt="Diya Khimsuriya" >
+            <span class="spec-pill">&#10003; Certified Care Specialist</span></div>
+        <div class="spec-body">
+          <h3>Diya Khimsuriya</h3>
+          <div class="spec-qual">Nursing Background</div>
+          <div class="spec-loc"><b>Location:</b> Ambedkar Nagar, Rajkot (360004)</div>
+          <div class="spec-langs"><span>Gujarati</span><span>Hindi</span><span>English</span></div>
+          <a class="btn btn-line spec-book" href="#book" data-specialist="Diya Khimsuriya">Book with Diya</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="results" id="results">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Real glow, real homes</div>
+      <h2>Before and after your visit</h2>
+      <p>Drag the slider on each card to compare. Every photo is shared with the client’s permission, with no filters and no heavy retouching.</p>
+    </div>
+    <!-- Replace the placeholder photos, names, details and quotes below with real clients who have given written permission. -->
+    <div class="ba-grid">
+      <article class="ba-card">
+        <div class="ba" style="--pos:50%">
+          <div class="ba-layer ba-after"><img src="images/priya.jpg" alt="Client skin after visit" loading="lazy" onerror="this.remove()"></div>
+         
+          <!--<span class="ba-lab l">Before</span><span class="ba-lab r">After</span>-->
+         
+        </div>
+        <div class="ba-info">
+          <h3>Priya, 28</h3>
+          <span class="tag">Nu Skin LumiSpa Glow Facial</span>
+          <dl><dt>Concern</dt><dd>Dull, tired skin</dd><dt>Plan</dt><dd>3 visits over 12 weeks</dd><dt>Products</dt><dd>LumiSpa iO, Face Wash, Vitamin C Serum, SunRight SPF 50+</dd></dl>
+          <blockquote>“My skin looks fresher and my makeup sits better.”</blockquote>
+        </div>
+      </article>
+      <article class="ba-card">
+        <div class="ba" style="--pos:50%">
+           <div class="ba-layer ba-after"><img src="images/neha.jpg" alt="Client skin after visit" loading="lazy" onerror="this.remove()"></div>
+          <!--<span class="ba-lab l">Before</span><span class="ba-lab r">After</span>-->
+         
+        </div>
+        <div class="ba-info">
+          <h3>Neha, 34</h3>
+          <span class="tag">FMZ Glow Cleanse</span>
+          <dl><dt>Concern</dt><dd>Dry, tight skin</dd><dt>Plan</dt><dd>2 visits over 4 weeks</dd><dt>Products</dt><dd>Face Wash, Glow Toner, Light Moisturizer</dd></dl>
+          <blockquote>“It feels soft and comfortable all day.”</blockquote>
+        </div>
+      </article>
+ 
+    </div>
+    <p class="fine">Individual results vary with skin type, routine and number of visits. Photos taken in similar light and without filters. These are cosmetic services, not medical treatments.</p>
+  </div>
+</section>
+
+<section class="safety">
+  <div class="wrap safe-grid">
+    <div>
+      <div class="eyebrow">Hygiene and safety</div>
+      <h2>Our checklist, every visit</h2>
+      <div class="checks">
+        <div>Sealed, genuine Nu Skin products</div><div>Fresh towels and headband</div>
+        <div>Devices cleaned before every visit</div><div>Skin and health check first</div>
+      </div>
+      <p class="safe-note">Before using the Galvanic Spa, your specialist asks about pregnancy, implanted electrical devices, metal implants and skin conditions, and skips that step if it isn’t right for you. </p>
+    </div>
+    <div>
+      <div class="eyebrow">Reviews</div>
+      <h2>In her words</h2>
+      <div class="review"><p>“I had a lovely experience at FMZ Glow! The facial was so relaxing, and my skin felt clean, soft and refreshed afterwards. The specialist was very friendly, and I felt comfortable throughout the session”</p><b>Mansi Joshi</b></div>
+      <div class="review"><p>“The antioxidant scan was something new for me. I found it really interesting to learn more about my antioxidant levels and understand my wellness better.”</p><b>Hetal Patel</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="booking" id="book">
+  <div class="wrap book-grid">
+    <div>
+      <div class="eyebrow">Book a visit</div>
+      <h2>Ready for your glow?</h2>
+      <p>Send us your details and preferred service. Our team will contact you on WhatsApp to confirm your specialist, time and total price in writing.</p>
+    </div>
+    <div class="form">
+      <!-- DEMO FORM: connect to your WordPress/Elementor form, CRM or WhatsApp workflow before launch. -->
+  
+<form id="bookForm" action="send-booking.php" method="POST">
+
+    <div class="form-grid">
+
+        <div class="field">
+            <label for="name">Your name</label>
+            <input
+                id="name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                required
+            >
+        </div>
+
+        <div class="field">
+            <label for="phone">WhatsApp number</label>
+            <input
+                id="phone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="+91"
+                required
+                pattern="[0-9+\s()-]{8,18}"
+            >
+        </div>
+
+        <div class="field">
+            <label for="pin">Pincode</label>
+            <input
+                id="pin"
+                name="pin"
+                inputmode="numeric"
+                required
+                pattern="[0-9]{6}"
+                maxlength="6"
+            >
+        </div>
+
+        <div class="field">
+            <label for="service">Service</label>
+            <select id="service" name="service" required>
+                <option>FMZ Glow Cleanse</option>
+                <option selected>Nu Skin LumiSpa Glow Facial</option>
+                <option>Nu Skin Radiance Ritual</option>
+                <option>Glow 3-Visit Plan</option>
+                <option>Not sure, help me choose</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="date">Preferred date</label>
+            <input id="date" name="date" type="date">
+        </div>
+
+        <div class="field">
+            <label for="time">Preferred time</label>
+            <select id="time" name="time">
+                <option value="">No preference</option>
+                <option>Morning</option>
+                <option>Afternoon</option>
+                <option>Evening</option>
+            </select>
+        </div>
+
+        <div class="field full">
+            <label for="msg">Your skin concern (optional)</label>
+            <textarea id="msg" name="msg" rows="3"></textarea>
+        </div>
+
+    </div>
+
+    <label class="consent" for="consent">
+        <input
+            id="consent"
+            name="consent"
+            type="checkbox"
+            value="yes"
+            required
+        >
+        <span>
+            I agree that FMZ India may contact me on WhatsApp about this request.
+        </span>
+    </label>
+
+    <button class="btn" id="bookingSubmit" type="submit">
+        Book your glow
+    </button>
+
+    <p class="form-note">
+        This request does not confirm an appointment. Price, specialist and
+        any travel charges are confirmed in writing before your visit.
+        You pay after your visit.
+    </p>
+
+    <!-- Success / Error message -->
+    <div
+        class="success"
+        id="ok"
+        role="status"
+        aria-live="polite"
+        style="display:none;"
+    ></div>
+
+</form>
+
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="head"><div class="eyebrow">Good to know</div><h2>Frequently asked questions</h2></div>
+    <div class="faq-list">
+      <details><summary>Is the facial suitable for my skin type?</summary><p>Our services are personalised to your skin's needs. Before beginning, your specialist will discuss your skin concerns and check whether the selected products and treatment are suitable for you.</p></details>
+      <details><summary>Can I get a facial if I have sensitive skin or acne?</summary><p>Please tell us about any sensitivity, acne, allergies or ongoing skin concerns when booking. Your specialist will assess product suitability, and we may recommend postponing the service or consulting a dermatologist.</p></details>
+      <details><summary>Can I get a facial during pregnancy or while breastfeeding?</summary><p>Some skincare products and device treatments may not be suitable during pregnancy or breastfeeding. Please inform us when booking so we can discuss appropriate options and any necessary medical advice.</p></details>
+      <details><summary>Will I experience redness, irritation or breakouts after the facial?</summary><p>Skin reactions vary from person to person. Although we use products according to their instructions and check suitability beforehand, temporary redness or irritation may occur. Please contact us if you experience a persistent or unexpected reaction.</p></details>
+      <details><summary>How long does a facial appointment take?</summary><p>Appointment duration depends on the service selected. We will confirm the expected duration when your booking is confirmed.</p></details>
+      <details><summary>What do I need to prepare before the specialist arrives?</summary><p>Just a comfortable, well-lit space where you can relax. Your specialist brings the products, devices and essentials required for your booked service.</p></details>
+      <details><summary>Will the same specialist visit me every time?</summary><p>We will do our best to assign your preferred specialist for repeat visits, subject to availability.</p></details>
+      <details><summary>Can I book a facial for my mother, friend or family member?</summary><p>Yes. You can enquire about booking a service for someone else. Please share their skin concerns and preferred appointment details with us in advance.</p></details>
+      <details><summary>Do I have to purchase Nu Skin products after my facial?</summary><p>No. Product purchases are entirely optional. Your specialist will explain your skincare options, but there is no obligation to buy anything.</p></details>
+      <details><summary>Are there any additional or travel charges?</summary><p>Any applicable travel charges or additional costs will be communicated to you in writing before your appointment is confirmed.</p></details>
+      <details><summary>Can I use my own skincare products during the facial?</summary><p>Our services are designed around selected Nu Skin products and approved device protocols. Please let us know if you have a preferred product or ingredient concern before your appointment.</p></details>
+      <details><summary>How soon will I see results, and how long will they last?</summary><p>Results vary depending on your skin, the service and your home-care routine. Some people notice an immediate refreshed feeling, while longer-term cosmetic improvements may require consistent care. We cannot guarantee specific results.</p></details>
+      <details><summary>What is the difference between LumiSpa iO and Galvanic Spa?</summary><p>LumiSpa iO is used for device-assisted cleansing, while Galvanic Spa uses microcurrent technology as part of selected skincare treatments. Your specialist can explain which service is appropriate for your needs.</p></details>
+      <details><summary>Is the Prysm iO scan a medical test?</summary><p>No. Prysm iO provides a cosmetic wellness-related antioxidant score. It is not a medical test, does not diagnose disease and should not replace medical advice.</p></details>
+      <details><summary>Will I receive a personalised skincare routine after my visit?</summary><p>Yes. Your specialist will share practical skincare guidance and explain how to use recommended products at home. Purchasing those products is optional.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <img src="images/FMZ logo.jpg" alt="FMZ Glow" width="118" height="38">
+    <nav aria-label="Footer">
+      <a href="#services">Services</a><a href="#plans">Plans</a><a href="#faq">FAQ</a>
+      <a href="/privacy-policy/">Privacy Policy</a><a href="/terms-and-conditions/">Terms</a>
+    </nav>
+    <p>© <span id="yr"></span> FMZ India. All rights reserved.</p>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/+917303706047?text=Hi%20FMZ%20Glow%2C%20I%27d%20like%20to%20know%20more%20about%20your%20at-home%20skincare%20services." target="_blank" rel="noopener" aria-label="Chat with FMZ Glow on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.003 3C8.83 3 3 8.83 3 16c0 2.29.6 4.53 1.74 6.5L3 29l6.67-1.7A12.95 12.95 0 0 0 16 29c7.17 0 13-5.83 13-13S23.17 3 16.003 3zm0 23.7c-1.95 0-3.86-.53-5.53-1.52l-.4-.23-3.96 1.01 1.06-3.86-.26-.4A10.66 10.66 0 0 1 5.3 16c0-5.9 4.8-10.7 10.7-10.7S26.7 10.1 26.7 16s-4.8 10.7-10.7 10.7zm5.87-8c-.32-.16-1.9-.94-2.2-1.05-.3-.1-.5-.16-.72.16-.22.32-.83 1.05-1.02 1.27-.19.22-.38.24-.7.08-.32-.16-1.36-.5-2.59-1.6-.96-.85-1.6-1.9-1.79-2.22-.19-.32-.02-.5.14-.66.14-.14.32-.38.48-.57.16-.19.22-.32.32-.54.1-.22.05-.4-.03-.57-.08-.16-.72-1.74-.99-2.38-.26-.63-.52-.54-.72-.55h-.62c-.22 0-.57.08-.86.4-.3.32-1.13 1.1-1.13 2.69s1.16 3.12 1.32 3.34c.16.22 2.28 3.48 5.52 4.88.77.33 1.37.53 1.84.68.77.25 1.48.21 2.04.13.62-.09 1.9-.78 2.17-1.53.27-.75.27-1.4.19-1.53-.08-.13-.3-.21-.62-.37z"/></svg></a>
+<div class="mobile-cta"><a class="btn" href="#book">Book your glow</a></div>
+
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+(function(){
+  var b = document.getElementById('menuBtn'),
+      m = document.getElementById('mobileMenu');
+
+  function set(o) {
+    m.classList.toggle('open', o);
+    b.setAttribute('aria-expanded', o);
+    b.setAttribute('aria-label', o ? 'Close menu' : 'Open menu');
+  }
+
+  b.addEventListener('click', function(){
+    set(!m.classList.contains('open'));
+  });
+
+  m.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      set(false);
+    });
+  });
+
+  window.addEventListener('resize', function(){
+    if(innerWidth > 820) set(false);
+  });
+})();
+
+(function(){
+  var c = document.querySelector('.mobile-cta'),
+      s = document.getElementById('book');
+
+  if(!c || !('IntersectionObserver' in window)) return;
+
+  new IntersectionObserver(function(e){
+    c.classList.toggle('hide', e[0].isIntersecting);
+  }, {threshold: .15}).observe(s);
+})();
+
+document.querySelectorAll('.pkg').forEach(function(a){
+  a.addEventListener('click', function(){
+    var sel = document.getElementById('service'),
+        v = a.getAttribute('data-pkg');
+
+    Array.from(sel.options).forEach(function(o){
+      if(o.text === v) sel.value = o.value;
+    });
+  });
+});
+
+
+
+(function(){
+  var c=document.querySelector('.mobile-cta'),s=document.getElementById('book');
+  if(!c||!('IntersectionObserver' in window))return;
+  new IntersectionObserver(function(e){c.classList.toggle('hide',e[0].isIntersecting)},{threshold:.15}).observe(s);
+})();
+
+
+
+// Before/after sliders
+document.querySelectorAll('.ba').forEach(function(ba){
+  var r = ba.querySelector('input[type=range]');
+  if(!r) return;
+  r.addEventListener('input', function(){
+    ba.style.setProperty('--pos', r.value + '%');
+  });
+});
+
+
+// Specialist city filter + prefill booking note
+document.querySelectorAll('.spec-filter button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.spec-filter button').forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+    var f = b.getAttribute('data-filter');
+    document.querySelectorAll('.spec').forEach(function(c){
+      c.style.display = (f === 'all' || c.getAttribute('data-city') === f) ? 'flex' : 'none';
+    });
+  });
+});
+document.querySelectorAll('.spec-book').forEach(function(a){
+  a.addEventListener('click', function(){
+    var m = document.getElementById('msg');
+    if(m) m.value = 'Preferred specialist: ' + a.getAttribute('data-specialist');
+  });
+});
+
+// Set minimum booking date to today
+var d = new Date();
+document.getElementById('date').min =
+    new Date(d.getTime() - d.getTimezoneOffset() * 6e4)
+    .toISOString().slice(0, 10);
+
+</script>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"c8797d1785c746c1b0476b1d8ed49cd5","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
