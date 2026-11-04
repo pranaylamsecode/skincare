@@ -3,7 +3,7 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-  <footer>
+  <footer class="site-footer">
     <div class="wrap foot">
       <img src="/images/FMZ logo.jpg" alt="FMZ Glow" width="118" height="38">
       <nav aria-label="Footer">

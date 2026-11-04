@@ -147,14 +147,14 @@ const submit = () => {
               <CreditCard class="w-4 h-4 text-purple-600" />
               <span>Razorpay Payment Gateway</span>
             </h2>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 select-none">
               <input 
                 type="checkbox" 
                 id="rzpActive" 
                 v-model="form.razorpay_enabled" 
                 true-value="1" 
                 false-value="0"
-                class="rounded text-purple-600 focus:ring-purple-600 cursor-pointer"
+                class="w-4 h-4 rounded text-purple-600 focus:ring-purple-600 cursor-pointer shrink-0 accent-purple-600"
               />
               <label for="rzpActive" class="text-xs font-bold text-neutral-700 cursor-pointer">Enable Razorpay</label>
             </div>

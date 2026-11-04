@@ -29,15 +29,15 @@ const submit = () => {
       <form @submit.prevent="submit" class="space-y-5">
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-2">Email Address</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+          <div class="relative flex items-center">
+            <div class="absolute left-3.5 flex items-center pointer-events-none text-neutral-400 z-10">
               <Mail class="w-4 h-4" />
             </div>
             <input 
               v-model="form.email" 
               type="email" 
               required
-              class="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:bg-white focus:border-[#b60a0a] focus:ring-1 focus:ring-[#b60a0a] transition outline-none"
+              class="w-full !pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:bg-white focus:border-[#b60a0a] focus:ring-1 focus:ring-[#b60a0a] transition outline-none"
               placeholder="admin@fmzglow.com"
             />
           </div>
@@ -46,15 +46,15 @@ const submit = () => {
 
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-2">Password</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+          <div class="relative flex items-center">
+            <div class="absolute left-3.5 flex items-center pointer-events-none text-neutral-400 z-10">
               <Lock class="w-4 h-4" />
             </div>
             <input 
               v-model="form.password" 
               type="password" 
               required
-              class="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:bg-white focus:border-[#b60a0a] focus:ring-1 focus:ring-[#b60a0a] transition outline-none"
+              class="w-full !pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:bg-white focus:border-[#b60a0a] focus:ring-1 focus:ring-[#b60a0a] transition outline-none"
               placeholder="••••••••"
             />
           </div>
@@ -62,8 +62,12 @@ const submit = () => {
         </div>
 
         <div class="flex items-center justify-between text-xs">
-          <label class="flex items-center gap-2 cursor-pointer text-neutral-600">
-            <input type="checkbox" v-model="form.remember" class="rounded text-[#b60a0a] focus:ring-[#b60a0a]" />
+          <label class="flex items-center gap-2 cursor-pointer text-neutral-600 select-none">
+            <input 
+              type="checkbox" 
+              v-model="form.remember" 
+              class="w-4 h-4 rounded text-[#b60a0a] focus:ring-[#b60a0a] shrink-0 cursor-pointer accent-[#b60a0a]" 
+            />
             <span>Remember me</span>
           </label>
           <span class="text-neutral-400 text-xs">Default: admin123</span>

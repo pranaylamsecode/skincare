@@ -89,8 +89,8 @@ const insertVariable = (varName) => {
               ></textarea>
             </div>
 
-            <div class="flex items-center gap-2 pt-1">
-              <input type="checkbox" v-model="form.is_active" id="tmplActive" class="rounded text-[#b60a0a]" />
+            <div class="flex items-center gap-2 pt-1 select-none">
+              <input type="checkbox" v-model="form.is_active" id="tmplActive" class="w-4 h-4 rounded text-[#b60a0a] shrink-0 accent-[#b60a0a] cursor-pointer" />
               <label for="tmplActive" class="text-xs font-semibold text-neutral-700 cursor-pointer">Active and will be sent automatically</label>
             </div>
 

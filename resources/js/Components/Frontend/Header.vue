@@ -27,7 +27,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header>
+  <header class="site-header">
     <div class="wrap nav">
       <a class="logo" href="#" aria-label="FMZ Glow home">
         <img src="/images/FMZ logo.jpg" alt="FMZ Glow" width="143" height="46">

@@ -248,8 +248,8 @@ const deleteSlot = (id) => {
               />
             </div>
 
-            <div class="flex items-center gap-2 pt-1">
-              <input type="checkbox" v-model="form.is_active" id="slotActive" class="rounded text-[#b60a0a]" />
+            <div class="flex items-center gap-2 pt-1 select-none">
+              <input type="checkbox" v-model="form.is_active" id="slotActive" class="w-4 h-4 rounded text-[#b60a0a] shrink-0 accent-[#b60a0a] cursor-pointer" />
               <label for="slotActive" class="text-xs font-semibold text-neutral-700 cursor-pointer">Active and open for booking</label>
             </div>
 

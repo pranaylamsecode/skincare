@@ -62,7 +62,7 @@ const handleSpecialistSelect = (specialist) => {
 <template>
   <Head title="FMZ Glow | At-Home Skincare by FMZ India" />
 
-  <div>
+  <div class="fmz-frontend">
     <!-- Top Announcement Bar -->
     <TopBar :text="settings.topbar_text" />
 

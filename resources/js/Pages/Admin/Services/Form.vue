@@ -200,13 +200,13 @@ const submit = () => {
 
           <!-- Toggles -->
           <div class="border-t border-neutral-100 pt-5 flex items-center gap-6">
-            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700">
-              <input type="checkbox" v-model="form.is_featured" class="rounded text-[#b60a0a]" />
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 select-none">
+              <input type="checkbox" v-model="form.is_featured" class="w-4 h-4 rounded text-[#b60a0a] shrink-0 accent-[#b60a0a]" />
               <span>Highlight as Featured Card</span>
             </label>
 
-            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700">
-              <input type="checkbox" v-model="form.is_active" class="rounded text-[#b60a0a]" />
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 select-none">
+              <input type="checkbox" v-model="form.is_active" class="w-4 h-4 rounded text-[#b60a0a] shrink-0 accent-[#b60a0a]" />
               <span>Visible on Website</span>
             </label>
           </div>

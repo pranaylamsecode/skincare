@@ -191,8 +191,8 @@ const submit = () => {
           </div>
 
           <div class="border-t border-neutral-100 pt-5 flex items-center justify-between">
-            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700">
-              <input type="checkbox" v-model="form.is_active" class="rounded text-[#b60a0a]" />
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-neutral-700 select-none">
+              <input type="checkbox" v-model="form.is_active" class="w-4 h-4 rounded text-[#b60a0a] shrink-0 accent-[#b60a0a]" />
               <span>Visible on Website</span>
             </label>
 

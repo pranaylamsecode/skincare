@@ -45,7 +45,7 @@ const isActive = (url) => {
 <template>
   <div class="min-h-screen bg-neutral-50 flex flex-col font-sans text-neutral-800">
     <!-- Top Bar for Mobile & Desktop -->
-    <header class="bg-white border-b border-neutral-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-xs">
+    <header class="bg-white border-b border-neutral-200 sticky top-0 z-30 h-16 px-4 md:px-6 flex items-center justify-between shadow-xs">
       <div class="flex items-center gap-3">
         <button 
           type="button" 
@@ -72,7 +72,7 @@ const isActive = (url) => {
         </a>
 
         <div class="flex items-center gap-2 pl-3 border-l border-neutral-200">
-          <div class="w-8 h-8 rounded-full bg-[#7a2e2e] text-white flex items-center justify-center font-bold text-xs">
+          <div class="w-8 h-8 rounded-full bg-[#7a2e2e] text-white flex items-center justify-center font-bold text-xs shrink-0">
             {{ user.name ? user.name.charAt(0) : 'A' }}
           </div>
           <span class="text-xs font-semibold hidden md:inline text-neutral-700">{{ user.name }}</span>
@@ -90,10 +90,17 @@ const isActive = (url) => {
       </div>
     </header>
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 relative">
+      <!-- Mobile Backdrop Overlay -->
+      <div 
+        v-if="isSidebarOpen" 
+        class="fixed inset-0 bg-black/40 z-20 lg:hidden"
+        @click="isSidebarOpen = false"
+      />
+
       <!-- Sidebar -->
       <aside 
-        class="fixed inset-y-0 left-0 top-[57px] z-20 w-64 bg-white border-r border-neutral-200 flex flex-col justify-between transition-transform duration-200 lg:static lg:translate-x-0"
+        class="fixed inset-y-0 left-0 top-16 z-20 w-64 bg-white border-r border-neutral-200 flex flex-col justify-between transition-transform duration-200 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:translate-x-0 overflow-y-auto shrink-0"
         :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
       >
         <nav class="p-3 space-y-1">
@@ -107,7 +114,7 @@ const isActive = (url) => {
               : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900'"
             @click="isSidebarOpen = false"
           >
-            <component :is="item.icon" class="w-4 h-4" />
+            <component :is="item.icon" class="w-4 h-4 shrink-0" />
             <span>{{ item.name }}</span>
           </Link>
         </nav>
@@ -119,7 +126,7 @@ const isActive = (url) => {
       </aside>
 
       <!-- Main Content Area -->
-      <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+      <main class="flex-1 min-w-0 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto">
         <!-- Flash Success Notification -->
         <div 
           v-if="$page.props.flash?.success" 
