@@ -43,9 +43,15 @@ class DatabaseSeeder extends Seeder
             'hero_title' => 'Skincare that<br><em>understands</em> you.',
             'hero_lead' => 'We listen to your skin concerns first. Then a certified woman specialist brings professional Nu Skin care to your home, explains every step, and leaves you with a routine that fits your life.',
             'hero_tagline' => 'Your Glow. Your Home. Your Time.',
+            'active_payment_gateway' => 'razorpay',
             'razorpay_key' => 'rzp_test_placeholder',
             'razorpay_secret' => 'rzp_secret_placeholder',
             'razorpay_enabled' => '0',
+            'zoho_enabled' => '0',
+            'zoho_client_id' => '',
+            'zoho_client_secret' => '',
+            'zoho_checkout_url' => '',
+            'zoho_merchant_id' => '',
             'currency' => 'INR',
         ];
 
@@ -131,6 +137,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'B.Sc. in Biochemistry',
                 'location' => 'Paldi & Central Ahmedabad (380007)',
                 'pincode' => '380007',
+                'serviceable_pincodes' => '380007, 380006, 380001',
                 'city' => 'ahmedabad',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Dhruvi.png',
@@ -142,6 +149,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'Master\'s Graduate (M.Com)',
                 'location' => 'Odhav & East Ahmedabad (382415)',
                 'pincode' => '382415',
+                'serviceable_pincodes' => '382415, 382350, 380026',
                 'city' => 'ahmedabad',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Dolly.png',
@@ -153,6 +161,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'B.A. Background',
                 'location' => 'Vastral & Ring Road (382418)',
                 'pincode' => '382418',
+                'serviceable_pincodes' => '382418, 382449',
                 'city' => 'ahmedabad',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Minakshi.png',
@@ -164,6 +173,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'B.Sc. in Chemistry',
                 'location' => 'Navrangpura & University Area (380009)',
                 'pincode' => '380009',
+                'serviceable_pincodes' => '380009, 380015, 380054',
                 'city' => 'ahmedabad',
                 'languages' => ['Gujarati', 'Hindi'],
                 'photo' => 'images/Kelee.png',
@@ -175,6 +185,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'D.Pharm / B.Pharm',
                 'location' => 'Navrangpura / West Ahmedabad',
                 'pincode' => '380009',
+                'serviceable_pincodes' => '380009, 380015, 380052',
                 'city' => 'ahmedabad',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Dharvi.jpg',
@@ -186,6 +197,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'B.Sc. in Zoology',
                 'location' => 'PDEU Road, Gandhinagar (382421)',
                 'pincode' => '382421',
+                'serviceable_pincodes' => '382421, 382007',
                 'city' => 'gandhinagar',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Param.png',
@@ -197,6 +209,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'D.Pharm / B.Pharm',
                 'location' => 'Hirabag, Surat',
                 'pincode' => '395006',
+                'serviceable_pincodes' => '395006, 395007',
                 'city' => 'surat',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Vishwa.jpg',
@@ -208,6 +221,7 @@ class DatabaseSeeder extends Seeder
                 'qualification' => 'Nursing Background',
                 'location' => 'Ambedkar Nagar, Rajkot (360004)',
                 'pincode' => '360004',
+                'serviceable_pincodes' => '360004, 360001',
                 'city' => 'rajkot',
                 'languages' => ['Gujarati', 'Hindi', 'English'],
                 'photo' => 'images/Diya.png',
@@ -217,7 +231,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($specialists as $spec) {
-            Specialist::firstOrCreate(['name' => $spec['name']], $spec);
+            Specialist::updateOrCreate(['name' => $spec['name']], $spec);
         }
 
         // 5. Time Slots (Standard recurring daily time slots for morning, afternoon, evening)

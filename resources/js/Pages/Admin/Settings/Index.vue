@@ -17,9 +17,15 @@ const form = useForm({
   hero_title: props.settings.hero_title || 'Skincare that<br><em>understands</em> you.',
   hero_lead: props.settings.hero_lead || 'We listen to your skin concerns first. Then a certified woman specialist brings professional Nu Skin care to your home, explains every step, and leaves you with a routine that fits your life.',
   hero_tagline: props.settings.hero_tagline || 'Your Glow. Your Home. Your Time.',
+  active_payment_gateway: props.settings.active_payment_gateway || 'razorpay',
   razorpay_key: props.settings.razorpay_key || '',
   razorpay_secret: props.settings.razorpay_secret || '',
   razorpay_enabled: props.settings.razorpay_enabled || '0',
+  zoho_enabled: props.settings.zoho_enabled || '0',
+  zoho_client_id: props.settings.zoho_client_id || '',
+  zoho_client_secret: props.settings.zoho_client_secret || '',
+  zoho_checkout_url: props.settings.zoho_checkout_url || '',
+  zoho_merchant_id: props.settings.zoho_merchant_id || '',
 });
 
 const submit = () => {
@@ -136,6 +142,140 @@ const submit = () => {
                 rows="2"
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
               ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Gateway Selector -->
+        <div class="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
+            <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
+              <CreditCard class="w-4 h-4 text-emerald-600" />
+              <span>Active Online Payment Gateway</span>
+            </h2>
+          </div>
+
+          <p class="text-xs text-neutral-500">
+            Select which payment gateway is active for customer online checkout. You can toggle between <b>Zoho Checkout</b>, <b>Razorpay</b>, or keep it <b>Cash / UPI After Visit only</b>.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <label 
+              :class="[
+                'flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition select-none',
+                form.active_payment_gateway === 'zoho' 
+                  ? 'border-emerald-600 bg-emerald-50/50 text-emerald-950 font-bold' 
+                  : 'border-neutral-200 hover:border-neutral-300 text-neutral-700'
+              ]"
+            >
+              <input 
+                type="radio" 
+                value="zoho" 
+                v-model="form.active_payment_gateway" 
+                class="accent-emerald-600 w-4 h-4"
+              />
+              <div>
+                <div class="text-xs font-bold">Zoho Checkout</div>
+                <div class="text-[11px] text-neutral-500">Zoho Payments Link / Page</div>
+              </div>
+            </label>
+
+            <label 
+              :class="[
+                'flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition select-none',
+                form.active_payment_gateway === 'razorpay' 
+                  ? 'border-purple-600 bg-purple-50/50 text-purple-950 font-bold' 
+                  : 'border-neutral-200 hover:border-neutral-300 text-neutral-700'
+              ]"
+            >
+              <input 
+                type="radio" 
+                value="razorpay" 
+                v-model="form.active_payment_gateway" 
+                class="accent-purple-600 w-4 h-4"
+              />
+              <div>
+                <div class="text-xs font-bold">Razorpay</div>
+                <div class="text-[11px] text-neutral-500">UPI, Cards & NetBanking</div>
+              </div>
+            </label>
+
+            <label 
+              :class="[
+                'flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition select-none',
+                form.active_payment_gateway === 'none' 
+                  ? 'border-[#7a2e2e] bg-[#fbf5f4] text-[#7a2e2e] font-bold' 
+                  : 'border-neutral-200 hover:border-neutral-300 text-neutral-700'
+              ]"
+            >
+              <input 
+                type="radio" 
+                value="none" 
+                v-model="form.active_payment_gateway" 
+                class="accent-[#7a2e2e] w-4 h-4"
+              />
+              <div>
+                <div class="text-xs font-bold">Pay After Visit Only</div>
+                <div class="text-[11px] text-neutral-500">No online checkout step</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Zoho Checkout Settings -->
+        <div class="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
+            <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
+              <CreditCard class="w-4 h-4 text-emerald-600" />
+              <span>Zoho Checkout Configuration</span>
+            </h2>
+            <div class="flex items-center gap-2 select-none">
+              <input 
+                type="checkbox" 
+                id="zohoActive" 
+                v-model="form.zoho_enabled" 
+                true-value="1" 
+                false-value="0"
+                class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-600 cursor-pointer shrink-0 accent-emerald-600"
+              />
+              <label for="zohoActive" class="text-xs font-bold text-neutral-700 cursor-pointer">Enable Zoho</label>
+            </div>
+          </div>
+
+          <p class="text-xs text-neutral-500">
+            Provide your Zoho Payments / Zoho Checkout Client ID, Secret, and Checkout Page URL.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Zoho Client ID</label>
+              <input 
+                v-model="form.zoho_client_id" 
+                type="text" 
+                placeholder="1000.XXXXXX..." 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Zoho Client Secret</label>
+              <input 
+                v-model="form.zoho_client_secret" 
+                type="password" 
+                placeholder="••••••••••••••••••••••••" 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
+              />
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Zoho Checkout Page URL / Payment Link</label>
+              <input 
+                v-model="form.zoho_checkout_url" 
+                type="text" 
+                placeholder="https://payments.zoho.in/checkout/..." 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
+              />
+              <p class="text-[11px] text-neutral-500 mt-1">Customers will be redirected here or this URL will be launched to complete payment with booking details attached.</p>
             </div>
           </div>
         </div>

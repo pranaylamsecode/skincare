@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Plan;
 use App\Models\Service;
+use App\Models\Setting;
 use App\Models\Specialist;
 use App\Models\TimeSlot;
 use App\Services\EmailNotificationService;
@@ -15,39 +16,65 @@ use Illuminate\Support\Str;
 class BookingController extends Controller
 {
     /**
-     * Get available slots for a chosen date and optional specialist
+     * Get available slots for a chosen date and area pincode
+     * Auto-detects whether the area is serviceable and filters slots accordingly
      */
     public function getAvailableSlots(Request $request)
     {
         $request->validate([
             'date' => 'required|date|after_or_equal:today',
+            'pincode' => 'nullable|string',
             'specialist_id' => 'nullable|integer',
         ]);
 
         $date = Carbon::parse($request->date)->format('Y-m-d');
-        $specialistId = $request->specialist_id;
+        $pincode = $request->filled('pincode') ? trim($request->pincode) : null;
 
-        // Query slots: either matching specialist, or general (null specialist)
-        $query = TimeSlot::where('is_active', true);
+        // Check area serviceability if 6-digit pincode provided
+        $servingSpecialists = null;
+        if ($pincode && strlen($pincode) === 6) {
+            $servingSpecialists = Specialist::getSpecialistsForPincode($pincode);
 
-        if ($specialistId) {
-            $query->where(function ($q) use ($specialistId) {
-                $q->where('specialist_id', $specialistId)
-                  ->orWhereNull('specialist_id');
-            });
+            if ($servingSpecialists->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'serviceable' => false,
+                    'pincode' => $pincode,
+                    'message' => "We currently do not offer at-home skincare service in pincode {$pincode}. Our certified specialists serve Ahmedabad, Gandhinagar, Surat & Rajkot.",
+                    'slots' => [],
+                ]);
+            }
         }
 
-        $allSlots = $query->orderBy('period')->orderBy('start_time')->get();
+        // Query slots
+        $allSlots = TimeSlot::where('is_active', true)
+            ->orderBy('period')
+            ->orderBy('start_time')
+            ->get();
 
-        // Check booked count for each slot on this date
         $availableSlots = [];
         foreach ($allSlots as $slot) {
-            $bookedCount = Booking::where('booking_date', $date)
-                ->where('time_slot_id', $slot->id)
-                ->whereIn('status', ['pending', 'confirmed', 'in_progress'])
-                ->count();
+            if ($servingSpecialists && $servingSpecialists->isNotEmpty()) {
+                // Find specialists in this pincode already booked for this slot
+                $bookedSpecialistIds = Booking::where('booking_date', $date)
+                    ->where('time_slot_id', $slot->id)
+                    ->whereIn('status', ['pending', 'confirmed', 'in_progress'])
+                    ->pluck('specialist_id')
+                    ->filter()
+                    ->toArray();
 
-            $isAvailable = $bookedCount < $slot->max_bookings;
+                $freeCount = $servingSpecialists->reject(fn($sp) => in_array($sp->id, $bookedSpecialistIds))->count();
+                $isAvailable = $freeCount > 0;
+                $remaining = $freeCount;
+            } else {
+                $bookedCount = Booking::where('booking_date', $date)
+                    ->where('time_slot_id', $slot->id)
+                    ->whereIn('status', ['pending', 'confirmed', 'in_progress'])
+                    ->count();
+
+                $isAvailable = $bookedCount < $slot->max_bookings;
+                $remaining = max(0, $slot->max_bookings - $bookedCount);
+            }
 
             $availableSlots[] = [
                 'id' => $slot->id,
@@ -55,21 +82,23 @@ class BookingController extends Controller
                 'start_time' => $slot->start_time,
                 'end_time' => $slot->end_time,
                 'display' => "{$slot->period} ({$slot->start_time} - {$slot->end_time})",
-                'specialist_id' => $slot->specialist_id,
                 'is_available' => $isAvailable,
-                'remaining' => max(0, $slot->max_bookings - $bookedCount),
+                'remaining' => $remaining,
             ];
         }
 
         return response()->json([
             'success' => true,
+            'serviceable' => true,
+            'pincode' => $pincode,
+            'specialist_count' => $servingSpecialists ? $servingSpecialists->count() : null,
             'date' => $date,
             'slots' => $availableSlots,
         ]);
     }
 
     /**
-     * Store new customer booking
+     * Store new customer booking with auto-assigned specialist via round-robin
      */
     public function store(Request $request)
     {
@@ -80,15 +109,36 @@ class BookingController extends Controller
             'pincode' => 'required|string|size:6',
             'service_name' => 'required|string|max:150',
             'service_id' => 'nullable|integer',
-            'specialist_id' => 'nullable|integer',
-            'specialist_name' => 'nullable|string|max:100',
             'date' => 'required|date|after_or_equal:today',
             'time_slot_id' => 'nullable|integer',
             'time_slot_text' => 'nullable|string|max:100',
             'msg' => 'nullable|string|max:2000',
             'consent' => 'required|accepted',
-            'payment_method' => 'nullable|string|in:after_visit,razorpay',
+            'payment_method' => 'nullable|string', // 'after_visit', 'online', 'razorpay', 'zoho'
         ]);
+
+        $pincode = trim($validated['pincode']);
+        $date = Carbon::parse($validated['date'])->format('Y-m-d');
+        $timeSlotId = $validated['time_slot_id'] ?? null;
+
+        // Auto-assign specialist using round-robin for this pincode area
+        $assignResult = Specialist::findAvailableForPincode($pincode, $date, $timeSlotId);
+
+        if (!$assignResult['serviceable']) {
+            return response()->json([
+                'success' => false,
+                'message' => "We currently do not offer at-home skincare service in pincode {$pincode}. Our certified specialists serve Ahmedabad, Gandhinagar, Surat & Rajkot.",
+            ], 422);
+        }
+
+        if (!$assignResult['specialist']) {
+            return response()->json([
+                'success' => false,
+                'message' => "All certified specialists serving pincode {$pincode} are fully booked for this time slot. Please choose another slot or date.",
+            ], 422);
+        }
+
+        $specialist = $assignResult['specialist'];
 
         // Smart price and service resolution
         $service = null;
@@ -121,19 +171,33 @@ class BookingController extends Controller
             $totalAmount = $plan ? $plan->price : 3299;
         }
 
-        // Find specialist
-        $specialist = null;
-        if (!empty($validated['specialist_id'])) {
-            $specialist = Specialist::find($validated['specialist_id']);
-        }
-
         // Find slot
         $timeSlot = null;
         $slotText = $validated['time_slot_text'] ?? '';
-        if (!empty($validated['time_slot_id'])) {
-            $timeSlot = TimeSlot::find($validated['time_slot_id']);
+        if ($timeSlotId) {
+            $timeSlot = TimeSlot::find($timeSlotId);
             if ($timeSlot) {
                 $slotText = "{$timeSlot->period} ({$timeSlot->start_time} - {$timeSlot->end_time})";
+            }
+        }
+
+        // Determine payment method and active gateway
+        $requestedPayment = $validated['payment_method'] ?? 'after_visit';
+        $activeGateway = Setting::get('active_payment_gateway', 'razorpay');
+        $zohoCheckoutUrl = null;
+
+        if (in_array($requestedPayment, ['online', 'zoho']) || ($requestedPayment === 'razorpay' && $activeGateway === 'zoho')) {
+            $rawZohoUrl = Setting::get('zoho_checkout_url', '');
+            if (!empty($rawZohoUrl)) {
+                $query = http_build_query([
+                    'amount' => $totalAmount,
+                    'name' => $validated['name'],
+                    'phone' => $validated['phone'],
+                    'email' => $validated['email'] ?? '',
+                    'service' => $service ? $service->title : $validated['service_name'],
+                    'pincode' => $pincode,
+                ]);
+                $zohoCheckoutUrl = $rawZohoUrl . (str_contains($rawZohoUrl, '?') ? '&' : '?') . $query;
             }
         }
 
@@ -145,19 +209,20 @@ class BookingController extends Controller
             'name' => $validated['name'],
             'phone' => $validated['phone'],
             'email' => $validated['email'] ?? null,
-            'pincode' => $validated['pincode'],
+            'pincode' => $pincode,
             'service_id' => $service?->id,
             'service_name' => $service ? $service->title : $validated['service_name'],
-            'specialist_id' => $specialist?->id,
-            'specialist_name' => $specialist ? $specialist->name : ($validated['specialist_name'] ?? null),
-            'booking_date' => $validated['date'],
+            'specialist_id' => $specialist->id,
+            'specialist_name' => $specialist->name,
+            'booking_date' => $date,
             'time_slot_id' => $timeSlot?->id,
             'time_slot_text' => $slotText,
             'skin_concern' => $validated['msg'] ?? null,
             'status' => 'pending',
             'total_amount' => $totalAmount,
             'payment_status' => 'unpaid',
-            'payment_method' => $validated['payment_method'] ?? 'after_visit',
+            'payment_method' => $requestedPayment,
+            'zoho_checkout_url' => $zohoCheckoutUrl,
             'consent' => true,
         ]);
 
@@ -166,7 +231,7 @@ class BookingController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Your booking request has been received! Our team will contact you on WhatsApp to confirm your visit.',
+            'message' => "Appointment scheduled! Specialist {$specialist->name} has been assigned to your visit in pincode {$pincode}.",
             'booking' => [
                 'id' => $booking->id,
                 'booking_number' => $booking->booking_number,
@@ -174,8 +239,19 @@ class BookingController extends Controller
                 'service' => $booking->service_name,
                 'date' => $booking->booking_date->format('d M Y'),
                 'time' => $booking->time_slot_text,
+                'pincode' => $booking->pincode,
+                'specialist_name' => $specialist->name,
+                'specialist_qualification' => $specialist->qualification,
                 'total_amount' => $booking->total_amount,
                 'payment_method' => $booking->payment_method,
+                'zoho_checkout_url' => $zohoCheckoutUrl,
+            ],
+            'assigned_specialist' => [
+                'id' => $specialist->id,
+                'name' => $specialist->name,
+                'qualification' => $specialist->qualification,
+                'location' => $specialist->location,
+                'badge' => $specialist->badge,
             ],
         ]);
     }

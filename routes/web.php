@@ -40,8 +40,10 @@ Route::prefix('api')->group(function () {
     Route::post('/bookings/{id}/cancel', [ApiController::class, 'cancelBooking'])->name('api.bookings.cancel');
 
     // Payments
+    Route::get('/payment/config', [PaymentController::class, 'getPaymentConfig'])->name('api.payment.config');
     Route::post('/payment/create-order', [PaymentController::class, 'createOrder'])->name('api.payment.order');
     Route::post('/payment/verify', [PaymentController::class, 'verifyPayment'])->name('api.payment.verify');
+    Route::post('/payment/zoho/verify', [PaymentController::class, 'verifyZohoPayment'])->name('api.payment.zoho.verify');
 });
 
 // Admin Authentication

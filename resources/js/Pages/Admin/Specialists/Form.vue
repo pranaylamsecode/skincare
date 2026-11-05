@@ -17,6 +17,7 @@ const form = useForm({
   qualification: props.specialist?.qualification || '',
   location: props.specialist?.location || '',
   pincode: props.specialist?.pincode || '',
+  serviceable_pincodes: props.specialist?.serviceable_pincodes || '',
   city: props.specialist?.city || 'ahmedabad',
   languages: props.specialist?.languages || ['Gujarati', 'Hindi', 'English'],
   badge: props.specialist?.badge || 'Verified Specialist',
@@ -117,13 +118,26 @@ const submit = () => {
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1.5">Pincode</label>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1.5">Primary Home Base Pincode</label>
               <input 
                 v-model="form.pincode" 
                 type="text" 
                 placeholder="380007" 
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-[#7a2e2e] outline-none"
               />
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1.5">Serviceable Area Pincodes (Comma-separated)</label>
+              <input 
+                v-model="form.serviceable_pincodes" 
+                type="text" 
+                placeholder="e.g. 380009, 380015, 380054" 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-[#7a2e2e] outline-none font-mono"
+              />
+              <p class="text-[11px] text-neutral-500 mt-1">
+                Enter all 6-digit pincodes this specialist can travel to. When customers book in these pincodes, the system automatically assigns available specialists using fair round-robin.
+              </p>
             </div>
 
             <div>
