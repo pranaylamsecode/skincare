@@ -11,16 +11,31 @@ use Inertia\Inertia;
 
 class SpecialistController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+        
+        // If logged in as staff, immediately redirect to their own profile
+        if ($user && $user->isStaff()) {
+            if ($user->specialist_id) {
+                return redirect()->route('admin.specialists.edit', $user->specialist_id);
+            }
+            abort(403, 'Your staff account is not linked to a specialist profile.');
+        }
+
         $specialists = Specialist::with('user:id,email,specialist_id')->orderBy('sort_order')->get();
         return Inertia::render('Admin/Specialists/Index', [
             'specialists' => $specialists,
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $user = $request->user();
+        if ($user && $user->isStaff()) {
+            abort(403, 'Staff members cannot create new specialists.');
+        }
+
         return Inertia::render('Admin/Specialists/Form', [
             'specialist' => null,
             'staffUser' => null,
@@ -29,6 +44,11 @@ class SpecialistController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+        if ($user && $user->isStaff()) {
+            abort(403, 'Staff members cannot create new specialists.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'qualification' => 'required|string|max:150',
@@ -81,17 +101,35 @@ class SpecialistController extends Controller
         return redirect()->route('admin.specialists.index')->with('success', 'Specialist added successfully.');
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
+        $user = $request->user();
+        if ($user && $user->isStaff()) {
+            // Staff can ONLY access their own specialist profile
+            if ((int) $user->specialist_id !== (int) $id) {
+                return redirect()->route('admin.specialists.edit', $user->specialist_id)
+                    ->with('error', 'You can only view and manage your own specialist profile.');
+            }
+        }
+
         $specialist = Specialist::with('user:id,email,specialist_id')->findOrFail($id);
         return Inertia::render('Admin/Specialists/Form', [
             'specialist' => $specialist,
             'staffUser' => $specialist->user ? ['email' => $specialist->user->email] : null,
+            'isStaff' => $user ? $user->isStaff() : false,
         ]);
     }
 
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        if ($user && $user->isStaff()) {
+            // Staff can ONLY update their own specialist profile
+            if ((int) $user->specialist_id !== (int) $id) {
+                abort(403, 'Unauthorized. You can only update your own specialist profile.');
+            }
+        }
+
         $specialist = Specialist::findOrFail($id);
 
         $validated = $request->validate([
@@ -143,11 +181,20 @@ class SpecialistController extends Controller
             $user->save();
         }
 
+        if ($user && $user->isStaff()) {
+            return redirect()->route('admin.specialists.edit', $id)->with('success', 'Your profile and service area were updated successfully.');
+        }
+
         return redirect()->route('admin.specialists.index')->with('success', 'Specialist updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $user = $request->user();
+        if ($user && $user->isStaff()) {
+            abort(403, 'Staff members cannot delete specialists.');
+        }
+
         $specialist = Specialist::findOrFail($id);
         $specialist->delete();
 

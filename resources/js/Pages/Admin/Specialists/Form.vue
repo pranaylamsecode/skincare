@@ -8,7 +8,8 @@ import L from 'leaflet';
 
 const props = defineProps({
   specialist: { type: Object, default: null },
-  staffUser: { type: Object, default: null }
+  staffUser: { type: Object, default: null },
+  isStaff: { type: Boolean, default: false }
 });
 
 const isEditing = !!props.specialist;
@@ -267,17 +268,20 @@ onMounted(() => {
     <div class="space-y-6 max-w-4xl mx-auto pb-12">
       <div class="flex items-center justify-between">
         <Link 
-          href="/admin/specialists" 
+          :href="isStaff ? '/admin/dashboard' : '/admin/specialists'" 
           class="inline-flex items-center gap-2 text-xs font-semibold text-neutral-600 hover:text-[#7a2e2e] transition"
         >
           <ArrowLeft class="w-4 h-4" />
-          <span>Back to Specialists</span>
+          <span>{{ isStaff ? 'Back to My Dashboard' : 'Back to Specialists' }}</span>
         </Link>
       </div>
 
       <div class="bg-white p-6 md:p-8 rounded-2xl border border-neutral-200 shadow-xs">
-        <h1 class="text-xl font-bold text-neutral-900 mb-6 pb-3 border-b border-neutral-100">
-          {{ isEditing ? `Edit Specialist: ${specialist.name}` : 'Add New Specialist' }}
+        <h1 class="text-xl font-bold text-neutral-900 mb-6 pb-3 border-b border-neutral-100 flex items-center justify-between">
+          <span>{{ isStaff ? 'My Profile & Service Area' : (isEditing ? `Edit Specialist: ${specialist.name}` : 'Add New Specialist') }}</span>
+          <span v-if="isStaff" class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full uppercase">
+            Staff Specialist Mode
+          </span>
         </h1>
 
         <form @submit.prevent="submit" class="space-y-6">
@@ -591,8 +595,8 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Staff Employee Login Account -->
-          <div class="p-5 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-4">
+          <!-- Staff Employee Login Account (Only visible to Admin) -->
+          <div v-if="!isStaff" class="p-5 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-4">
             <div>
               <h3 class="text-xs font-bold text-amber-950 uppercase flex items-center gap-2">
                 <span>Staff Portal Login Account</span>
@@ -635,7 +639,7 @@ onMounted(() => {
 
             <div class="flex items-center gap-3">
               <Link 
-                href="/admin/specialists" 
+                :href="isStaff ? '/admin/dashboard' : '/admin/specialists'" 
                 class="px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 rounded-xl"
               >
                 Cancel
@@ -646,7 +650,7 @@ onMounted(() => {
                 class="px-5 py-2.5 bg-[#7a2e2e] hover:bg-[#52201f] text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-xs"
               >
                 <Save class="w-4 h-4" />
-                <span>{{ form.processing ? 'Saving...' : 'Save Specialist' }}</span>
+                <span>{{ form.processing ? 'Saving...' : (isStaff ? 'Save My Profile & Map Area' : 'Save Specialist') }}</span>
               </button>
             </div>
           </div>

@@ -13,7 +13,8 @@ import {
   LogOut, 
   Menu, 
   X,
-  ExternalLink 
+  ExternalLink,
+  MapPin 
 } from 'lucide-vue-next';
 
 const page = usePage();
@@ -32,6 +33,7 @@ const navigation = computed(() => {
       { name: 'My Schedule', href: '/admin/dashboard', icon: LayoutDashboard },
       { name: 'My Bookings', href: '/admin/bookings', icon: CalendarCheck },
       { name: 'My Time Slots', href: '/admin/time-slots', icon: Clock },
+      { name: 'My Profile & Area Map', href: user.value.specialist_id ? `/admin/specialists/${user.value.specialist_id}/edit` : '/admin/specialists', icon: MapPin },
     ];
   }
 
