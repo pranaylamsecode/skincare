@@ -231,7 +231,19 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($specialists as $spec) {
-            Specialist::updateOrCreate(['name' => $spec['name']], $spec);
+            $specialist = Specialist::updateOrCreate(['name' => $spec['name']], $spec);
+
+            $staffEmail = strtolower(explode(' ', $spec['name'])[0]) . '@fmzglow.com';
+            User::updateOrCreate(
+                ['email' => $staffEmail],
+                [
+                    'name' => $spec['name'],
+                    'password' => Hash::make('staff123'),
+                    'role' => 'staff',
+                    'specialist_id' => $specialist->id,
+                    'email_verified_at' => now(),
+                ]
+            );
         }
 
         // 5. Time Slots (Standard recurring daily time slots for morning, afternoon, evening)

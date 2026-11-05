@@ -7,6 +7,15 @@
     <meta name="theme-color" content="#7a2e2e">
     <title>FMZ Glow | At-Home Skincare by FMZ India</title>
 
+    @php
+        $siteFavicon = \App\Models\Setting::get('site_favicon', 'images/FMZ Glow logo.jpg');
+        $siteLogo = \App\Models\Setting::get('site_logo', 'images/FMZ Glow logo.jpg');
+    @endphp
+    <!-- Dynamic Favicon & Brand Icons -->
+    <link rel="icon" type="image/png" href="{{ asset($siteFavicon) }}">
+    <link rel="shortcut icon" href="{{ asset($siteFavicon) }}">
+    <link rel="apple-touch-icon" href="{{ asset($siteLogo) }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">

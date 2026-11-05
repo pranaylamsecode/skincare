@@ -7,6 +7,8 @@ import { Plus, Edit, Trash2, Clock, CheckCircle2, User, X } from 'lucide-vue-nex
 const props = defineProps({
   timeSlots: { type: Array, default: () => [] },
   specialists: { type: Array, default: () => [] },
+  isStaff: { type: Boolean, default: false },
+  currentSpecialistId: { type: Number, default: null },
 });
 
 const isModalOpen = ref(false);
@@ -16,7 +18,7 @@ const form = useForm({
   period: 'Morning',
   start_time: '10:00 AM',
   end_time: '11:30 AM',
-  specialist_id: null,
+  specialist_id: props.currentSpecialistId || null,
   day_of_week: '',
   specific_date: '',
   max_bookings: 1,
@@ -29,6 +31,7 @@ const openCreateModal = () => {
   form.period = 'Morning';
   form.start_time = '10:00 AM';
   form.end_time = '11:30 AM';
+  form.specialist_id = props.currentSpecialistId || null;
   form.max_bookings = 1;
   form.is_active = true;
   isModalOpen.value = true;
@@ -74,13 +77,17 @@ const deleteSlot = (id) => {
 
 <template>
   <AdminLayout>
-    <Head title="Time Slots | Admin" />
+    <Head :title="isStaff ? 'My Time Slots | Staff' : 'Time Slots | Admin'" />
 
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold tracking-tight text-neutral-900">Appointment Time Slots</h1>
-          <p class="text-xs text-neutral-500 mt-1">Configure appointment slots by period (Morning, Afternoon, Evening) and assign specialist capacities</p>
+          <h1 class="text-2xl font-bold tracking-tight text-neutral-900">
+            {{ isStaff ? 'My Appointment Time Slots' : 'Appointment Time Slots' }}
+          </h1>
+          <p class="text-xs text-neutral-500 mt-1">
+            {{ isStaff ? 'Manage your own visit availability. Customers in your serviceable pincodes will be able to book with you during these hours.' : 'Configure appointment slots by period (Morning, Afternoon, Evening) and assign specialist capacities' }}
+          </p>
         </div>
         <button 
           type="button" 
@@ -88,7 +95,7 @@ const deleteSlot = (id) => {
           @click="openCreateModal"
         >
           <Plus class="w-4 h-4" />
-          <span>Add New Time Slot</span>
+          <span>{{ isStaff ? 'Add My Available Slot' : 'Add New Time Slot' }}</span>
         </button>
       </div>
 
@@ -149,7 +156,7 @@ const deleteSlot = (id) => {
                   </span>
                 </td>
                 <td class="py-3.5 px-4 text-right">
-                  <div class="flex items-center justify-end gap-1">
+                  <div v-if="!isStaff || slot.specialist_id === currentSpecialistId" class="flex items-center justify-end gap-1">
                     <button 
                       type="button" 
                       class="p-1.5 text-neutral-600 hover:text-[#7a2e2e] hover:bg-neutral-100 rounded-lg transition"
@@ -165,6 +172,7 @@ const deleteSlot = (id) => {
                       <Trash2 class="w-3.5 h-3.5" />
                     </button>
                   </div>
+                  <span v-else class="text-[11px] text-neutral-400 italic">Managed by Admin</span>
                 </td>
               </tr>
             </tbody>
@@ -223,7 +231,7 @@ const deleteSlot = (id) => {
               </div>
             </div>
 
-            <div>
+            <div v-if="!isStaff">
               <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Assigned Specialist (Optional)</label>
               <select 
                 v-model="form.specialist_id" 
@@ -234,6 +242,10 @@ const deleteSlot = (id) => {
                   {{ sp.name }}
                 </option>
               </select>
+            </div>
+            <div v-else class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-center gap-2">
+              <User class="w-4 h-4 text-amber-800 shrink-0" />
+              <span><b>Assigned Specialist:</b> Your own specialist schedule</span>
             </div>
 
             <div>

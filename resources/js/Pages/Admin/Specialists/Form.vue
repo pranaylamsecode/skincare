@@ -5,7 +5,8 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-vue-next';
 
 const props = defineProps({
-  specialist: { type: Object, default: null }
+  specialist: { type: Object, default: null },
+  staffUser: { type: Object, default: null }
 });
 
 const isEditing = !!props.specialist;
@@ -26,6 +27,8 @@ const form = useForm({
   photo: props.specialist?.photo || '',
   is_active: props.specialist?.is_active ?? true,
   sort_order: props.specialist?.sort_order ?? 0,
+  staff_email: props.staffUser?.email || props.specialist?.email || '',
+  staff_password: '',
 });
 
 const addLanguage = () => {
@@ -201,6 +204,42 @@ const submit = () => {
                 <span>{{ lang }}</span>
                 <button type="button" @click="removeLanguage(idx)" class="hover:text-red-700 font-bold">&times;</button>
               </span>
+            </div>
+          </div>
+
+          <!-- Staff Employee Login Account -->
+          <div class="p-5 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-4">
+            <div>
+              <h3 class="text-xs font-bold text-amber-950 uppercase flex items-center gap-2">
+                <span>Staff Portal Login Account</span>
+              </h3>
+              <p class="text-[11px] text-amber-800/80 mt-0.5">
+                Allows this specialist to log in to the backend staff portal, view their assigned bookings, and add/manage their own time slots.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Staff Login Email</label>
+                <input 
+                  v-model="form.staff_email" 
+                  type="email" 
+                  placeholder="specialist@fmzglow.com" 
+                  class="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-200 rounded-xl focus:border-[#7a2e2e] outline-none"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">
+                  {{ staffUser ? 'Change Password (Leave blank to keep)' : 'Login Password (Default: staff123)' }}
+                </label>
+                <input 
+                  v-model="form.staff_password" 
+                  type="password" 
+                  placeholder="••••••••" 
+                  class="w-full px-3.5 py-2.5 text-xs bg-white border border-neutral-200 rounded-xl focus:border-[#7a2e2e] outline-none font-mono"
+                />
+              </div>
             </div>
           </div>
 

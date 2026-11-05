@@ -40,6 +40,11 @@ class Specialist extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
     /**
      * Get all serviceable pincodes for this specialist as an array of trimmed strings
      */

@@ -14,7 +14,15 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
+        $isStaff = $user && $user->isStaff();
+
         $query = Booking::with(['service', 'specialist', 'timeSlot'])->latest();
+
+        // Staff sees only their assigned bookings
+        if ($isStaff && $user->specialist_id) {
+            $query->where('specialist_id', $user->specialist_id);
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -24,7 +32,7 @@ class BookingController extends Controller
             $query->where('payment_status', $request->payment_status);
         }
 
-        if ($request->filled('specialist_id')) {
+        if (!$isStaff && $request->filled('specialist_id')) {
             $query->where('specialist_id', $request->specialist_id);
         }
 
@@ -51,6 +59,7 @@ class BookingController extends Controller
             'bookings' => $bookings,
             'specialists' => $specialists,
             'timeSlots' => $timeSlots,
+            'isStaff' => $isStaff,
             'filters' => $request->only(['status', 'payment_status', 'specialist_id', 'date', 'search']),
         ]);
     }
@@ -58,59 +67,66 @@ class BookingController extends Controller
     public function show($id)
     {
         $booking = Booking::with(['service', 'specialist', 'timeSlot'])->findOrFail($id);
-        $specialists = Specialist::where('is_active', true)->get(['id', 'name', 'phone']);
+        $user = auth()->user();
+
+        if ($user && $user->isStaff() && $booking->specialist_id != $user->specialist_id) {
+            abort(403, 'Unauthorized. You can only view bookings assigned to you.');
+        }
+
+        $specialists = Specialist::where('is_active', true)->get(['id', 'name']);
         $timeSlots = TimeSlot::where('is_active', true)->get();
 
         return Inertia::render('Admin/Bookings/Show', [
             'booking' => $booking,
             'specialists' => $specialists,
             'timeSlots' => $timeSlots,
+            'isStaff' => $user?->isStaff() ?? false,
         ]);
     }
 
     public function update(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
+        $user = auth()->user();
+
+        if ($user && $user->isStaff() && $booking->specialist_id != $user->specialist_id) {
+            abort(403, 'Unauthorized. You can only update bookings assigned to you.');
+        }
 
         $validated = $request->validate([
             'status' => 'required|in:pending,confirmed,in_progress,completed,cancelled',
             'specialist_id' => 'nullable|exists:specialists,id',
-            'time_slot_id' => 'nullable|exists:time_slots,id',
-            'time_slot_text' => 'nullable|string|max:100',
-            'payment_status' => 'required|in:unpaid,pending,paid,failed,refunded',
-            'total_amount' => 'required|numeric|min:0',
-            'admin_notes' => 'nullable|string|max:1000',
-            'send_notification' => 'nullable|boolean',
+            'payment_status' => 'nullable|in:unpaid,pending,paid,failed,refunded',
+            'admin_notes' => 'nullable|string|max:2000',
         ]);
 
-        $oldStatus = $booking->status;
+        $prevStatus = $booking->status;
 
-        // If specialist assigned
-        if (!empty($validated['specialist_id'])) {
+        if ($user && $user->isStaff()) {
+            // Staff cannot reassign to another specialist
+            unset($validated['specialist_id']);
+        } elseif (!empty($validated['specialist_id'])) {
             $specialist = Specialist::find($validated['specialist_id']);
             $validated['specialist_name'] = $specialist?->name;
         }
 
-        // If time slot assigned
-        if (!empty($validated['time_slot_id'])) {
-            $slot = TimeSlot::find($validated['time_slot_id']);
-            if ($slot) {
-                $validated['time_slot_text'] = "{$slot->period} ({$slot->start_time} - {$slot->end_time})";
-            }
-        }
-
         $booking->update($validated);
 
-        // If status changed to confirmed and send_notification requested
-        if ($request->boolean('send_notification') || ($oldStatus !== 'confirmed' && $validated['status'] === 'confirmed')) {
+        // Send notifications if status changed
+        if ($prevStatus !== 'confirmed' && $booking->status === 'confirmed') {
             EmailNotificationService::notifyBookingConfirmed($booking);
         }
 
-        return redirect()->back()->with('success', 'Booking updated successfully.');
+        return back()->with('success', 'Booking updated successfully.');
     }
 
     public function destroy($id)
     {
+        $user = auth()->user();
+        if ($user && $user->isStaff()) {
+            abort(403, 'Unauthorized. Staff members cannot delete bookings.');
+        }
+
         $booking = Booking::findOrFail($id);
         $booking->delete();
 

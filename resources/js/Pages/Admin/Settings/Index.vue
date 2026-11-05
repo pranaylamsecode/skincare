@@ -1,7 +1,8 @@
 <script setup>
+import { ref } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Save, Phone, Mail, CreditCard, Bell, Sparkles } from 'lucide-vue-next';
+import { Save, Phone, Mail, CreditCard, Bell, Sparkles, Image, Upload } from 'lucide-vue-next';
 
 const props = defineProps({
   settings: { type: Object, default: () => ({}) }
@@ -9,6 +10,10 @@ const props = defineProps({
 
 const form = useForm({
   site_name: props.settings.site_name || 'FMZ Glow',
+  site_favicon: props.settings.site_favicon || 'images/FMZ Glow logo.jpg',
+  site_logo: props.settings.site_logo || 'images/FMZ Glow logo.jpg',
+  favicon_file: null,
+  logo_file: null,
   business_email: props.settings.business_email || 'fmz@fmzau.com.au',
   whatsapp_number: props.settings.whatsapp_number || '+917303706047',
   whatsapp_default_message: props.settings.whatsapp_default_message || "Hi FMZ Glow, I'd like to know more about your at-home skincare services.",
@@ -28,8 +33,29 @@ const form = useForm({
   zoho_merchant_id: props.settings.zoho_merchant_id || '',
 });
 
+const faviconPreview = ref(props.settings.site_favicon ? '/' + props.settings.site_favicon.replace(/^\/+/, '') : null);
+const logoPreview = ref(props.settings.site_logo ? '/' + props.settings.site_logo.replace(/^\/+/, '') : null);
+
+const onFaviconSelected = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    form.favicon_file = file;
+    faviconPreview.value = URL.createObjectURL(file);
+  }
+};
+
+const onLogoSelected = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    form.logo_file = file;
+    logoPreview.value = URL.createObjectURL(file);
+  }
+};
+
 const submit = () => {
-  form.post('/admin/settings');
+  form.post('/admin/settings', {
+    forceFormData: true,
+  });
 };
 </script>
 
@@ -44,6 +70,70 @@ const submit = () => {
       </div>
 
       <form @submit.prevent="submit" class="space-y-6">
+        <!-- Website Brand, Favicon & Logo -->
+        <div class="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-5">
+          <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2 pb-2 border-b border-neutral-100">
+            <Image class="w-4 h-4 text-[#7a2e2e]" />
+            <span>Website Branding, Favicon &amp; Logo</span>
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Site Brand Name</label>
+              <input 
+                v-model="form.site_name" 
+                type="text" 
+                placeholder="FMZ Glow"
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-semibold"
+              />
+            </div>
+
+            <!-- Favicon Upload -->
+            <div class="p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label class="block text-xs font-bold text-neutral-800 uppercase">Website Favicon</label>
+                  <p class="text-[11px] text-neutral-500">Browser tab icon (.ico, .png, .svg)</p>
+                </div>
+                <div v-if="faviconPreview" class="w-8 h-8 rounded-lg bg-white border border-neutral-300 p-1 flex items-center justify-center shrink-0">
+                  <img :src="faviconPreview" alt="Favicon Preview" class="w-full h-full object-contain" />
+                </div>
+              </div>
+
+              <div>
+                <input 
+                  type="file" 
+                  accept=".ico,.png,.svg,.jpg,.jpeg" 
+                  @change="onFaviconSelected" 
+                  class="block w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#7a2e2e] file:text-white hover:file:bg-[#52201f] cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <!-- Website & App Logo Upload -->
+            <div class="md:col-span-2 p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label class="block text-xs font-bold text-neutral-800 uppercase">Brand / Header Logo</label>
+                  <p class="text-[11px] text-neutral-500">Main header emblem and mobile app logo (.png, .jpg, .svg, .webp)</p>
+                </div>
+                <div v-if="logoPreview" class="h-12 w-28 rounded-lg bg-white border border-neutral-300 p-1 flex items-center justify-center shrink-0">
+                  <img :src="logoPreview" alt="Logo Preview" class="max-h-full max-w-full object-contain" />
+                </div>
+              </div>
+
+              <div>
+                <input 
+                  type="file" 
+                  accept=".png,.jpg,.jpeg,.svg,.webp" 
+                  @change="onLogoSelected" 
+                  class="block w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#7a2e2e] file:text-white hover:file:bg-[#52201f] cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- WhatsApp & Contact -->
         <div class="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
           <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2 pb-2 border-b border-neutral-100">

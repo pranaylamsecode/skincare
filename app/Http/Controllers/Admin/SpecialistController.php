@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Specialist;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class SpecialistController extends Controller
 {
     public function index()
     {
-        $specialists = Specialist::orderBy('sort_order')->get();
+        $specialists = Specialist::with('user:id,email,specialist_id')->orderBy('sort_order')->get();
         return Inertia::render('Admin/Specialists/Index', [
             'specialists' => $specialists,
         ]);
@@ -21,6 +23,7 @@ class SpecialistController extends Controller
     {
         return Inertia::render('Admin/Specialists/Form', [
             'specialist' => null,
+            'staffUser' => null,
         ]);
     }
 
@@ -41,6 +44,8 @@ class SpecialistController extends Controller
             'photo_file' => 'nullable|image|max:3072',
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'staff_email' => 'nullable|email|max:100',
+            'staff_password' => 'nullable|string|min:6|max:100',
         ]);
 
         if ($request->hasFile('photo_file')) {
@@ -48,16 +53,37 @@ class SpecialistController extends Controller
             $validated['photo'] = 'storage/' . $path;
         }
 
-        Specialist::create($validated);
+        $specialist = Specialist::create($validated);
+
+        // Create or update Staff Login User
+        $staffEmail = $request->filled('staff_email') ? $request->staff_email : $request->email;
+        if ($staffEmail) {
+            $user = User::where('specialist_id', $specialist->id)->first() 
+                ?? User::where('email', $staffEmail)->first() 
+                ?? new User();
+
+            $user->name = $specialist->name;
+            $user->email = $staffEmail;
+            $user->role = 'staff';
+            $user->specialist_id = $specialist->id;
+
+            if ($request->filled('staff_password')) {
+                $user->password = Hash::make($request->staff_password);
+            } elseif (!$user->exists) {
+                $user->password = Hash::make('staff123'); // Default password
+            }
+            $user->save();
+        }
 
         return redirect()->route('admin.specialists.index')->with('success', 'Specialist added successfully.');
     }
 
     public function edit($id)
     {
-        $specialist = Specialist::findOrFail($id);
+        $specialist = Specialist::with('user:id,email,specialist_id')->findOrFail($id);
         return Inertia::render('Admin/Specialists/Form', [
             'specialist' => $specialist,
+            'staffUser' => $specialist->user ? ['email' => $specialist->user->email] : null,
         ]);
     }
 
@@ -80,6 +106,8 @@ class SpecialistController extends Controller
             'photo_file' => 'nullable|image|max:3072',
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'staff_email' => 'nullable|email|max:100',
+            'staff_password' => 'nullable|string|min:6|max:100',
         ]);
 
         if ($request->hasFile('photo_file')) {
@@ -88,6 +116,26 @@ class SpecialistController extends Controller
         }
 
         $specialist->update($validated);
+
+        // Update Staff Login User
+        $staffEmail = $request->filled('staff_email') ? $request->staff_email : $request->email;
+        if ($staffEmail) {
+            $user = User::where('specialist_id', $specialist->id)->first() 
+                ?? User::where('email', $staffEmail)->first() 
+                ?? new User();
+
+            $user->name = $specialist->name;
+            $user->email = $staffEmail;
+            $user->role = 'staff';
+            $user->specialist_id = $specialist->id;
+
+            if ($request->filled('staff_password')) {
+                $user->password = Hash::make($request->staff_password);
+            } elseif (!$user->exists) {
+                $user->password = Hash::make('staff123');
+            }
+            $user->save();
+        }
 
         return redirect()->route('admin.specialists.index')->with('success', 'Specialist updated successfully.');
     }

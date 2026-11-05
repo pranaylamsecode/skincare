@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { 
   LayoutDashboard, 
@@ -17,7 +17,7 @@ import {
 } from 'lucide-vue-next';
 
 const page = usePage();
-const user = page.props.auth?.user || { name: 'Admin' };
+const user = computed(() => page.props.auth?.user || { name: 'Admin', role: 'admin' });
 const flash = page.props.flash || {};
 
 const isSidebarOpen = ref(false);
@@ -26,16 +26,26 @@ const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
-const navigation = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'Bookings', href: '/admin/bookings', icon: CalendarCheck },
-  { name: 'Services', href: '/admin/services', icon: Sparkles },
-  { name: 'Specialists', href: '/admin/specialists', icon: Users },
-  { name: 'Time Slots', href: '/admin/time-slots', icon: Clock },
-  { name: 'Email Templates', href: '/admin/email-templates', icon: Mail },
-  { name: 'Site Content', href: '/admin/content', icon: Sliders },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
-];
+const navigation = computed(() => {
+  if (user.value.role === 'staff') {
+    return [
+      { name: 'My Schedule', href: '/admin/dashboard', icon: LayoutDashboard },
+      { name: 'My Bookings', href: '/admin/bookings', icon: CalendarCheck },
+      { name: 'My Time Slots', href: '/admin/time-slots', icon: Clock },
+    ];
+  }
+
+  return [
+    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Bookings', href: '/admin/bookings', icon: CalendarCheck },
+    { name: 'Services', href: '/admin/services', icon: Sparkles },
+    { name: 'Specialists & Staff', href: '/admin/specialists', icon: Users },
+    { name: 'Time Slots', href: '/admin/time-slots', icon: Clock },
+    { name: 'Email Templates', href: '/admin/email-templates', icon: Mail },
+    { name: 'Site Content', href: '/admin/content', icon: Sliders },
+    { name: 'Settings', href: '/admin/settings', icon: Settings },
+  ];
+});
 
 const isActive = (url) => {
   return window.location.pathname.startsWith(url);
@@ -57,7 +67,12 @@ const isActive = (url) => {
         </button>
         <Link href="/admin/dashboard" class="flex items-center gap-2">
           <span class="text-xl font-bold tracking-tight text-[#7a2e2e]">FMZ GLOW</span>
-          <span class="text-xs bg-[#fbeded] text-[#b60a0a] font-semibold px-2 py-0.5 rounded-full uppercase">Admin</span>
+          <span 
+            class="text-xs font-semibold px-2 py-0.5 rounded-full uppercase"
+            :class="user.role === 'staff' ? 'bg-amber-100 text-amber-800' : 'bg-[#fbeded] text-[#b60a0a]'"
+          >
+            {{ user.role === 'staff' ? 'Staff Specialist' : 'Admin' }}
+          </span>
         </Link>
       </div>
 
@@ -75,7 +90,10 @@ const isActive = (url) => {
           <div class="w-8 h-8 rounded-full bg-[#7a2e2e] text-white flex items-center justify-center font-bold text-xs shrink-0">
             {{ user.name ? user.name.charAt(0) : 'A' }}
           </div>
-          <span class="text-xs font-semibold hidden md:inline text-neutral-700">{{ user.name }}</span>
+          <div class="hidden md:flex flex-col">
+            <span class="text-xs font-semibold text-neutral-800">{{ user.name }}</span>
+            <span class="text-[10px] text-neutral-400 capitalize">{{ user.role === 'staff' ? 'Specialist' : 'Administrator' }}</span>
+          </div>
           
           <Link 
             href="/admin/logout" 
