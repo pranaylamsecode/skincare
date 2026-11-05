@@ -75,3 +75,4 @@ class PincodeSeeder extends Seeder
         }
     }
 }
+

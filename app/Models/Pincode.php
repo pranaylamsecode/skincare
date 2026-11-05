@@ -44,3 +44,4 @@ class Pincode extends Model
             ->get();
     }
 }
+
