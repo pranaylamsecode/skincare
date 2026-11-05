@@ -2,7 +2,7 @@
 import { ref, onMounted, nextTick } from 'vue';
 import { useForm, Head, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { ArrowLeft, Save, Plus, Trash2, MapPin, Search, Navigation, Compass, Layers, CheckCircle } from 'lucide-vue-next';
+import { ArrowLeft, Save, Plus, Trash2, MapPin, Search, Navigation, Compass, Layers, CheckCircle, Star } from 'lucide-vue-next';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -18,8 +18,16 @@ const searchLocation = ref('');
 const isSearching = ref(false);
 const isCalculating = ref(false);
 const detectedPincodes = ref([]);
+const customExtraPincodes = ref([]);
+const newExtraPincode = ref('');
 const autoSyncPincodes = ref(true);
 const mapContainer = ref(null);
+
+// Extract any pre-existing custom pincodes saved on this specialist
+if (props.specialist?.serviceable_pincodes) {
+  const parts = props.specialist.serviceable_pincodes.split(/[,\s]+/).map(s => s.trim()).filter(s => s.length === 6 && /^\d{6}$/.test(s));
+  customExtraPincodes.value = [...new Set(parts)];
+}
 
 let map = null;
 let marker = null;
@@ -135,6 +143,31 @@ const setRadius = (km) => {
   fetchPincodesInRadius(form.latitude, form.longitude, km);
 };
 
+const syncFinalPincodes = () => {
+  const radiusPins = detectedPincodes.value.map(p => p.pincode);
+  const combined = Array.from(new Set([...radiusPins, ...customExtraPincodes.value]));
+  form.serviceable_pincodes = combined.join(', ');
+};
+
+const addExtraPincode = () => {
+  const pin = newExtraPincode.value.trim();
+  if (!pin) return;
+  if (!/^\d{6}$/.test(pin)) {
+    alert('Please enter a valid 6-digit Indian pincode (e.g. 382421).');
+    return;
+  }
+  if (!customExtraPincodes.value.includes(pin)) {
+    customExtraPincodes.value.push(pin);
+  }
+  newExtraPincode.value = '';
+  syncFinalPincodes();
+};
+
+const removeExtraPincode = (pin) => {
+  customExtraPincodes.value = customExtraPincodes.value.filter(p => p !== pin);
+  syncFinalPincodes();
+};
+
 const fetchPincodesInRadius = async (lat, lng, radius) => {
   isCalculating.value = true;
   try {
@@ -142,8 +175,8 @@ const fetchPincodesInRadius = async (lat, lng, radius) => {
     const data = await res.json();
     if (data.success) {
       detectedPincodes.value = data.items || [];
-      if (autoSyncPincodes.value && data.pincode_list) {
-        form.serviceable_pincodes = data.pincode_list;
+      if (autoSyncPincodes.value) {
+        syncFinalPincodes();
       }
     }
   } catch (err) {
@@ -417,6 +450,60 @@ onMounted(() => {
                     type="button" 
                     @click="removePincodeFromList(item.pincode)" 
                     title="Remove this pincode"
+                    class="text-neutral-400 hover:text-red-600 font-bold ml-1 text-sm leading-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- EXTRA SPECIFIC PINCODES OUTSIDE RADIUS -->
+            <div class="p-4 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <Star class="w-4 h-4 text-amber-600 fill-amber-500" />
+                  <span class="text-xs font-bold text-amber-950">
+                    Extra Specific Pincodes (Special Areas Outside Radius)
+                  </span>
+                </div>
+              </div>
+              <p class="text-[11px] text-amber-800/80">
+                Want this employee to also serve a specific area that is outside their {{ form.service_radius_km }}km circle? Enter any extra 6-digit pincode below:
+              </p>
+
+              <div class="flex gap-2">
+                <input 
+                  v-model="newExtraPincode" 
+                  type="text" 
+                  maxlength="6"
+                  placeholder="e.g. 382421 (Any 6-digit pincode)"
+                  @keyup.enter.prevent="addExtraPincode"
+                  class="w-56 px-3 py-1.5 text-xs bg-white border border-amber-300 rounded-lg focus:border-[#7a2e2e] outline-none font-mono"
+                />
+                <button 
+                  type="button" 
+                  @click="addExtraPincode" 
+                  class="px-3.5 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-lg flex items-center gap-1 shadow-2xs"
+                >
+                  <Plus class="w-3.5 h-3.5" />
+                  <span>Add Extra Pincode</span>
+                </button>
+              </div>
+
+              <div v-if="customExtraPincodes.length > 0" class="flex flex-wrap gap-1.5 pt-1">
+                <div 
+                  v-for="pin in customExtraPincodes" 
+                  :key="pin"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-amber-300 text-amber-950 rounded-lg text-xs font-medium shadow-2xs"
+                >
+                  <Star class="w-3 h-3 text-amber-500 fill-amber-500 shrink-0" />
+                  <span class="font-mono font-bold">{{ pin }}</span>
+                  <span class="text-[10px] text-amber-700">(Specific Area)</span>
+                  <button 
+                    type="button" 
+                    @click="removeExtraPincode(pin)" 
+                    title="Remove extra pincode"
                     class="text-neutral-400 hover:text-red-600 font-bold ml-1 text-sm leading-none"
                   >
                     &times;
