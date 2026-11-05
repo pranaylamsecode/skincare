@@ -12,16 +12,37 @@ use App\Http\Controllers\Admin\TimeSlotController as AdminTimeSlotController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Api\ApiController;
 use Illuminate\Support\Facades\Route;
 
 // Public Frontend
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 
-// Customer Booking & Slots API
-Route::get('/api/available-slots', [BookingController::class, 'getAvailableSlots'])->name('api.slots');
-Route::post('/api/bookings', [BookingController::class, 'store'])->name('api.bookings.store');
-Route::post('/api/payment/create-order', [PaymentController::class, 'createOrder'])->name('api.payment.order');
-Route::post('/api/payment/verify', [PaymentController::class, 'verifyPayment'])->name('api.payment.verify');
+// Customer & Mobile App REST API
+Route::prefix('api')->group(function () {
+    Route::get('/home', [ApiController::class, 'home'])->name('api.home');
+    Route::get('/settings', [ApiController::class, 'getSettings'])->name('api.settings');
+    Route::get('/services', [ApiController::class, 'getServices'])->name('api.services');
+    Route::get('/services/{id}', [ApiController::class, 'getServiceDetail'])->name('api.services.show');
+    Route::get('/specialists', [ApiController::class, 'getSpecialists'])->name('api.specialists');
+    Route::get('/plans', [ApiController::class, 'getPlans'])->name('api.plans');
+    Route::get('/devices', [ApiController::class, 'getDevices'])->name('api.devices');
+    Route::get('/products', [ApiController::class, 'getProducts'])->name('api.products');
+    Route::get('/concerns', [ApiController::class, 'getConcerns'])->name('api.concerns');
+    Route::get('/reviews', [ApiController::class, 'getReviews'])->name('api.reviews');
+    Route::get('/faqs', [ApiController::class, 'getFaqs'])->name('api.faqs');
+    
+    // Booking & Slots
+    Route::get('/available-slots', [BookingController::class, 'getAvailableSlots'])->name('api.slots');
+    Route::post('/bookings', [BookingController::class, 'store'])->name('api.bookings.store');
+    Route::get('/bookings/track', [ApiController::class, 'getBookingsByPhone'])->name('api.bookings.by_phone');
+    Route::get('/bookings/{identifier}', [ApiController::class, 'getBooking'])->name('api.bookings.show');
+    Route::post('/bookings/{id}/cancel', [ApiController::class, 'cancelBooking'])->name('api.bookings.cancel');
+
+    // Payments
+    Route::post('/payment/create-order', [PaymentController::class, 'createOrder'])->name('api.payment.order');
+    Route::post('/payment/verify', [PaymentController::class, 'verifyPayment'])->name('api.payment.verify');
+});
 
 // Admin Authentication
 Route::prefix('admin')->group(function () {
