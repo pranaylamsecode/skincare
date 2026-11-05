@@ -465,5 +465,8 @@ class DatabaseSeeder extends Seeder
         foreach ($emailTemplates as $tmpl) {
             EmailTemplate::firstOrCreate(['code' => $tmpl['code']], $tmpl);
         }
+
+        // 13. Customer Bookings for testing
+        $this->call(FakeBookingsSeeder::class);
     }
 }
