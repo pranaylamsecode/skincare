@@ -15,6 +15,27 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\ApiController;
 use Illuminate\Support\Facades\Route;
 
+// Health Check Route
+Route::get('/test-health', function () {
+    $dbOk = false;
+    $dbError = null;
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        $dbOk = true;
+    } catch (\Throwable $e) {
+        $dbError = $e->getMessage();
+    }
+
+    return response()->json([
+        'status' => 'ok',
+        'php_version' => PHP_VERSION,
+        'app_env' => config('app.env'),
+        'app_key_set' => !empty(config('app.key')),
+        'database_connected' => $dbOk,
+        'database_error' => $dbError,
+    ]);
+});
+
 // Public Frontend
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 
