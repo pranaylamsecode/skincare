@@ -211,3 +211,4 @@ class FakeBookingsSeeder extends Seeder
         }
     }
 }
+
