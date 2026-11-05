@@ -492,7 +492,10 @@ class DatabaseSeeder extends Seeder
             EmailTemplate::firstOrCreate(['code' => $tmpl['code']], $tmpl);
         }
 
-        // 13. Customer Bookings for testing
+        // 13. Pincodes database for radius auto-assignment
+        $this->call(PincodeSeeder::class);
+
+        // 14. Customer Bookings for testing
         $this->call(FakeBookingsSeeder::class);
     }
 }

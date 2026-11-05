@@ -16,6 +16,9 @@ class Specialist extends Model
         'qualification',
         'location',
         'pincode',
+        'latitude',
+        'longitude',
+        'service_radius_km',
         'serviceable_pincodes',
         'city',
         'languages',
@@ -28,6 +31,9 @@ class Specialist extends Model
     protected $casts = [
         'languages' => 'array',
         'is_active' => 'boolean',
+        'latitude' => 'float',
+        'longitude' => 'float',
+        'service_radius_km' => 'integer',
     ];
 
     public function timeSlots()

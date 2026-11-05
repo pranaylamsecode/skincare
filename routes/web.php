@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\TimeSlotController as AdminTimeSlotController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PincodeRadiusController;
 use App\Http\Controllers\Api\ApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +60,10 @@ Route::prefix('api')->group(function () {
     Route::get('/bookings/track', [ApiController::class, 'getBookingsByPhone'])->name('api.bookings.by_phone');
     Route::get('/bookings/{identifier}', [ApiController::class, 'getBooking'])->name('api.bookings.show');
     Route::post('/bookings/{id}/cancel', [ApiController::class, 'cancelBooking'])->name('api.bookings.cancel');
+
+    // Pincode Radius & Geocoding
+    Route::get('/pincodes/in-radius', [PincodeRadiusController::class, 'getInRadius'])->name('api.pincodes.in_radius');
+    Route::get('/pincodes/geocode', [PincodeRadiusController::class, 'geocode'])->name('api.pincodes.geocode');
 
     // Payments
     Route::get('/payment/config', [PaymentController::class, 'getPaymentConfig'])->name('api.payment.config');
