@@ -8,8 +8,14 @@
     <title>FMZ Glow | At-Home Skincare by FMZ India</title>
 
     @php
-        $siteFavicon = \App\Models\Setting::get('site_favicon', 'images/FMZ Glow logo.jpg');
-        $siteLogo = \App\Models\Setting::get('site_logo', 'images/FMZ Glow logo.jpg');
+        $siteFavicon = 'images/FMZ Glow logo.jpg';
+        $siteLogo = 'images/FMZ Glow logo.jpg';
+        try {
+            $siteFavicon = \App\Models\Setting::get('site_favicon', $siteFavicon);
+            $siteLogo = \App\Models\Setting::get('site_logo', $siteLogo);
+        } catch (\Throwable $e) {
+            // gracefully fallback if database or settings table is not ready
+        }
     @endphp
     <!-- Dynamic Favicon & Brand Icons -->
     <link rel="icon" type="image/png" href="{{ asset($siteFavicon) }}">
