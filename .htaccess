@@ -1,18 +1,23 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /glow/
 
-    # Prevent access to sensitive files
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Prevent direct access to sensitive project files
     RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|artisan|storage/.*|bootstrap/cache/.*) - [F,L,NC]
 
-    # Serve static assets and files from public/ folder if not found in root
+    # Serve static assets and files from public/ folder
     RewriteCond %{REQUEST_URI} !public/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (assets|build|images|branding|favicon\.ico|robots\.txt) [NC]
     RewriteRule ^(.*)$ public/$1 [L]
 
-    # Route all other web requests through index.php
+    # Send all application routes to /glow/index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ index.php [L]
+    RewriteRule ^(.*)$ index.php [L]
 </IfModule>
