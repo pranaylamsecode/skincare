@@ -16,7 +16,7 @@ header('Content-Type: text/html; charset=utf-8');
         .err { color: #f87171; font-weight: bold; background: #450a0a; padding: 4px 8px; border-radius: 4px; display: inline-block; }
         h1 { color: #38bdf8; margin-top: 0; }
         h2 { color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 8px; }
-        pre { background: #020617; padding: 12px; border-radius: 6px; overflow-x: auto; color: #f1f5f9; }
+        pre { background: #020617; padding: 12px; border-radius: 6px; overflow-x: auto; color: #f87171; }
     </style>
 </head>
 <body>
@@ -47,6 +47,7 @@ header('Content-Type: text/html; charset=utf-8');
         $autoloaderPath = file_exists(__DIR__ . '/vendor/autoload.php') ? __DIR__ . '/vendor/autoload.php' : __DIR__ . '/../vendor/autoload.php';
         $bootstrapPath = file_exists(__DIR__ . '/bootstrap/app.php') ? __DIR__ . '/bootstrap/app.php' : __DIR__ . '/../bootstrap/app.php';
 
+        $app = null;
         if (!file_exists($autoloaderPath)) {
             echo '<p><span class="err">✗ vendor/autoload.php NOT FOUND! Run composer install</span></p>';
         } else {
@@ -54,8 +55,8 @@ header('Content-Type: text/html; charset=utf-8');
                 require_once $autoloaderPath;
                 echo '<p><span class="ok">✓ Autoloader loaded successfully</span></p>';
             } catch (\Throwable $e) {
-                echo '<p><span class="err">✗ Autoloader Exception: ' . htmlspecialchars($e->getMessage()) . '</span></p>';
-                echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+                echo '<p><span class="err">✗ Autoloader Error: ' . htmlspecialchars($e->getMessage()) . '</span></p>';
+                echo '<pre>' . htmlspecialchars($e->getFile() . ':' . $e->getLine() . "\n" . $e->getTraceAsString()) . '</pre>';
             }
         }
 
@@ -65,9 +66,14 @@ header('Content-Type: text/html; charset=utf-8');
             try {
                 $app = require_once $bootstrapPath;
                 echo '<p><span class="ok">✓ bootstrap/app.php loaded successfully</span></p>';
+
+                // Fully bootstrap Laravel Console Kernel to load configuration and database service providers
+                $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+                $kernel->bootstrap();
+                echo '<p><span class="ok">✓ Laravel Application Kernel Bootstrapped successfully</span></p>';
             } catch (\Throwable $e) {
-                echo '<p><span class="err">✗ Bootstrap Exception: ' . htmlspecialchars($e->getMessage()) . '</span></p>';
-                echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+                echo '<p><span class="err">✗ Kernel Bootstrap Error: ' . htmlspecialchars($e->getMessage()) . '</span></p>';
+                echo '<pre>' . htmlspecialchars($e->getFile() . ':' . $e->getLine() . "\n" . $e->getTraceAsString()) . '</pre>';
             }
         }
         ?>
@@ -85,18 +91,22 @@ header('Content-Type: text/html; charset=utf-8');
                     echo '<p><span class="ok">✓ APP_KEY is set</span></p>';
                 }
 
+                $dbName = config('database.connections.mysql.database');
+                echo '<p>Configured Database Name: <strong>' . htmlspecialchars($dbName ?? 'N/A') . '</strong></p>';
+
                 try {
                     \Illuminate\Support\Facades\DB::connection()->getPdo();
                     echo '<p><span class="ok">✓ MySQL Database connected successfully!</span></p>';
                 } catch (\Throwable $dbe) {
                     echo '<p><span class="err">✗ Database Connection Failed: ' . htmlspecialchars($dbe->getMessage()) . '</span></p>';
+                    echo '<pre>' . htmlspecialchars($dbe->getFile() . ':' . $dbe->getLine()) . '</pre>';
                 }
             } catch (\Throwable $e) {
                 echo '<p><span class="err">✗ Config/DB Error: ' . htmlspecialchars($e->getMessage()) . '</span></p>';
+                echo '<pre>' . htmlspecialchars($e->getFile() . ':' . $e->getLine()) . '</pre>';
             }
         }
         ?>
     </div>
 </body>
 </html>
-
