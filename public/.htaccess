@@ -4,6 +4,7 @@
     </IfModule>
 
     RewriteEngine On
+    RewriteBase /glow/public/
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

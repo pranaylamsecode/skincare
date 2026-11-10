@@ -14,17 +14,11 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # 1. Serve existing physical files or directories directly
+    # Serve real files and directories as-is (this covers public/build/assets/...)
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # 2. Rewrite build, assets, and images to public folder if not found in root
-    RewriteRule ^build/(.*)$ public/build/$1 [L]
-    RewriteRule ^images/(.*)$ public/images/$1 [L]
-    RewriteRule ^favicon\.ico$ public/favicon.ico [L]
-    RewriteRule ^robots\.txt$ public/robots.txt [L]
-
-    # 3. Send all remaining requests to front controller
+    # Route everything else to Laravel front controller
     RewriteRule ^ index.php [L]
 </IfModule>
