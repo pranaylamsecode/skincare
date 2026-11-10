@@ -159,6 +159,19 @@ const removeSelectedImage = () => {
   }
 };
 
+const formatImageUrl = (img, updatedAt = null) => {
+  if (!img) return '';
+  let url = img;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = url.startsWith('/') ? url : '/' + url;
+  }
+  if (updatedAt) {
+    const ts = new Date(updatedAt).getTime() || updatedAt;
+    url += (url.includes('?') ? '&' : '?') + 't=' + ts;
+  }
+  return url;
+};
+
 const saveProduct = () => {
   const endpoint = editingProduct.value 
     ? `/admin/content/products/${editingProduct.value.id}` 
@@ -166,8 +179,10 @@ const saveProduct = () => {
 
   productForm.post(endpoint, {
     forceFormData: true,
+    preserveScroll: true,
     onSuccess: () => {
       closeProductModal();
+      router.reload({ only: ['products'] });
     },
   });
 };
@@ -323,10 +338,12 @@ const wellnessCount = computed(() => props.products.filter(p => p.category === '
               <div class="relative h-40 bg-neutral-50 border-b border-neutral-100 flex items-center justify-center p-3 overflow-hidden group">
                 <img 
                   v-if="prod.image" 
-                  :src="prod.image.startsWith('http') ? prod.image : '/' + prod.image" 
+                  :key="prod.id + '_' + prod.image + '_' + (prod.updated_at || '')"
+                  :src="formatImageUrl(prod.image, prod.updated_at)" 
                   :alt="prod.name" 
                   class="h-full w-full object-contain group-hover:scale-105 transition duration-300" 
-                  onerror="this.style.display='none'"
+                  @error="(e) => e.target.style.display = 'none'"
+                  @load="(e) => e.target.style.display = 'block'"
                 />
                 <div v-else class="flex flex-col items-center justify-center text-neutral-300">
                   <ImageIcon class="w-10 h-10 mb-1" />

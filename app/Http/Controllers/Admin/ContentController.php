@@ -134,7 +134,7 @@ class ContentController extends Controller
             Product::create($validated);
         }
 
-        return back()->with('success', 'Product saved successfully.');
+        return redirect()->route('admin.content.index', ['tab' => 'products'])->with('success', 'Product saved successfully.');
     }
 
     public function deleteProduct($id)

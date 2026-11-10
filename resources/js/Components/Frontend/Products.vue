@@ -35,10 +35,12 @@ const formatImgUrl = (img) => {
             <template v-if="!prod.image">Product photo</template>
             <img 
               v-if="prod.image" 
+              :key="prod.id + '_' + prod.image"
               :src="formatImgUrl(prod.image)" 
               :alt="prod.name" 
               loading="lazy" 
-              onerror="this.style.display='none'"
+              @error="(e) => e.target.style.display = 'none'"
+              @load="(e) => e.target.style.display = 'block'"
             >
           </div>
           <small v-if="prod.step_name">{{ prod.step_name }}</small>
