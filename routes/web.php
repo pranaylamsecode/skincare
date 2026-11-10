@@ -42,9 +42,9 @@ Route::get('/', function () {
     return view('coming-soon');
 })->name('root');
 
-// FMZ Glow Main Page
-Route::get('/glow', [FrontendController::class, 'index'])->name('home');
-
+// FMZ Glow Main Page (matches /glow, /glow/, and any subpath)
+Route::match(['get', 'head'], '/glow', [FrontendController::class, 'index'])->name('home');
+Route::match(['get', 'head'], '/glow/{any}', [FrontendController::class, 'index'])->where('any', '.*');
 // Customer & Mobile App REST API
 Route::prefix('api')->group(function () {
     Route::get('/home', [ApiController::class, 'home'])->name('api.home');
