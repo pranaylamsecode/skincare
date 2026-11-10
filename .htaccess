@@ -1,7 +1,18 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Prevent internal redirect loop
-    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    # Prevent access to sensitive files
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|artisan|storage/.*|bootstrap/cache/.*) - [F,L,NC]
+
+    # Serve static assets and files from public/ folder if not found in root
+    RewriteCond %{REQUEST_URI} !public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (assets|build|images|branding|favicon\.ico|robots\.txt) [NC]
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Route all other web requests through index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
 </IfModule>
