@@ -42,6 +42,19 @@ Route::get('/', function () {
     return view('coming-soon');
 })->name('root');
 
+// Storage File Delivery Route (guarantees uploaded images load seamlessly in all environments)
+Route::get('/storage/{path}', function ($path) {
+    $pubPath = public_path('storage/' . $path);
+    if (file_exists($pubPath) && is_file($pubPath)) {
+        return response()->file($pubPath);
+    }
+    $storagePath = storage_path('app/public/' . $path);
+    if (file_exists($storagePath) && is_file($storagePath)) {
+        return response()->file($storagePath);
+    }
+    abort(404);
+})->where('path', '.*');
+
 // FMZ Glow Main Page (matches /glow, /glow/, and any subpath)
 Route::match(['get', 'head'], '/glow', [FrontendController::class, 'index'])->name('home');
 Route::match(['get', 'head'], '/glow/{any}', [FrontendController::class, 'index'])->where('any', '.*');

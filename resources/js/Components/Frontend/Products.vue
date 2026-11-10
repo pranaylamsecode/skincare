@@ -9,6 +9,14 @@ defineProps({
     default: () => []
   }
 });
+
+const formatImgUrl = (img) => {
+  if (!img) return '';
+  if (img.startsWith('http://') || img.startsWith('https://')) {
+    return img;
+  }
+  return img.startsWith('/') ? img : '/' + img;
+};
 </script>
 
 <template>
@@ -24,13 +32,13 @@ defineProps({
       <div class="daily">
         <div v-for="prod in dailyProducts" :key="prod.id" class="prod">
           <div class="ph">
-            Product photo
+            <template v-if="!prod.image">Product photo</template>
             <img 
               v-if="prod.image" 
-              :src="prod.image.startsWith('http') ? prod.image : '/' + prod.image" 
+              :src="formatImgUrl(prod.image)" 
               :alt="prod.name" 
               loading="lazy" 
-              onerror="this.remove()"
+              onerror="this.style.display='none'"
             >
           </div>
           <small v-if="prod.step_name">{{ prod.step_name }}</small>
@@ -41,6 +49,14 @@ defineProps({
       <p class="sub">Wellness from within</p>
       <div class="wellness">
         <div v-for="well in wellnessProducts" :key="well.id" class="well">
+          <div v-if="well.image" class="ph well-ph">
+            <img 
+              :src="formatImgUrl(well.image)" 
+              :alt="well.name" 
+              loading="lazy" 
+              onerror="this.style.display='none'"
+            >
+          </div>
           <b>{{ well.name }}</b>
           <p>{{ well.description }}</p>
         </div>

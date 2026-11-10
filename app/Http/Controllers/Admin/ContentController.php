@@ -104,8 +104,22 @@ class ContentController extends Controller
         }
 
         if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('products', 'public');
+            $file = $request->file('image_file');
+            $extension = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $path = $file->storeAs('products', $filename, 'public');
             $validated['image'] = 'storage/' . $path;
+
+            // Also ensure file is copied to public/storage/products for direct server delivery without symlink
+            try {
+                $publicDir = public_path('storage/products');
+                if (!file_exists($publicDir)) {
+                    @mkdir($publicDir, 0777, true);
+                }
+                @copy(storage_path('app/public/' . $path), $publicDir . '/' . $filename);
+            } catch (\Throwable $e) {
+                // Ignore copy error, fallback route in web.php will still serve it
+            }
         }
 
         unset($validated['image_file']);
@@ -125,7 +139,13 @@ class ContentController extends Controller
 
     public function deleteProduct($id)
     {
-        Product::findOrFail($id)->delete();
+        $product = Product::findOrFail($id);
+        if ($product->image && str_starts_with($product->image, 'storage/products/')) {
+            $rel = str_replace('storage/', '', $product->image);
+            @unlink(storage_path('app/public/' . $rel));
+            @unlink(public_path('storage/' . $rel));
+        }
+        $product->delete();
         return back()->with('success', 'Product deleted successfully.');
     }
 

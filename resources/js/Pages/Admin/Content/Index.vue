@@ -678,35 +678,49 @@ const wellnessCount = computed(() => props.products.filter(p => p.category === '
 
           <!-- Product Image Upload & Preview -->
           <div>
-            <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">
-              Product Image
+            <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <span>Product Image</span>
+              <span v-if="productForm.image_file" class="text-[10px] text-emerald-600 font-bold lowercase">
+                ✓ new image selected
+              </span>
             </label>
             
             <div class="space-y-2">
               <!-- Image Preview Box -->
               <div 
                 v-if="imagePreview" 
-                class="relative h-32 w-full bg-neutral-50 rounded-2xl border border-neutral-200 p-2 flex items-center justify-center overflow-hidden"
+                class="relative h-36 w-full bg-neutral-50 rounded-2xl border border-neutral-200 p-2 flex items-center justify-center overflow-hidden group"
               >
                 <img :src="imagePreview" alt="Preview" class="h-full object-contain" />
-                <button 
-                  type="button" 
-                  class="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black text-white rounded-full transition"
-                  title="Remove Image"
-                  @click="removeSelectedImage"
-                >
-                  <X class="w-3.5 h-3.5" />
-                </button>
+                
+                <div class="absolute bottom-2 right-2 flex items-center gap-1.5">
+                  <button 
+                    type="button" 
+                    class="px-3 py-1 bg-white/95 hover:bg-white text-neutral-800 text-[11px] font-bold rounded-lg shadow-sm border border-neutral-200 flex items-center gap-1 transition cursor-pointer"
+                    @click="fileInputRef && fileInputRef.click()"
+                  >
+                    <Upload class="w-3 h-3 text-[#7a2e2e]" />
+                    <span>Change</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white rounded-lg shadow-sm transition cursor-pointer"
+                    title="Remove Image"
+                    @click="removeSelectedImage"
+                  >
+                    <X class="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               <!-- Upload Area -->
               <div 
                 v-else
-                class="border-2 border-dashed border-neutral-300 rounded-2xl p-4 text-center hover:border-[#7a2e2e] transition cursor-pointer bg-neutral-50/50"
+                class="border-2 border-dashed border-neutral-300 hover:border-[#7a2e2e] rounded-2xl p-5 text-center transition cursor-pointer bg-neutral-50/50 hover:bg-[#7a2e2e]/5 group"
                 @click="fileInputRef && fileInputRef.click()"
               >
-                <Upload class="w-6 h-6 mx-auto text-neutral-400 mb-1" />
-                <p class="text-xs font-semibold text-neutral-700">Click to upload product photo</p>
+                <Upload class="w-7 h-7 mx-auto text-[#7a2e2e] mb-1.5 group-hover:scale-110 transition" />
+                <p class="text-xs font-bold text-neutral-800">Click to upload product photo</p>
                 <p class="text-[10px] text-neutral-400 mt-0.5">PNG, JPG or WebP up to 5MB</p>
               </div>
 
@@ -723,9 +737,9 @@ const wellnessCount = computed(() => props.products.filter(p => p.category === '
                 <input 
                   v-model="productForm.image" 
                   type="text" 
-                  placeholder="Or enter image URL / path (e.g. images/products/cleanser.jpg)" 
+                  placeholder="Or enter image URL / relative path (e.g. /images/products/cleanser.jpg)" 
                   class="w-full px-3 py-1.5 text-[11px] bg-neutral-50 border border-neutral-200 rounded-xl outline-none focus:border-[#7a2e2e]"
-                  @input="imagePreview = productForm.image ? (productForm.image.startsWith('http') ? productForm.image : '/' + productForm.image) : null"
+                  @input="imagePreview = productForm.image ? (productForm.image.startsWith('http') ? productForm.image : (productForm.image.startsWith('/') ? productForm.image : '/' + productForm.image)) : null"
                 />
               </div>
             </div>
