@@ -14,9 +14,10 @@ use Inertia\Inertia;
 
 class ContentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('Admin/Content/Index', [
+            'initialTab' => $request->query('tab', 'products'),
             'plans' => Plan::orderBy('sort_order')->get(),
             'devices' => Device::orderBy('sort_order')->get(),
             'products' => Product::orderBy('sort_order')->get(),
@@ -87,17 +88,34 @@ class ContentController extends Controller
     public function saveProduct(Request $request, $id = null)
     {
         $validated = $request->validate([
-            'step_name' => 'nullable|string|max:50',
+            'step_name' => 'nullable|string|max:100',
             'name' => 'required|string|max:150',
             'category' => 'required|in:daily,wellness',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string|max:1000',
             'image' => 'nullable|string',
-            'is_active' => 'boolean',
-            'sort_order' => 'integer',
+            'image_file' => 'nullable|image|max:5120',
+            'is_active' => 'nullable|boolean',
+            'sort_order' => 'nullable|integer',
         ]);
 
+        $validated['is_active'] = $request->boolean('is_active', true);
+        if ($request->has('sort_order')) {
+            $validated['sort_order'] = (int) $request->input('sort_order', 0);
+        }
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('products', 'public');
+            $validated['image'] = 'storage/' . $path;
+        }
+
+        unset($validated['image_file']);
+
         if ($id) {
-            Product::findOrFail($id)->update($validated);
+            $product = Product::findOrFail($id);
+            if (!isset($validated['image']) && !$request->hasFile('image_file')) {
+                unset($validated['image']);
+            }
+            $product->update($validated);
         } else {
             Product::create($validated);
         }
