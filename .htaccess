@@ -1,16 +1,19 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
-        Options -MultiViews
+        Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
 
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)/$ /$1 [L,R=301]
+    # 1. If someone visits /public/... directly in the URL bar, 301 redirect to clean URL
+    # Example: https://myfmz.com/public/glow -> https://myfmz.com/glow
+    RewriteCond %{THE_REQUEST} \s/public/+(.*?)\s [NC]
+    RewriteRule ^public/(.*)$ /$1 [R=301,L,NE]
 
-    # Handle Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    # 2. Block direct browser access to sensitive files
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json) - [F,L,NC]
+
+    # 3. Transparently route all requests into the /public/ folder
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
