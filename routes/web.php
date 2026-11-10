@@ -37,8 +37,13 @@ Route::get('/test-health', function () {
     ]);
 });
 
-// Public Frontend
-Route::get('/', [FrontendController::class, 'index'])->name('home');
+// Root Route - Coming Soon
+Route::get('/', function () {
+    return view('coming-soon');
+})->name('root');
+
+// FMZ Glow Main Page
+Route::get('/glow', [FrontendController::class, 'index'])->name('home');
 
 // Customer & Mobile App REST API
 Route::prefix('api')->group(function () {
