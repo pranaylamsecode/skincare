@@ -432,7 +432,31 @@ header.site-header .nav { display: flex; align-items: center; justify-content: s
 .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.72rem; font-weight: 400; color: var(--muted); margin: 16px 0; }
 .consent input { width: auto !important; margin-top: 3px; accent-color: var(--red); }
 .form .btn { width: 100%; padding: 15px; }
-.form-note { font-size: 0.7rem; color: var(--muted); margin: 12px 0 0; }
+.form-note {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #3b1e1d;
+  background: #fdf5f4;
+  border: 1px solid #ebd3cf;
+  border-left: 4px solid var(--maroon);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 16px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.form-note strong {
+  color: var(--maroon);
+  font-weight: 700;
+}
+.form-note-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--maroon);
+  margin-top: 2px;
+}
 .success-box { margin-top: 14px; padding: 14px 16px; border-radius: 12px; background: #eaf6ea; color: #1f5d1f; font-size: 0.85rem; border: 1px solid #c3e6cb; }
 .error-box { margin-top: 14px; padding: 14px 16px; border-radius: 12px; background: #fdf2f2; color: #9b1c1c; font-size: 0.85rem; border: 1px solid #f8b4b4; }
 
@@ -654,6 +678,12 @@ footer.site-footer .foot p { margin: 0; font-size: 0.74rem; color: var(--muted);
   }
   .form .btn span {
     color: #ffffff !important;
+  }
+  .form-note {
+    font-size: 0.78rem;
+    padding: 10px 12px;
+    margin-top: 14px;
+    gap: 8px;
   }
 
   .topbar { font-size: 0.66rem; }
