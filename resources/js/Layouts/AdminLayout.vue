@@ -142,7 +142,7 @@ const isActive = (url) => {
         </nav>
 
         <div class="p-4 border-t border-neutral-200 text-xs text-neutral-500">
-          <div>FMZ Glow v2.0 (Laravel + Vue)</div>
+          <div>FMZ Glow </div>
           <div class="mt-0.5 text-neutral-400">At-home Skincare System</div>
         </div>
       </aside>

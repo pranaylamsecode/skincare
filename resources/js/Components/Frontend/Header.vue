@@ -60,7 +60,7 @@ onUnmounted(() => {
       <a href="#products" @click="closeMenu">Products</a>
       <a href="#how" @click="closeMenu">How it works</a>
       <a href="#faq" @click="closeMenu">FAQ</a>
-      <a href="#book" @click="closeMenu">Book a visit</a>
+      <a class="mobile-book-btn" href="#book" @click="closeMenu">Book a visit</a>
     </nav>
   </header>
 </template>

@@ -4,6 +4,15 @@ import { ref, onMounted, onUnmounted } from 'vue';
 const isHidden = ref(false);
 let observer = null;
 
+const scrollToBook = () => {
+  const el = document.getElementById('book');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    window.location.hash = '#book';
+  }
+};
+
 onMounted(() => {
   const bookSection = document.getElementById('book');
   if (bookSection && 'IntersectionObserver' in window) {
@@ -23,6 +32,6 @@ onUnmounted(() => {
 
 <template>
   <div class="mobile-cta" :class="{ hide: isHidden }">
-    <a class="btn" href="#book">Book your glow</a>
+    <a class="btn" href="#book" @click="scrollToBook">Book your glow</a>
   </div>
 </template>
