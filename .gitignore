@@ -1,3 +1,7 @@
+# Explicitly keep compiled frontend assets for servers without npm
+!/public/build/
+!/build/
+
 *.log
 .DS_Store
 .env
