@@ -90,6 +90,9 @@ Route::prefix('api')->group(function () {
     Route::post('/payment/zoho/verify', [PaymentController::class, 'verifyZohoPayment'])->name('api.payment.zoho.verify');
 });
 
+// Standard Login Route Alias (redirects to admin login)
+Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+
 // Admin Authentication
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');

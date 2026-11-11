@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
         ]);
+
+        $middleware->redirectTo(
+            guests: '/admin/login',
+            users: '/admin/dashboard',
+        );
         
         // Exclude payment webhook / callback from CSRF if needed
         $middleware->validateCsrfTokens(except: [
