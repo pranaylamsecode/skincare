@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue';
+import { ref, reactive, watch, computed, onMounted } from 'vue';
 
 const props = defineProps({
   services: {
@@ -21,6 +21,10 @@ const props = defineProps({
   preselectedSpecialist: {
     type: Object,
     default: null
+  },
+  settings: {
+    type: Object,
+    default: () => ({})
   }
 });
 
@@ -40,15 +44,34 @@ const form = reactive({
   time_slot_text: '',
   msg: '',
   consent: true,
-  payment_method: 'after_visit' // 'after_visit' or 'razorpay'
+  payment_method: 'after_visit' // 'after_visit' or 'online'
 });
 
 const availableSlots = ref([]);
 const loadingSlots = ref(false);
 const submitting = ref(false);
+const isRedirecting = ref(false);
+const checkoutUrl = ref('');
 const successMessage = ref('');
 const bookingResult = ref(null);
 const errorMessage = ref('');
+
+const activeGateway = computed(() => {
+  return props.settings?.active_payment_gateway || 'zoho';
+});
+
+const isOnlinePaymentAvailable = computed(() => {
+  return activeGateway.value !== 'none';
+});
+
+const onlinePaymentLabel = computed(() => {
+  if (activeGateway.value === 'zoho') {
+    return 'Pay Online Now (Cards / UPI / NetBanking)';
+  } else if (activeGateway.value === 'razorpay') {
+    return 'Pay Online Now (Razorpay / Cards / UPI)';
+  }
+  return 'Pay Online Now (Cards / UPI / NetBanking)';
+});
 
 // Fetch slots from API based on date and specialist
 const fetchSlots = async () => {
@@ -164,21 +187,34 @@ const submitBooking = async () => {
     bookingResult.value = data.booking;
     successMessage.value = data.message || 'Your booking request has been received!';
 
-    // If online payment chosen (Razorpay)
-    if (form.payment_method === 'razorpay' && data.booking && data.booking.id) {
-      initiateRazorpayPayment(data.booking.id);
+    // If online payment chosen (Zoho Checkout / Razorpay)
+    if ((form.payment_method === 'online' || form.payment_method === 'razorpay') && data.booking && data.booking.id) {
+      await initiateOnlinePayment(data.booking.id, data.booking);
     }
 
   } catch (err) {
     console.error('Booking submission error:', err);
     errorMessage.value = 'Network error. Please try again or message us on WhatsApp.';
   } finally {
-    submitting.value = false;
+    if (!isRedirecting.value) {
+      submitting.value = false;
+    }
   }
 };
 
-const initiateRazorpayPayment = async (bookingId) => {
+const initiateOnlinePayment = async (bookingId, bookingData) => {
   try {
+    // If backend already prepared zoho checkout url during store
+    if (bookingData && bookingData.zoho_checkout_url) {
+      checkoutUrl.value = bookingData.zoho_checkout_url;
+      successMessage.value = 'Booking submitted! Opening secure payment checkout...';
+      isRedirecting.value = true;
+      setTimeout(() => {
+        window.location.href = bookingData.zoho_checkout_url;
+      }, 700);
+      return;
+    }
+
     const orderRes = await fetch('/api/payment/create-order', {
       method: 'POST',
       headers: {
@@ -191,42 +227,71 @@ const initiateRazorpayPayment = async (bookingId) => {
     const orderData = await orderRes.json();
 
     if (!orderData.success) {
-      // Test mode notice
+      // Test mode or unpriced consultation notice
       if (orderData.mock_allowed) {
-        successMessage.value += ' (Online payment gateway is in test mode; you can pay after your visit via UPI or cash).';
+        successMessage.value += ` (${orderData.message || 'Online gateway not ready; you can pay after your visit via UPI or Cash.'})`;
       } else {
-        errorMessage.value = orderData.message;
+        errorMessage.value = orderData.message || 'Online payment initialization failed.';
       }
       return;
     }
 
-    if (window.Razorpay) {
-      const options = {
-        key: orderData.key,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: 'FMZ Glow',
-        description: `Booking #${orderData.booking_number}`,
-        image: '/images/FMZ logo.jpg',
-        order_id: orderData.order_id,
-        prefill: {
-          name: orderData.client_name,
-          email: orderData.client_email,
-          contact: orderData.client_phone
-        },
-        theme: {
-          color: '#7a2e2e'
-        },
-        handler: async function (response) {
-          // Verify on backend
-          await verifyPaymentOnServer(bookingId, response);
-        }
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+    // 1. Zoho Checkout: Redirect customer to Zoho checkout URL
+    if (orderData.gateway === 'zoho' || orderData.checkout_url) {
+      checkoutUrl.value = orderData.checkout_url;
+      successMessage.value = 'Booking submitted! Opening secure payment checkout...';
+      isRedirecting.value = true;
+      setTimeout(() => {
+        window.location.href = orderData.checkout_url;
+      }, 700);
+      return;
+    }
+
+    // 2. Razorpay Checkout
+    if (orderData.gateway === 'razorpay' || orderData.order_id) {
+      if (typeof window.Razorpay === 'undefined') {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
+          document.head.appendChild(script);
+        }).catch(err => {
+          console.error('Failed to load Razorpay script:', err);
+        });
+      }
+
+      if (window.Razorpay) {
+        const options = {
+          key: orderData.key,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
+          name: 'FMZ Glow',
+          description: `Booking #${orderData.booking_number}`,
+          image: '/images/FMZ logo.jpg',
+          order_id: orderData.order_id,
+          prefill: {
+            name: orderData.client_name,
+            email: orderData.client_email,
+            contact: orderData.client_phone
+          },
+          theme: {
+            color: '#7a2e2e'
+          },
+          handler: async function (response) {
+            await verifyPaymentOnServer(bookingId, response);
+          }
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else {
+        errorMessage.value = 'Razorpay checkout script could not be loaded. You can pay after your visit via UPI or Cash.';
+      }
     }
   } catch (e) {
-    console.error('Razorpay init error:', e);
+    console.error('Payment init error:', e);
+    errorMessage.value = 'Could not open payment gateway. You can pay after your visit via UPI or Cash.';
   }
 };
 
@@ -272,6 +337,11 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
             <div><b>Date:</b> {{ bookingResult.date }}</div>
             <div><b>Time:</b> {{ bookingResult.time }}</div>
             <div v-if="Number(bookingResult.total_amount) > 0"><b>Price:</b> ₹{{ Math.round(Number(bookingResult.total_amount)).toLocaleString('en-IN') }}</div>
+            <div v-if="checkoutUrl" style="margin-top:14px">
+              <a :href="checkoutUrl" style="display:inline-block;padding:8px 18px;background:#fff;color:#7a2e2e !important;font-weight:700;border-radius:999px;text-decoration:none;font-size:0.85rem">
+                Pay Online Now &rarr;
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -410,9 +480,9 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
                   <input type="radio" v-model="form.payment_method" value="after_visit" style="width:auto">
                   <span>Pay After Visit (UPI / Cash)</span>
                 </label>
-                <label style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:0.82rem;cursor:pointer">
-                  <input type="radio" v-model="form.payment_method" value="razorpay" style="width:auto">
-                  <span>Pay Online Now (Razorpay / Cards / UPI)</span>
+                <label v-if="isOnlinePaymentAvailable" style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:0.82rem;cursor:pointer">
+                  <input type="radio" v-model="form.payment_method" value="online" style="width:auto">
+                  <span>{{ onlinePaymentLabel }}</span>
                 </label>
               </div>
             </div>
@@ -429,7 +499,7 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
           </label>
 
           <button class="btn" type="submit" :disabled="submitting">
-            <span v-if="submitting">Processing your booking...</span>
+            <span v-if="submitting">{{ isRedirecting ? 'Opening payment gateway...' : 'Processing your booking...' }}</span>
             <span v-else>Book your glow</span>
           </button>
 
@@ -444,6 +514,11 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
 
           <div v-if="successMessage" class="success-box" role="status">
             <b>Thank you!</b> {{ successMessage }}
+            <div v-if="checkoutUrl" style="margin-top:12px">
+              <a :href="checkoutUrl" class="btn" style="display:inline-block;padding:8px 18px;background:#7a2e2e;color:#fff !important;font-weight:700;border-radius:999px;text-decoration:none;font-size:0.85rem">
+                Proceed to Payment &rarr;
+              </a>
+            </div>
           </div>
 
           <div v-if="errorMessage" class="error-box" role="alert">

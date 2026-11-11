@@ -127,6 +127,7 @@ const handleSpecialistSelect = (specialist) => {
         :time-slots="timeSlots"
         :preselected-service="selectedService"
         :preselected-specialist="selectedSpecialist"
+        :settings="settings"
       />
 
       <Faq :faqs="faqs" />

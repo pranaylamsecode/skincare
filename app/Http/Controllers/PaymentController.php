@@ -56,6 +56,14 @@ class PaymentController extends Controller
 
         // Handle Zoho Checkout
         if ($gateway === 'zoho') {
+            if ($booking->total_amount <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Online payment is not required for consultation requests with no fixed price. You can pay after your visit via UPI or Cash.',
+                    'mock_allowed' => true,
+                ]);
+            }
+
             $zohoClientId = Setting::get('zoho_client_id', '');
             $zohoCheckoutUrl = Setting::get('zoho_checkout_url', '');
 
@@ -119,7 +127,8 @@ class PaymentController extends Controller
             if ($amountInPaise <= 0) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid booking amount for payment.',
+                    'message' => 'Online payment is not required for consultation requests with no fixed price. You can pay after your visit via UPI or Cash.',
+                    'mock_allowed' => true,
                 ]);
             }
 

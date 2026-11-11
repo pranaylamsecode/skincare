@@ -181,6 +181,9 @@ class BookingController extends Controller
             }
         }
 
+        // Generate booking number
+        $bookingNumber = 'FMZ-' . date('Ymd') . '-' . strtoupper(Str::random(4));
+
         // Determine payment method and active gateway
         $requestedPayment = $validated['payment_method'] ?? 'after_visit';
         $activeGateway = Setting::get('active_payment_gateway', 'razorpay');
@@ -188,21 +191,22 @@ class BookingController extends Controller
 
         if (in_array($requestedPayment, ['online', 'zoho']) || ($requestedPayment === 'razorpay' && $activeGateway === 'zoho')) {
             $rawZohoUrl = Setting::get('zoho_checkout_url', '');
+            $zohoClientId = Setting::get('zoho_client_id', '');
             if (!empty($rawZohoUrl)) {
                 $query = http_build_query([
+                    'booking_id' => $bookingNumber,
                     'amount' => $totalAmount,
+                    'currency' => 'INR',
                     'name' => $validated['name'],
                     'phone' => $validated['phone'],
                     'email' => $validated['email'] ?? '',
+                    'client_id' => $zohoClientId,
                     'service' => $service ? $service->title : $validated['service_name'],
                     'pincode' => $pincode,
                 ]);
                 $zohoCheckoutUrl = $rawZohoUrl . (str_contains($rawZohoUrl, '?') ? '&' : '?') . $query;
             }
         }
-
-        // Generate booking number
-        $bookingNumber = 'FMZ-' . date('Ymd') . '-' . strtoupper(Str::random(4));
 
         $booking = Booking::create([
             'booking_number' => $bookingNumber,
