@@ -89,6 +89,8 @@ Route::prefix('api')->group(function () {
     Route::post('/payment/create-order', [PaymentController::class, 'createOrder'])->name('api.payment.order');
     Route::post('/payment/verify', [PaymentController::class, 'verifyPayment'])->name('api.payment.verify');
     Route::post('/payment/zoho/verify', [PaymentController::class, 'verifyZohoPayment'])->name('api.payment.zoho.verify');
+    Route::get('/payment/zoho/callback', [PaymentController::class, 'handleZohoCallback'])->name('api.payment.zoho.callback');
+    Route::post('/zoho-payments/create-session', [PaymentController::class, 'createZohoTestSession'])->name('api.zoho.test_session');
 });
 
 // Standard Login Route Alias (redirects to admin login)

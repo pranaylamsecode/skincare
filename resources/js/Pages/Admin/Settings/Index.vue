@@ -30,7 +30,9 @@ const form = useForm({
   zoho_client_id: props.settings.zoho_client_id || '',
   zoho_client_secret: props.settings.zoho_client_secret || '',
   zoho_checkout_url: props.settings.zoho_checkout_url || '',
-  zoho_merchant_id: props.settings.zoho_merchant_id || '',
+  zoho_merchant_id: props.settings.zoho_merchant_id || props.settings.zoho_account_id || '',
+  zoho_refresh_token: props.settings.zoho_refresh_token || '',
+  zoho_access_token: props.settings.zoho_access_token || '',
 });
 
 // Keep active_payment_gateway and toggle checkboxes synchronized
@@ -389,16 +391,38 @@ const submit = () => {
               />
             </div>
 
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Zoho Payments Account ID</label>
+              <input 
+                v-model="form.zoho_merchant_id" 
+                type="text" 
+                placeholder="e.g. 6002XXXXXX" 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
+              />
+              <p class="text-[11px] text-neutral-500 mt-1">Found in Zoho Payments Dashboard &rarr; Settings &rarr; Account Details.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Zoho OAuth Refresh Token</label>
+              <input 
+                v-model="form.zoho_refresh_token" 
+                type="password" 
+                placeholder="1000.XXXXXX..." 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
+              />
+              <p class="text-[11px] text-neutral-500 mt-1">Generated in Zoho API Console with scope <code class="bg-neutral-100 px-1 py-0.5 rounded text-neutral-700">ZohoPay.payments.CREATE</code>.</p>
+            </div>
+
             <div class="md:col-span-2">
-              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Zoho Checkout Page URL / Payment Link</label>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1">Optional: Custom Payment Page URL Override</label>
               <input 
                 v-model="form.zoho_checkout_url" 
                 type="text" 
-                placeholder="https://payments.zoho.in/checkout/... or https://checkout.zoho.in/v2/..." 
+                placeholder="https://checkout.zoho.in/v2/... (leave blank to use dynamic API sessions)" 
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
               />
               <p class="text-[11px] text-neutral-500 mt-1">
-                Enter your actual Zoho Checkout payment page URL from your Zoho dashboard. The generic <code class="text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">payments.zoho.in/checkout/</code> placeholder returns 404 on Zoho without a valid payment link.
+                Leave blank if using the official Zoho Payments Session API above. Or paste an explicit Zoho Checkout hosted link.
               </p>
             </div>
           </div>

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Setting;
 use App\Services\EmailNotificationService;
+use App\Services\ZohoPaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Razorpay\Api\Api;
 
 class PaymentController extends Controller
@@ -88,52 +90,79 @@ class PaymentController extends Controller
                 ]);
             }
 
-            $zohoClientId = Setting::get('zoho_client_id', '');
-            $zohoCheckoutUrl = trim(Setting::get('zoho_checkout_url', ''));
+            // 1. If custom static payment link is configured and is NOT the placeholder
+            $customUrl = trim((string) Setting::get('zoho_checkout_url', ''));
+            $isPlaceholder = empty($customUrl)
+                || str_ends_with(rtrim($customUrl, '/'), 'payments.zoho.in/checkout')
+                || str_ends_with(rtrim($customUrl, '/'), 'payments.zoho.in');
 
-            // Check if Zoho URL is empty or the invalid default placeholder
-            $isPlaceholder = empty($zohoCheckoutUrl)
-                || str_ends_with(rtrim($zohoCheckoutUrl, '/'), 'payments.zoho.in/checkout')
-                || str_ends_with(rtrim($zohoCheckoutUrl, '/'), 'payments.zoho.in');
+            if (!$isPlaceholder && !empty($customUrl)) {
+                $params = http_build_query([
+                    'booking_id' => $booking->booking_number,
+                    'amount' => $booking->total_amount,
+                    'currency' => 'INR',
+                    'name' => $booking->name,
+                    'email' => $booking->email ?? '',
+                    'phone' => $booking->phone,
+                    'service' => $booking->service_name,
+                ]);
 
-            if ($isPlaceholder) {
+                $finalUrl = $customUrl . (str_contains($customUrl, '?') ? '&' : '?') . $params;
+
+                $booking->update([
+                    'payment_method' => 'zoho',
+                    'zoho_checkout_url' => $finalUrl,
+                ]);
+
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Your Zoho Checkout payment page URL is not configured yet. Please enter your actual Zoho payment link in Admin Settings > Payment Gateways.',
-                    'mock_allowed' => true,
+                    'success' => true,
+                    'gateway' => 'zoho',
+                    'checkout_url' => $finalUrl,
+                    'booking_number' => $booking->booking_number,
+                    'amount' => $booking->total_amount,
+                    'client_name' => $booking->name,
+                    'client_email' => $booking->email,
+                    'client_phone' => $booking->phone,
                 ]);
             }
 
-            // Build checkout page url with booking parameters
-            $baseUrl = $zohoCheckoutUrl;
-            $params = http_build_query([
-                'booking_id' => $booking->booking_number,
-                'amount' => $booking->total_amount,
-                'currency' => 'INR',
-                'name' => $booking->name,
-                'email' => $booking->email ?? '',
-                'phone' => $booking->phone,
-                'client_id' => $zohoClientId,
-                'service' => $booking->service_name,
-            ]);
+            // 2. Official Zoho Payments API Hosted Checkout Session flow
+            $sessionResult = ZohoPaymentService::createPaymentSession(
+                (float) $booking->total_amount,
+                'INR',
+                [
+                    'name' => $booking->name,
+                    'email' => $booking->email ?? '',
+                    'phone' => $booking->phone,
+                    'description' => "FMZ Glow Booking #{$booking->booking_number}",
+                ],
+                $booking->booking_number
+            );
 
-            $finalUrl = $baseUrl . (str_contains($baseUrl, '?') ? '&' : '?') . $params;
+            if ($sessionResult['success']) {
+                $booking->update([
+                    'payment_method' => 'zoho',
+                    'zoho_checkout_url' => $sessionResult['checkout_url'],
+                ]);
 
-            $booking->update([
-                'payment_method' => 'zoho',
-                'zoho_checkout_url' => $finalUrl,
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'gateway' => 'zoho',
+                    'access_key' => $sessionResult['access_key'],
+                    'payments_session' => $sessionResult['payments_session'],
+                    'checkout_url' => $sessionResult['checkout_url'],
+                    'booking_number' => $booking->booking_number,
+                    'amount' => $booking->total_amount,
+                    'client_name' => $booking->name,
+                    'client_email' => $booking->email,
+                    'client_phone' => $booking->phone,
+                ]);
+            }
 
             return response()->json([
-                'success' => true,
-                'gateway' => 'zoho',
-                'checkout_url' => $finalUrl,
-                'client_id' => $zohoClientId,
-                'booking_number' => $booking->booking_number,
-                'amount' => $booking->total_amount,
-                'client_name' => $booking->name,
-                'client_email' => $booking->email,
-                'client_phone' => $booking->phone,
+                'success' => false,
+                'message' => $sessionResult['message'] ?? 'Zoho Payments session could not be created. Please verify your Zoho API credentials in Admin Settings.',
+                'mock_allowed' => true,
             ]);
         }
 
@@ -317,11 +346,78 @@ class PaymentController extends Controller
                 'status' => 'confirmed',
             ],
         ]);
+    }
+
+    /**
+     * Endpoint for test page c:\Users\lenovo\Downloads\zoho-payments-test.html
+     */
+    public function createZohoTestSession(Request $request)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'currency' => 'nullable|string',
+            'name' => 'nullable|string',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string',
+            'description' => 'nullable|string',
+        ]);
+
+        $orderRef = 'TEST-' . strtoupper(Str::random(6));
+
+        $sessionResult = ZohoPaymentService::createPaymentSession(
+            (float) $validated['amount'],
+            $validated['currency'] ?? 'INR',
+            [
+                'name' => $validated['name'] ?? 'Test Customer',
+                'email' => $validated['email'] ?? 'test@example.com',
+                'phone' => $validated['phone'] ?? '9876543210',
+                'description' => $validated['description'] ?? 'Zoho Payments connection test',
+            ],
+            $orderRef
+        );
+
+        if (!$sessionResult['success']) {
+            return response()->json([
+                'success' => false,
+                'error' => $sessionResult['message'],
+                'message' => $sessionResult['message'],
+            ], 422);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Zoho Payment recorded successfully! Your booking is confirmed.',
-            'booking' => $booking,
+            'access_key' => $sessionResult['access_key'],
+            'payments_session' => $sessionResult['payments_session'],
+            'checkout_url' => $sessionResult['checkout_url'],
         ]);
+    }
+
+    /**
+     * Handle customer return from Zoho Hosted Checkout
+     */
+    public function handleZohoCallback(Request $request)
+    {
+        $bookingRef = $request->get('booking_ref') ?: $request->get('udf1');
+        $paymentId = $request->get('payment_id') ?: $request->get('payments_id') ?: $request->get('transaction_id');
+
+        $booking = null;
+        if ($bookingRef) {
+            $booking = Booking::where('booking_number', $bookingRef)->first();
+        }
+
+        if ($booking) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'zoho_payment_id' => $paymentId ?: 'ZOHO-HOSTED-PAID',
+                'status' => 'confirmed',
+            ]);
+
+            EmailNotificationService::notifyBookingCreated($booking);
+            EmailNotificationService::notifyPaymentReceived($booking);
+
+            return redirect('/glow?payment=success&booking=' . urlencode($booking->booking_number));
+        }
+
+        return redirect('/glow?payment=success');
     }
 }
