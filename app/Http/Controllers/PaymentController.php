@@ -213,13 +213,29 @@ class PaymentController extends Controller
             'status' => 'confirmed',
         ]);
 
+        // Send booking created notification to admin + customer now that payment has completed
+        EmailNotificationService::notifyBookingCreated($booking);
         // Send payment confirmation email
         EmailNotificationService::notifyPaymentReceived($booking);
 
         return response()->json([
             'success' => true,
-            'message' => 'Payment verified successfully! Your booking is confirmed.',
-            'booking' => $booking,
+            'message' => "Payment verified! Appointment scheduled with Specialist {$booking->specialist_name} in pincode {$booking->pincode}.",
+            'booking' => [
+                'id' => $booking->id,
+                'booking_number' => $booking->booking_number,
+                'name' => $booking->name,
+                'service' => $booking->service_name,
+                'date' => $booking->booking_date ? $booking->booking_date->format('d M Y') : 'N/A',
+                'time' => $booking->time_slot_text,
+                'pincode' => $booking->pincode,
+                'specialist_name' => $booking->specialist_name,
+                'specialist_qualification' => $booking->specialist_qualification,
+                'total_amount' => $booking->total_amount,
+                'payment_method' => 'razorpay',
+                'payment_status' => 'paid',
+                'status' => 'confirmed',
+            ],
         ]);
     }
 
@@ -241,7 +257,28 @@ class PaymentController extends Controller
             'status' => 'confirmed',
         ]);
 
+        EmailNotificationService::notifyBookingCreated($booking);
         EmailNotificationService::notifyPaymentReceived($booking);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Payment verified! Appointment scheduled with Specialist {$booking->specialist_name} in pincode {$booking->pincode}.",
+            'booking' => [
+                'id' => $booking->id,
+                'booking_number' => $booking->booking_number,
+                'name' => $booking->name,
+                'service' => $booking->service_name,
+                'date' => $booking->booking_date ? $booking->booking_date->format('d M Y') : 'N/A',
+                'time' => $booking->time_slot_text,
+                'pincode' => $booking->pincode,
+                'specialist_name' => $booking->specialist_name,
+                'specialist_qualification' => $booking->specialist_qualification,
+                'total_amount' => $booking->total_amount,
+                'payment_method' => 'zoho',
+                'payment_status' => 'paid',
+                'status' => 'confirmed',
+            ],
+        ]);
 
         return response()->json([
             'success' => true,

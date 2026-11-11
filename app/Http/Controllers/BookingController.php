@@ -230,12 +230,20 @@ class BookingController extends Controller
             'consent' => true,
         ]);
 
-        // Send Email Notifications
-        EmailNotificationService::notifyBookingCreated($booking);
+        $isOnline = in_array($booking->payment_method, ['online', 'razorpay', 'zoho']);
+
+        // Send Email Notifications immediately only for Pay After Visit
+        // For online payment, notification is sent after payment is successfully verified
+        if (!$isOnline) {
+            EmailNotificationService::notifyBookingCreated($booking);
+        }
 
         return response()->json([
             'success' => true,
-            'message' => "Appointment scheduled! Specialist {$specialist->name} has been assigned to your visit in pincode {$pincode}.",
+            'is_online_payment' => $isOnline,
+            'message' => $isOnline 
+                ? "Booking request initiated. Please complete your payment." 
+                : "Appointment scheduled! Specialist {$specialist->name} has been assigned to your visit in pincode {$pincode}.",
             'booking' => [
                 'id' => $booking->id,
                 'booking_number' => $booking->booking_number,
@@ -248,6 +256,8 @@ class BookingController extends Controller
                 'specialist_qualification' => $specialist->qualification,
                 'total_amount' => $booking->total_amount,
                 'payment_method' => $booking->payment_method,
+                'payment_status' => $booking->payment_status,
+                'status' => $booking->status,
                 'zoho_checkout_url' => $zohoCheckoutUrl,
             ],
             'assigned_specialist' => [
@@ -256,6 +266,49 @@ class BookingController extends Controller
                 'qualification' => $specialist->qualification,
                 'location' => $specialist->location,
                 'badge' => $specialist->badge,
+            ],
+        ]);
+    }
+
+    /**
+     * Switch an unpaid/pending online booking to Pay After Visit (Cash / UPI)
+     */
+    public function switchToPayAfterVisit($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        if ($booking->status === 'cancelled') {
+            return response()->json([
+                'success' => false,
+                'message' => 'This booking has already been cancelled.',
+            ], 422);
+        }
+
+        $booking->update([
+            'payment_method' => 'after_visit',
+            'payment_status' => 'unpaid',
+            'status' => 'pending',
+        ]);
+
+        // Send booking confirmation email now that customer has confirmed cash payment
+        EmailNotificationService::notifyBookingCreated($booking);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Appointment scheduled! Specialist {$booking->specialist_name} has been assigned to your visit in pincode {$booking->pincode}. You can pay after your visit via UPI or Cash.",
+            'booking' => [
+                'id' => $booking->id,
+                'booking_number' => $booking->booking_number,
+                'name' => $booking->name,
+                'service' => $booking->service_name,
+                'date' => $booking->booking_date ? $booking->booking_date->format('d M Y') : 'N/A',
+                'time' => $booking->time_slot_text,
+                'pincode' => $booking->pincode,
+                'specialist_name' => $booking->specialist_name,
+                'total_amount' => $booking->total_amount,
+                'payment_method' => 'after_visit',
+                'payment_status' => 'unpaid',
+                'status' => 'pending',
             ],
         ]);
     }

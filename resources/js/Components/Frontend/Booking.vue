@@ -56,6 +56,11 @@ const successMessage = ref('');
 const bookingResult = ref(null);
 const errorMessage = ref('');
 
+const pendingBooking = ref(null);
+const paymentFailed = ref(false);
+const switchingToCash = ref(false);
+const cancellingBooking = ref(false);
+
 const activeGateway = computed(() => {
   return props.settings?.active_payment_gateway || 'zoho';
 });
@@ -184,21 +189,29 @@ const submitBooking = async () => {
       return;
     }
 
-    bookingResult.value = data.booking;
-    successMessage.value = data.message || 'Your booking request has been received!';
+    const isOnline = form.payment_method === 'online' || form.payment_method === 'razorpay' || data.is_online_payment;
 
-    // If online payment chosen (Zoho Checkout / Razorpay)
-    if ((form.payment_method === 'online' || form.payment_method === 'razorpay') && data.booking && data.booking.id) {
-      await initiateOnlinePayment(data.booking.id, data.booking);
+    if (!isOnline) {
+      bookingResult.value = data.booking;
+      successMessage.value = data.message || 'Your booking request has been received!';
+      pendingBooking.value = null;
+      paymentFailed.value = false;
+      submitting.value = false;
+      return;
     }
+
+    // For online payment: do NOT confirm appointment until payment is verified
+    pendingBooking.value = data.booking;
+    bookingResult.value = null;
+    successMessage.value = '';
+    paymentFailed.value = false;
+
+    await initiateOnlinePayment(data.booking.id, data.booking);
 
   } catch (err) {
     console.error('Booking submission error:', err);
     errorMessage.value = 'Network error. Please try again or message us on WhatsApp.';
-  } finally {
-    if (!isRedirecting.value) {
-      submitting.value = false;
-    }
+    submitting.value = false;
   }
 };
 
@@ -207,7 +220,7 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
     // If backend already prepared zoho checkout url during store
     if (bookingData && bookingData.zoho_checkout_url) {
       checkoutUrl.value = bookingData.zoho_checkout_url;
-      successMessage.value = 'Booking submitted! Opening secure payment checkout...';
+      successMessage.value = 'Redirecting to secure Zoho payment gateway...';
       isRedirecting.value = true;
       setTimeout(() => {
         window.location.href = bookingData.zoho_checkout_url;
@@ -229,17 +242,21 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
     if (!orderData.success) {
       // Test mode or unpriced consultation notice
       if (orderData.mock_allowed) {
-        successMessage.value += ` (${orderData.message || 'Online gateway not ready; you can pay after your visit via UPI or Cash.'})`;
+        successMessage.value = orderData.message || 'Online payment not required; you can pay after your visit via UPI or Cash.';
+        bookingResult.value = bookingData;
+        paymentFailed.value = false;
       } else {
+        paymentFailed.value = true;
         errorMessage.value = orderData.message || 'Online payment initialization failed.';
       }
+      submitting.value = false;
       return;
     }
 
     // 1. Zoho Checkout: Redirect customer to Zoho checkout URL
     if (orderData.gateway === 'zoho' || orderData.checkout_url) {
       checkoutUrl.value = orderData.checkout_url;
-      successMessage.value = 'Booking submitted! Opening secure payment checkout...';
+      successMessage.value = 'Redirecting to secure payment checkout...';
       isRedirecting.value = true;
       setTimeout(() => {
         window.location.href = orderData.checkout_url;
@@ -281,21 +298,48 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
           },
           handler: async function (response) {
             await verifyPaymentOnServer(bookingId, response);
+          },
+          modal: {
+            ondismiss: function () {
+              handlePaymentDismissed();
+            }
           }
         };
         const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (resp) {
+          handlePaymentFailed(resp?.error?.description);
+        });
         rzp.open();
       } else {
+        paymentFailed.value = true;
         errorMessage.value = 'Razorpay checkout script could not be loaded. You can pay after your visit via UPI or Cash.';
+        submitting.value = false;
       }
     }
   } catch (e) {
     console.error('Payment init error:', e);
+    paymentFailed.value = true;
     errorMessage.value = 'Could not open payment gateway. You can pay after your visit via UPI or Cash.';
+    submitting.value = false;
   }
 };
 
+const handlePaymentDismissed = () => {
+  submitting.value = false;
+  paymentFailed.value = true;
+  successMessage.value = '';
+  errorMessage.value = 'Payment was closed before completion. Your appointment has NOT been confirmed yet.';
+};
+
+const handlePaymentFailed = (reason) => {
+  submitting.value = false;
+  paymentFailed.value = true;
+  successMessage.value = '';
+  errorMessage.value = `Payment failed (${reason || 'Transaction could not be processed'}). Your appointment has NOT been confirmed yet.`;
+};
+
 const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
+  submitting.value = true;
   try {
     const verifyRes = await fetch('/api/payment/verify', {
       method: 'POST',
@@ -313,10 +357,91 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
     });
     const verifyData = await verifyRes.json();
     if (verifyData.success) {
-      successMessage.value = 'Payment successful! Your booking is fully confirmed. An email receipt has been sent.';
+      paymentFailed.value = false;
+      errorMessage.value = '';
+      bookingResult.value = verifyData.booking || pendingBooking.value;
+      successMessage.value = verifyData.message || 'Payment successful! Your appointment is fully confirmed.';
+      pendingBooking.value = null;
+    } else {
+      paymentFailed.value = true;
+      successMessage.value = '';
+      errorMessage.value = verifyData.message || 'Payment verification failed.';
     }
   } catch (e) {
     console.error('Payment verification error:', e);
+    paymentFailed.value = true;
+    successMessage.value = '';
+    errorMessage.value = 'Payment verification encountered a network error. Please contact us on WhatsApp with your payment details.';
+  } finally {
+    submitting.value = false;
+  }
+};
+
+const retryOnlinePayment = () => {
+  if (!pendingBooking.value) return;
+  errorMessage.value = '';
+  paymentFailed.value = false;
+  submitting.value = true;
+  initiateOnlinePayment(pendingBooking.value.id, pendingBooking.value);
+};
+
+const switchToPayAfterVisit = async () => {
+  if (!pendingBooking.value) return;
+  switchingToCash.value = true;
+  try {
+    const res = await fetch(`/api/bookings/${pendingBooking.value.id}/switch-to-cash`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    const data = await res.json();
+    if (data.success) {
+      paymentFailed.value = false;
+      errorMessage.value = '';
+      bookingResult.value = data.booking || pendingBooking.value;
+      successMessage.value = data.message || 'Appointment scheduled! You can pay after your visit via UPI or Cash.';
+      pendingBooking.value = null;
+    } else {
+      errorMessage.value = data.message || 'Could not switch payment method.';
+    }
+  } catch (e) {
+    console.error('Error switching payment method:', e);
+    errorMessage.value = 'Network error. Please try again or contact us on WhatsApp.';
+  } finally {
+    switchingToCash.value = false;
+  }
+};
+
+const cancelPendingBooking = async () => {
+  if (!pendingBooking.value) return;
+  cancellingBooking.value = true;
+  try {
+    const res = await fetch(`/api/bookings/${pendingBooking.value.id}/cancel`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({ reason: 'Customer cancelled after payment dismissal' })
+    });
+    const data = await res.json();
+    if (data.success) {
+      paymentFailed.value = false;
+      pendingBooking.value = null;
+      bookingResult.value = null;
+      successMessage.value = '';
+      errorMessage.value = 'Your booking request has been cancelled.';
+    } else {
+      errorMessage.value = data.message || 'Could not cancel booking.';
+    }
+  } catch (e) {
+    console.error('Error cancelling booking:', e);
+  } finally {
+    cancellingBooking.value = false;
   }
 };
 </script>
@@ -499,7 +624,7 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
           </label>
 
           <button class="btn" type="submit" :disabled="submitting">
-            <span v-if="submitting">{{ isRedirecting ? 'Opening payment gateway...' : 'Processing your booking...' }}</span>
+            <span v-if="submitting">{{ isRedirecting ? 'Opening payment gateway...' : (form.payment_method === 'online' || form.payment_method === 'razorpay' ? 'Opening payment checkout...' : 'Processing your booking...') }}</span>
             <span v-else>Book your glow</span>
           </button>
 
@@ -523,6 +648,42 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
 
           <div v-if="errorMessage" class="error-box" role="alert">
             {{ errorMessage }}
+          </div>
+
+          <!-- Actions if online payment was closed or failed -->
+          <div v-if="paymentFailed && pendingBooking" style="margin-top:14px;padding:14px 16px;background:#fff5f5;border:1px solid #fecaca;border-radius:12px">
+            <div style="font-size:0.86rem;font-weight:700;color:#991b1b;margin-bottom:6px">
+              Booking #{{ pendingBooking.booking_number }} is unpaid & unconfirmed.
+            </div>
+            <p style="font-size:0.78rem;color:#7f1d1d;margin-bottom:12px;line-height:1.4">
+              Your appointment is not scheduled yet. You can retry paying online, or confirm this booking right now as <b>Pay After Visit (UPI / Cash)</b>.
+            </p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <button 
+                type="button" 
+                @click="retryOnlinePayment" 
+                :disabled="submitting"
+                style="padding:8px 16px;font-size:0.82rem;background:#7a2e2e;color:#fff !important;border-radius:999px;border:none;cursor:pointer;font-weight:700"
+              >
+                {{ submitting ? 'Opening Checkout...' : 'Retry Online Payment' }}
+              </button>
+              <button 
+                type="button" 
+                @click="switchToPayAfterVisit" 
+                :disabled="switchingToCash"
+                style="padding:8px 16px;font-size:0.82rem;background:#fff;color:#7a2e2e !important;border:1px solid #7a2e2e;border-radius:999px;cursor:pointer;font-weight:700"
+              >
+                {{ switchingToCash ? 'Confirming...' : 'Confirm as Pay After Visit' }}
+              </button>
+              <button 
+                type="button" 
+                @click="cancelPendingBooking" 
+                :disabled="cancellingBooking"
+                style="padding:8px 12px;font-size:0.82rem;background:transparent;color:#991b1b;border:none;cursor:pointer;text-decoration:underline"
+              >
+                {{ cancellingBooking ? 'Cancelling...' : 'Cancel Request' }}
+              </button>
+            </div>
           </div>
         </form>
       </div>

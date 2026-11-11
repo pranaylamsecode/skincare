@@ -77,6 +77,7 @@ Route::prefix('api')->group(function () {
     Route::post('/bookings', [BookingController::class, 'store'])->name('api.bookings.store');
     Route::get('/bookings/track', [ApiController::class, 'getBookingsByPhone'])->name('api.bookings.by_phone');
     Route::get('/bookings/{identifier}', [ApiController::class, 'getBooking'])->name('api.bookings.show');
+    Route::post('/bookings/{id}/switch-to-cash', [BookingController::class, 'switchToPayAfterVisit'])->name('api.bookings.switch_to_cash');
     Route::post('/bookings/{id}/cancel', [ApiController::class, 'cancelBooking'])->name('api.bookings.cancel');
 
     // Pincode Radius & Geocoding
