@@ -217,17 +217,6 @@ const submitBooking = async () => {
 
 const initiateOnlinePayment = async (bookingId, bookingData) => {
   try {
-    // If backend already prepared zoho checkout url during store
-    if (bookingData && bookingData.zoho_checkout_url) {
-      checkoutUrl.value = bookingData.zoho_checkout_url;
-      successMessage.value = 'Redirecting to secure Zoho payment gateway...';
-      isRedirecting.value = true;
-      setTimeout(() => {
-        window.location.href = bookingData.zoho_checkout_url;
-      }, 700);
-      return;
-    }
-
     const orderRes = await fetch('/api/payment/create-order', {
       method: 'POST',
       headers: {
@@ -265,7 +254,7 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
     }
 
     // 2. Razorpay Checkout
-    if (orderData.gateway === 'razorpay' || orderData.order_id) {
+    if (orderData.gateway === 'razorpay' || orderData.key) {
       if (typeof window.Razorpay === 'undefined') {
         await new Promise((resolve, reject) => {
           const script = document.createElement('script');
@@ -287,7 +276,6 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
           name: 'FMZ Glow',
           description: `Booking #${orderData.booking_number}`,
           image: '/images/FMZ logo.jpg',
-          order_id: orderData.order_id,
           prefill: {
             name: orderData.client_name,
             email: orderData.client_email,
@@ -305,6 +293,9 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
             }
           }
         };
+        if (orderData.order_id) {
+          options.order_id = orderData.order_id;
+        }
         const rzp = new window.Razorpay(options);
         rzp.on('payment.failed', function (resp) {
           handlePaymentFailed(resp?.error?.description);

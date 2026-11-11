@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Save, Phone, Mail, CreditCard, Bell, Sparkles, Image, Upload } from 'lucide-vue-next';
@@ -31,6 +31,38 @@ const form = useForm({
   zoho_client_secret: props.settings.zoho_client_secret || '',
   zoho_checkout_url: props.settings.zoho_checkout_url || '',
   zoho_merchant_id: props.settings.zoho_merchant_id || '',
+});
+
+// Keep active_payment_gateway and toggle checkboxes synchronized
+watch(() => form.active_payment_gateway, (val) => {
+  if (val === 'razorpay') {
+    form.razorpay_enabled = '1';
+    form.zoho_enabled = '0';
+  } else if (val === 'zoho') {
+    form.zoho_enabled = '1';
+    form.razorpay_enabled = '0';
+  } else if (val === 'none') {
+    form.razorpay_enabled = '0';
+    form.zoho_enabled = '0';
+  }
+});
+
+watch(() => form.razorpay_enabled, (val) => {
+  if (val === '1') {
+    form.active_payment_gateway = 'razorpay';
+    form.zoho_enabled = '0';
+  } else if (form.active_payment_gateway === 'razorpay') {
+    form.active_payment_gateway = 'none';
+  }
+});
+
+watch(() => form.zoho_enabled, (val) => {
+  if (val === '1') {
+    form.active_payment_gateway = 'zoho';
+    form.razorpay_enabled = '0';
+  } else if (form.active_payment_gateway === 'zoho') {
+    form.active_payment_gateway = 'none';
+  }
 });
 
 const faviconPreview = ref(props.settings.site_favicon ? '/' + props.settings.site_favicon.replace(/^\/+/, '') : null);
@@ -362,10 +394,12 @@ const submit = () => {
               <input 
                 v-model="form.zoho_checkout_url" 
                 type="text" 
-                placeholder="https://payments.zoho.in/checkout/..." 
+                placeholder="https://payments.zoho.in/checkout/... or https://checkout.zoho.in/v2/..." 
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
               />
-              <p class="text-[11px] text-neutral-500 mt-1">Customers will be redirected here or this URL will be launched to complete payment with booking details attached.</p>
+              <p class="text-[11px] text-neutral-500 mt-1">
+                Enter your actual Zoho Checkout payment page URL from your Zoho dashboard. The generic <code class="text-neutral-700 bg-neutral-100 px-1 py-0.5 rounded">payments.zoho.in/checkout/</code> placeholder returns 404 on Zoho without a valid payment link.
+              </p>
             </div>
           </div>
         </div>
@@ -400,7 +434,7 @@ const submit = () => {
               <input 
                 v-model="form.razorpay_key" 
                 type="text" 
-                placeholder="rzp_test_..." 
+                placeholder="rzp_test_... or rzp_live_..." 
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
               />
             </div>
@@ -410,9 +444,12 @@ const submit = () => {
               <input 
                 v-model="form.razorpay_secret" 
                 type="password" 
-                placeholder="••••••••••••••••••••••••" 
+                placeholder="Enter secret from Razorpay dashboard" 
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none font-mono"
               />
+              <p class="text-[11px] text-amber-600 mt-1 font-medium">
+                Note: Key Secret is generated in Razorpay Dashboard > Settings > API Keys. It is private and different from the Key ID.
+              </p>
             </div>
           </div>
         </div>

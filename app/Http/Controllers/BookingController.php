@@ -186,27 +186,8 @@ class BookingController extends Controller
 
         // Determine payment method and active gateway
         $requestedPayment = $validated['payment_method'] ?? 'after_visit';
-        $activeGateway = Setting::get('active_payment_gateway', 'razorpay');
-        $zohoCheckoutUrl = null;
-
-        if (in_array($requestedPayment, ['online', 'zoho']) || ($requestedPayment === 'razorpay' && $activeGateway === 'zoho')) {
-            $rawZohoUrl = Setting::get('zoho_checkout_url', '');
-            $zohoClientId = Setting::get('zoho_client_id', '');
-            if (!empty($rawZohoUrl)) {
-                $query = http_build_query([
-                    'booking_id' => $bookingNumber,
-                    'amount' => $totalAmount,
-                    'currency' => 'INR',
-                    'name' => $validated['name'],
-                    'phone' => $validated['phone'],
-                    'email' => $validated['email'] ?? '',
-                    'client_id' => $zohoClientId,
-                    'service' => $service ? $service->title : $validated['service_name'],
-                    'pincode' => $pincode,
-                ]);
-                $zohoCheckoutUrl = $rawZohoUrl . (str_contains($rawZohoUrl, '?') ? '&' : '?') . $query;
-            }
-        }
+        $activeGateway = PaymentController::getActiveGateway();
+        $finalPaymentMethod = ($requestedPayment === 'after_visit') ? 'after_visit' : $activeGateway;
 
         $booking = Booking::create([
             'booking_number' => $bookingNumber,
@@ -225,12 +206,12 @@ class BookingController extends Controller
             'status' => 'pending',
             'total_amount' => $totalAmount,
             'payment_status' => 'unpaid',
-            'payment_method' => $requestedPayment,
-            'zoho_checkout_url' => $zohoCheckoutUrl,
+            'payment_method' => $finalPaymentMethod,
+            'zoho_checkout_url' => null,
             'consent' => true,
         ]);
 
-        $isOnline = in_array($booking->payment_method, ['online', 'razorpay', 'zoho']);
+        $isOnline = ($finalPaymentMethod !== 'after_visit');
 
         // Send Email Notifications immediately only for Pay After Visit
         // For online payment, notification is sent after payment is successfully verified
@@ -258,7 +239,6 @@ class BookingController extends Controller
                 'payment_method' => $booking->payment_method,
                 'payment_status' => $booking->payment_status,
                 'status' => $booking->status,
-                'zoho_checkout_url' => $zohoCheckoutUrl,
             ],
             'assigned_specialist' => [
                 'id' => $specialist->id,

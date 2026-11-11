@@ -11,11 +11,35 @@ use Razorpay\Api\Api;
 class PaymentController extends Controller
 {
     /**
+     * Determine the effective active gateway based on settings
+     */
+    public static function getActiveGateway(): string
+    {
+        $active = Setting::get('active_payment_gateway', '');
+        $razorpayEnabled = (bool) Setting::get('razorpay_enabled', '0');
+        $zohoEnabled = (bool) Setting::get('zoho_enabled', '0');
+
+        // Check if one is exclusively enabled
+        if ($razorpayEnabled && !$zohoEnabled) {
+            return 'razorpay';
+        }
+        if ($zohoEnabled && !$razorpayEnabled) {
+            return 'zoho';
+        }
+
+        if ($active === 'razorpay' || $active === 'zoho' || $active === 'none') {
+            return $active;
+        }
+
+        return 'razorpay';
+    }
+
+    /**
      * Get active payment gateway configuration
      */
     public function getPaymentConfig()
     {
-        $activeGateway = Setting::get('active_payment_gateway', 'razorpay');
+        $activeGateway = self::getActiveGateway();
         $razorpayEnabled = (bool) Setting::get('razorpay_enabled', '0');
         $razorpayKey = Setting::get('razorpay_key', '');
         $zohoEnabled = (bool) Setting::get('zoho_enabled', '0');
@@ -52,7 +76,7 @@ class PaymentController extends Controller
         ]);
 
         $booking = Booking::findOrFail($request->booking_id);
-        $gateway = $request->gateway ?: Setting::get('active_payment_gateway', 'razorpay');
+        $gateway = $request->gateway ?: self::getActiveGateway();
 
         // Handle Zoho Checkout
         if ($gateway === 'zoho') {
@@ -65,18 +89,23 @@ class PaymentController extends Controller
             }
 
             $zohoClientId = Setting::get('zoho_client_id', '');
-            $zohoCheckoutUrl = Setting::get('zoho_checkout_url', '');
+            $zohoCheckoutUrl = trim(Setting::get('zoho_checkout_url', ''));
 
-            if (!$zohoCheckoutUrl && !$zohoClientId) {
+            // Check if Zoho URL is empty or the invalid default placeholder
+            $isPlaceholder = empty($zohoCheckoutUrl)
+                || str_ends_with(rtrim($zohoCheckoutUrl, '/'), 'payments.zoho.in/checkout')
+                || str_ends_with(rtrim($zohoCheckoutUrl, '/'), 'payments.zoho.in');
+
+            if ($isPlaceholder) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Zoho Checkout credentials are not yet configured in admin settings. You can pay after your visit via UPI or Cash.',
+                    'message' => 'Your Zoho Checkout payment page URL is not configured yet. Please enter your actual Zoho payment link in Admin Settings > Payment Gateways.',
                     'mock_allowed' => true,
                 ]);
             }
 
             // Build checkout page url with booking parameters
-            $baseUrl = $zohoCheckoutUrl ?: 'https://payments.zoho.in/checkout';
+            $baseUrl = $zohoCheckoutUrl;
             $params = http_build_query([
                 'booking_id' => $booking->booking_number,
                 'amount' => $booking->total_amount,
@@ -115,14 +144,12 @@ class PaymentController extends Controller
         if (!$key || $key === 'rzp_test_placeholder') {
             return response()->json([
                 'success' => false,
-                'message' => 'Razorpay gateway is in test mode or not configured. You can pay after your visit via UPI or Cash.',
+                'message' => 'Razorpay gateway is not configured with a valid Key ID. You can pay after your visit via UPI or Cash.',
                 'mock_allowed' => true,
             ]);
         }
 
         try {
-            $api = new Api($key, $secret);
-
             $amountInPaise = (int) round($booking->total_amount * 100);
             if ($amountInPaise <= 0) {
                 return response()->json([
@@ -132,28 +159,39 @@ class PaymentController extends Controller
                 ]);
             }
 
-            $orderData = [
-                'receipt' => $booking->booking_number,
-                'amount' => $amountInPaise,
-                'currency' => 'INR',
-                'notes' => [
-                    'booking_id' => (string) $booking->id,
-                    'client_name' => $booking->name,
-                    'service' => $booking->service_name,
-                ],
-            ];
+            $orderId = null;
 
-            $razorpayOrder = $api->order->create($orderData);
+            // Only attempt server-side order creation if secret is provided and differs from key ID
+            if ($secret && $secret !== $key && $secret !== 'rzp_secret_placeholder') {
+                try {
+                    $api = new Api($key, $secret);
+                    $orderData = [
+                        'receipt' => $booking->booking_number,
+                        'amount' => $amountInPaise,
+                        'currency' => 'INR',
+                        'notes' => [
+                            'booking_id' => (string) $booking->id,
+                            'client_name' => $booking->name,
+                            'service' => $booking->service_name,
+                        ],
+                    ];
+
+                    $razorpayOrder = $api->order->create($orderData);
+                    $orderId = $razorpayOrder['id'] ?? null;
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning("Razorpay order creation fallback: " . $e->getMessage());
+                }
+            }
 
             $booking->update([
-                'razorpay_order_id' => $razorpayOrder['id'],
+                'razorpay_order_id' => $orderId,
                 'payment_method' => 'razorpay',
             ]);
 
             return response()->json([
                 'success' => true,
                 'gateway' => 'razorpay',
-                'order_id' => $razorpayOrder['id'],
+                'order_id' => $orderId,
                 'amount' => $amountInPaise,
                 'currency' => 'INR',
                 'key' => $key,
