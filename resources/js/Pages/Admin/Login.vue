@@ -3,9 +3,9 @@ import { useForm, Head } from '@inertiajs/vue3';
 import { Lock, Mail, ArrowRight } from 'lucide-vue-next';
 
 const form = useForm({
-  email: 'admin@fmzglow.com',
-  password: 'admin123',
-  remember: true,
+  email: '',
+  password: '',
+  remember: false,
 });
 
 const submit = () => {
@@ -36,9 +36,10 @@ const submit = () => {
             <input 
               v-model="form.email" 
               type="email" 
+              autocomplete="username"
               required
               class="w-full !pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:bg-white focus:border-[#b60a0a] focus:ring-1 focus:ring-[#b60a0a] transition outline-none"
-              placeholder="admin@fmzglow.com"
+              placeholder="Enter your email"
             />
           </div>
           <span v-if="form.errors.email" class="text-xs text-red-600 mt-1 block">{{ form.errors.email }}</span>
@@ -53,6 +54,7 @@ const submit = () => {
             <input 
               v-model="form.password" 
               type="password" 
+              autocomplete="current-password"
               required
               class="w-full !pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm focus:bg-white focus:border-[#b60a0a] focus:ring-1 focus:ring-[#b60a0a] transition outline-none"
               placeholder="••••••••"
@@ -70,7 +72,6 @@ const submit = () => {
             />
             <span>Remember me</span>
           </label>
-          <span class="text-neutral-400 text-xs">Default: admin123</span>
         </div>
 
         <button 
