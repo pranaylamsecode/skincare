@@ -8,6 +8,11 @@ const props = defineProps({
 
 const emit = defineEmits(['select-concern']);
 
+const cleanQuote = (text) => {
+  if (!text) return '';
+  return text.replace(/^[“"']+|[”"']+$/g, '').trim();
+};
+
 const defaultConcerns = [
   {
     title: 'Dull, tired skin',
@@ -61,10 +66,10 @@ const pickConcern = (concern, service) => {
             :key="item.id || index"
             type="button"
             class="concern"
-            :class="{ dark: item.is_dark || index === 1 }"
+            :class="{ dark: Boolean(item.is_dark) }"
             @click="pickConcern(item.title || item.quote, item.service_name || defaultConcerns[index % 4].service)"
           >
-            <q>{{ item.title || item.quote }}</q>
+            <q>{{ cleanQuote(item.quote || item.title) }}</q>
             <span>{{ item.desc || item.solution || defaultConcerns[index % 4].desc }}</span>
             <b>{{ item.cta || item.link_text || defaultConcerns[index % 4].cta }}</b>
           </button>
@@ -79,7 +84,7 @@ const pickConcern = (concern, service) => {
             :class="{ dark: c.is_dark }"
             @click="pickConcern(c.title, c.service)"
           >
-            <q>{{ c.title }}</q>
+            <q>{{ cleanQuote(c.title) }}</q>
             <span>{{ c.desc }}</span>
             <b>{{ c.cta }}</b>
           </button>
