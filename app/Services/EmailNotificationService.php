@@ -61,9 +61,9 @@ class EmailNotificationService
             'total_amount' => number_format((float) $booking->total_amount, 2),
         ];
 
-        // 1. Notify user if email provided
+        // 1. Send confirmation email to client if email provided
         if (!empty($booking->email)) {
-            self::send('booking_received', $booking->email, $vars);
+            self::send('booking_confirmed', $booking->email, $vars);
         }
 
         // 2. Notify business owner / admin

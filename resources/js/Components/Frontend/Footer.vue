@@ -105,7 +105,10 @@ const supportPhone = computed(() => props.settings?.whatsapp_number || '+91 7303
       <div class="ft">
         <div>
           <a class="logo" href="#top">
-            <span class="fmz">FMZ</span><span class="glow">glow</span>
+            <div class="logo-mark">
+              <span class="fmz">FMZ</span><span class="glow">glow</span>
+            </div>
+            <span class="logo-tagline">Skincare &amp; Wellness</span>
           </a>
           <p style="margin-top: 14px; line-height: 1.6;">
             FMZ Glow is a service of FMZ India.<br>

@@ -30,8 +30,11 @@ onMounted(() => {
   <header class="site-header">
     <div class="wrap nav">
       <a class="logo" href="#top" aria-label="FMZ Glow home">
-        <span class="fmz">FMZ</span>
-        <span class="glow">glow</span>
+        <div class="logo-mark">
+          <span class="fmz">FMZ</span>
+          <span class="glow">glow</span>
+        </div>
+        <span class="logo-tagline">Skincare &amp; Wellness</span>
       </a>
 
       <ul>

@@ -89,7 +89,7 @@
             @else
                 <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 1px;">{{ $siteName ?? 'FMZ GLOW' }}</h1>
             @endif
-            <p>At-Home Skincare by FMZ India</p>
+            <p>At-Home Skincare &amp; Wellness by FMZ India</p>
         </div>
         <div class="body">
 {{ $bodyContent }}

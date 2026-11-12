@@ -62,7 +62,7 @@ const handleConcernSelect = ({ concern, service }) => {
 </script>
 
 <template>
-  <Head title="FMZ Glow · At-home skincare by certified women specialists" />
+  <Head title="FMZ Glow · At-home skincare & wellness by certified women specialists" />
 
   <div class="fmz-frontend">
     <!-- Top Announcement Banner -->

@@ -51,9 +51,9 @@ const waLink = computed(() => {
 
         <figure class="hero-media">
           <img 
-            src="/images/fmz-glow-facial.png" 
+            src="/images/client-hero.jpg" 
             alt="FMZ Glow at-home skincare visit" 
-            onerror="this.src='/images/Burgundy-Luxury-Skincare.png'"
+            onerror="this.src='/images/fmz-glow-facial.png'"
           />
           <a href="#book" class="hero-badge">
             <span class="tag">LAUNCH OFFER</span>

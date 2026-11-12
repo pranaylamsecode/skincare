@@ -446,15 +446,24 @@ const cancelPendingBooking = async () => {
     cancellingBooking.value = false;
   }
 };
+const waBookingLink = computed(() => {
+  const num = (props.settings?.whatsapp_number || '+917303706047').replace(/[^0-9]/g, '');
+  return `https://wa.me/${num}?text=${encodeURIComponent('Hi FMZ Glow, I would like to book an at-home skincare visit.')}`;
+});
 </script>
 
 <template>
   <section class="booking" id="book">
-    <div class="wrap book-grid">
-      <div>
-        <div class="eyebrow">Book a visit</div>
+    <div class="wrap bk-grid">
+      <div class="bk-side">
         <h2>Ready for your glow?</h2>
-        <p>Send us your details and preferred service. Our team will contact you on WhatsApp to confirm your specialist, time and total price in writing.</p>
+        <p>Three quick steps. We confirm your specialist, time and total price on WhatsApp before anyone comes to your home.</p>
+        <ul>
+          <li>Certified women specialists only</li>
+          <li>No payment now; pay after your visit</li>
+          <li>Free cancellation up to 4 hours before</li>
+        </ul>
+        <a class="btn wa" :href="waBookingLink" target="_blank" rel="noopener">Book on WhatsApp instead</a>
         
         <div v-if="bookingResult" style="margin-top:24px;background:rgba(255,255,255,0.08);border-radius:16px;padding:20px;border:1px solid rgba(255,255,255,0.15)">
           <div style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--tan);font-weight:700">Latest Booking</div>
@@ -473,7 +482,7 @@ const cancelPendingBooking = async () => {
         </div>
       </div>
 
-      <div class="form">
+      <div class="bk form">
         <form @submit.prevent="submitBooking">
           <div class="form-grid">
             <div class="field">
