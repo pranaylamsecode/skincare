@@ -131,9 +131,10 @@ const selectedWindow = ref(null);
 const form = reactive({
   name: '',
   phone: '',
+  email: '',
   pin: '',
   msg: '',
-  consent: false,
+  consent: true,
   payment_method: 'after_visit'
 });
 
@@ -228,22 +229,34 @@ const validate = () => {
   }
 };
 
-const isFormValid = computed(() => {
-  const phoneOk = /^[6-9]\d{9}$/.test(form.phone);
-  return (
-    form.name.trim().length > 1 &&
-    phoneOk &&
-    form.pin.length === 6 &&
-    form.consent === true
-  );
-});
-
 // Submit booking
 const submitBooking = async () => {
-  if (!isFormValid.value || submitting.value) return;
+  errorMessage.value = '';
+
+  if (!form.name.trim()) {
+    errorMessage.value = 'Please enter your name.';
+    return;
+  }
+
+  const phoneClean = form.phone.replace(/\D/g, '');
+  if (phoneClean.length < 10) {
+    errorMessage.value = 'Please enter a valid 10-digit WhatsApp number.';
+    return;
+  }
+
+  if (form.pin.trim().length !== 6) {
+    errorMessage.value = 'Please enter a valid 6-digit pincode.';
+    return;
+  }
+
+  if (!form.consent) {
+    errorMessage.value = 'Please check the box to allow FMZ India to message you on WhatsApp about this booking.';
+    return;
+  }
+
+  if (submitting.value) return;
 
   submitting.value = true;
-  errorMessage.value = '';
   paymentFailed.value = false;
 
   const d = days.value.find(x => x.dayIdx === selectedDayIdx.value) || days.value[0];
@@ -266,6 +279,7 @@ const submitBooking = async () => {
       body: JSON.stringify({
         name: form.name.trim(),
         phone: form.phone.trim(),
+        email: form.email.trim() || null,
         pincode: form.pin.trim(),
         service_name: svc.name,
         service_id: svc.id || null,
@@ -513,9 +527,10 @@ const restartWizard = () => {
   selectedSpecialistName.value = '';
   form.name = '';
   form.phone = '';
+  form.email = '';
   form.pin = '';
   form.msg = '';
-  form.consent = false;
+  form.consent = true;
   form.payment_method = 'after_visit';
   bookingResult.value = null;
   pendingBooking.value = null;
@@ -688,6 +703,16 @@ onMounted(() => {
             @input="validate"
           >
 
+          <label class="lbl" for="fEmail">Email address (for booking confirmation & receipt)</label>
+          <input 
+            class="field" 
+            id="fEmail" 
+            type="email"
+            v-model="form.email" 
+            autocomplete="email" 
+            placeholder="e.g. mansi@example.com"
+          >
+
           <div class="row2">
             <div>
               <label class="lbl" for="fPhone">WhatsApp number</label>
@@ -752,6 +777,15 @@ onMounted(() => {
             </button>
           </div>
 
+          <p class="hint" style="margin-top:6px;font-size:12.5px;color:var(--muted)">
+            <span v-if="form.payment_method === 'after_visit'">
+              ✓ <b>Pay after visit selected:</b> No payment taken now. You pay directly after your treatment via UPI or cash.
+            </span>
+            <span v-else>
+              ✓ <b>Pay online selected:</b> Fast &amp; secure checkout with Razorpay / UPI / Cards.
+            </span>
+          </p>
+
           <label class="check">
             <input type="checkbox" id="fConsent" v-model="form.consent" @change="validate">
             <span>FMZ India can message me on WhatsApp about this booking.</span>
@@ -767,13 +801,15 @@ onMounted(() => {
               class="btn" 
               id="submit" 
               type="button" 
-              :disabled="!isFormValid || submitting" 
+              :disabled="submitting" 
               @click="submitBooking"
             >
               <span v-if="submitting">
-                {{ isRedirecting ? 'Redirecting to payment...' : (form.payment_method === 'online' ? 'Opening payment...' : 'Requesting booking...') }}
+                {{ isRedirecting ? 'Redirecting to payment...' : (form.payment_method === 'online' ? 'Opening payment...' : 'Confirming your booking...') }}
               </span>
-              <span v-else>Request booking</span>
+              <span v-else>
+                {{ form.payment_method === 'online' ? 'Proceed to Online Payment' : 'Confirm booking (Pay after visit)' }}
+              </span>
             </button>
           </div>
 
@@ -822,7 +858,7 @@ onMounted(() => {
             <div v-if="bookingResult?.specialist_name || selectedSpecialistName">
               <b>Specialist:</b> {{ bookingResult?.specialist_name || selectedSpecialistName }}
             </div>
-            <div>{{ form.name }} · +91 {{ form.phone }} · {{ form.pin }}</div>
+            <div>{{ form.name }} · {{ form.email ? form.email + ' · ' : '' }}+91 {{ form.phone }} · {{ form.pin }}</div>
           </div>
 
           <a class="btn wa" :href="doneWaLink" target="_blank" rel="noopener" id="doneWa" style="width:100%">
