@@ -91,7 +91,6 @@ const bookWithSpecialist = (spec) => {
             <span class="verified">✓ {{ spec.badge || 'Verified specialist' }}</span>
             <h3>{{ spec.name }}</h3>
             <span class="cred">{{ spec.qualification }}</span>
-            <span class="area">{{ spec.location }}</span>
             <span class="area" v-if="spec.languages && spec.languages.length">
               {{ Array.isArray(spec.languages) ? spec.languages.join(', ') : spec.languages }}
             </span>

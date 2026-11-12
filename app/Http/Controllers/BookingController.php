@@ -109,6 +109,8 @@ class BookingController extends Controller
             'pincode' => 'required|string|size:6',
             'service_name' => 'required|string|max:150',
             'service_id' => 'nullable|integer',
+            'specialist_id' => 'nullable|integer',
+            'specialist_name' => 'nullable|string|max:150',
             'date' => 'required|date|after_or_equal:today',
             'time_slot_id' => 'nullable|integer',
             'time_slot_text' => 'nullable|string|max:100',
@@ -121,24 +123,43 @@ class BookingController extends Controller
         $date = Carbon::parse($validated['date'])->format('Y-m-d');
         $timeSlotId = $validated['time_slot_id'] ?? null;
 
-        // Auto-assign specialist using round-robin for this pincode area
-        $assignResult = Specialist::findAvailableForPincode($pincode, $date, $timeSlotId);
-
-        if (!$assignResult['serviceable']) {
-            return response()->json([
-                'success' => false,
-                'message' => "We currently do not offer at-home skincare service in pincode {$pincode}. Our certified specialists serve Ahmedabad, Gandhinagar, Surat & Rajkot.",
-            ], 422);
+        // Check if a specific specialist was requested by user
+        $specialist = null;
+        if (!empty($validated['specialist_id'])) {
+            $specialist = Specialist::where('is_active', true)->find($validated['specialist_id']);
+        }
+        if (!$specialist && !empty($validated['specialist_name'])) {
+            $specialist = Specialist::where('is_active', true)
+                ->where('name', $validated['specialist_name'])
+                ->first();
+        }
+        if (!$specialist && !empty($validated['msg']) && preg_match('/Preferred specialist:\s*([^\n\r,]+)/i', $validated['msg'], $m)) {
+            $prefName = trim($m[1]);
+            $specialist = Specialist::where('is_active', true)
+                ->where('name', 'like', "%{$prefName}%")
+                ->first();
         }
 
-        if (!$assignResult['specialist']) {
-            return response()->json([
-                'success' => false,
-                'message' => "All certified specialists serving pincode {$pincode} are fully booked for this time slot. Please choose another slot or date.",
-            ], 422);
-        }
+        // If no preferred specialist requested, auto-assign using round-robin for this pincode area
+        if (!$specialist) {
+            $assignResult = Specialist::findAvailableForPincode($pincode, $date, $timeSlotId);
 
-        $specialist = $assignResult['specialist'];
+            if (!$assignResult['serviceable']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "We currently do not offer at-home skincare service in pincode {$pincode}. Our certified specialists serve Ahmedabad, Gandhinagar, Surat & Rajkot.",
+                ], 422);
+            }
+
+            if (!$assignResult['specialist']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "All certified specialists serving pincode {$pincode} are fully booked for this time slot. Please choose another slot or date.",
+                ], 422);
+            }
+
+            $specialist = $assignResult['specialist'];
+        }
 
         // Smart price and service resolution
         $service = null;
