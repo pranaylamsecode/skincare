@@ -24,12 +24,16 @@ class EmailNotificationService
             }
 
             // Merge site settings variables
+            $siteLogo = Setting::get('site_logo', 'images/FMZ Glow logo.jpg');
+            $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim($siteLogo, '/'));
             $variables['site_name'] = Setting::get('site_name', 'FMZ Glow');
             $variables['whatsapp_number'] = Setting::get('whatsapp_number', '+917303706047');
+            $variables['site_logo'] = $logoUrl;
+            $variables['logo_url'] = $logoUrl;
 
             $rendered = $template->render($variables);
 
-            Mail::to($recipientEmail)->send(new TemplateMail($rendered['subject'], $rendered['content']));
+            Mail::to($recipientEmail)->send(new TemplateMail($rendered['subject'], $rendered['content'], $logoUrl));
 
             Log::info("Email '{$templateCode}' successfully sent to {$recipientEmail}.");
             return true;

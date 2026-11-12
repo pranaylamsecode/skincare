@@ -1,66 +1,58 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
-const isMenuOpen = ref(false);
+const isDark = ref(false);
 
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
-
-const closeMenu = () => {
-  isMenuOpen.value = false;
-};
-
-const handleResize = () => {
-  if (window.innerWidth > 820) {
-    isMenuOpen.value = false;
-  }
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  const theme = isDark.value ? 'dark' : 'light';
+  document.documentElement.dataset.theme = theme;
+  try {
+    localStorage.setItem('fmz-theme', theme);
+  } catch (e) {}
 };
 
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
+  try {
+    const saved = localStorage.getItem('fmz-theme');
+    if (saved === 'dark' || saved === 'light') {
+      isDark.value = saved === 'dark';
+      document.documentElement.dataset.theme = saved;
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      isDark.value = true;
+      document.documentElement.dataset.theme = 'dark';
+    }
+  } catch (e) {}
 });
 </script>
 
 <template>
   <header class="site-header">
     <div class="wrap nav">
-      <a class="logo" href="#" aria-label="FMZ Glow home">
-        <img src="/images/FMZ logo.jpg" alt="FMZ Glow" width="143" height="46">
+      <a class="logo" href="#top" aria-label="FMZ Glow home">
+        <span class="fmz">FMZ</span>
+        <span class="glow">glow</span>
       </a>
-      <nav class="nav-links" aria-label="Main navigation">
-        <a href="#skin">Your skin</a>
-        <a href="#services">Services</a>
-        <a href="#plans">Plans</a>
-        <a href="#products">Products</a>
-        <a href="#how">How it works</a>
-        <a href="#faq">FAQ</a>
+
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#specialists">Specialists</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <button 
+          class="theme-btn" 
+          type="button" 
+          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" 
+          :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          @click="toggleTheme"
+        >
+          {{ isDark ? '☀️' : '🌙' }}
+        </button>
         <a class="btn" href="#book">Book a visit</a>
-      </nav>
-      <button 
-        class="menu-btn" 
-        type="button" 
-        :aria-expanded="isMenuOpen" 
-        aria-label="Toggle menu" 
-        @click="toggleMenu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      </div>
     </div>
-    <nav class="mobile-menu" :class="{ open: isMenuOpen }" aria-label="Mobile navigation">
-      <a href="#skin" @click="closeMenu">Your skin</a>
-      <a href="#services" @click="closeMenu">Services</a>
-      <a href="#plans" @click="closeMenu">Plans</a>
-      <a href="#products" @click="closeMenu">Products</a>
-      <a href="#how" @click="closeMenu">How it works</a>
-      <a href="#faq" @click="closeMenu">FAQ</a>
-      <a class="mobile-book-btn" href="#book" @click="closeMenu">Book a visit</a>
-    </nav>
   </header>
 </template>

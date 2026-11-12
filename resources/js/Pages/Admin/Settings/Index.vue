@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Save, Phone, Mail, CreditCard, Bell, Sparkles, Image, Upload, Share2, Instagram, Facebook, Youtube, MessageCircle } from 'lucide-vue-next';
+import { Save, Phone, Mail, CreditCard, Bell, Sparkles, Image, Upload, Share2, Instagram, Facebook, Youtube, MessageCircle, Users } from 'lucide-vue-next';
 
 const props = defineProps({
   settings: { type: Object, default: () => ({}) }
@@ -22,6 +22,7 @@ const form = useForm({
   hero_title: props.settings.hero_title || 'Skincare that<br><em>understands</em> you.',
   hero_lead: props.settings.hero_lead || 'We listen to your skin concerns first. Then a certified woman specialist brings professional Nu Skin care to your home, explains every step, and leaves you with a routine that fits your life.',
   hero_tagline: props.settings.hero_tagline || 'Your Glow. Your Home. Your Time.',
+  specialist_gender_filter: props.settings.specialist_gender_filter || 'female',
   active_payment_gateway: props.settings.active_payment_gateway || 'razorpay',
   razorpay_key: props.settings.razorpay_key || '',
   razorpay_secret: props.settings.razorpay_secret || '',
@@ -341,6 +342,55 @@ const submit = () => {
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
               ></textarea>
             </div>
+          </div>
+        </div>
+
+        <!-- Specialist & Staff Frontend Display Filter -->
+        <div class="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
+            <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
+              <Users class="w-4 h-4 text-[#7a2e2e]" />
+              <span>Frontend Specialists Display Filter</span>
+            </h2>
+            <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">Staff Selection</span>
+          </div>
+          <p class="text-xs text-neutral-500">
+            Choose which specialists appear in the frontend side-scrolling list. Selecting <strong>Female Only</strong> ensures only certified women specialists are displayed to clients.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <label 
+              :class="form.specialist_gender_filter === 'female' ? 'border-[#7a2e2e] bg-[#fbf5f4] ring-1 ring-[#7a2e2e]' : 'border-neutral-200 bg-neutral-50'"
+              class="border rounded-xl p-3.5 cursor-pointer transition flex items-start gap-3"
+            >
+              <input type="radio" v-model="form.specialist_gender_filter" value="female" class="mt-0.5 accent-[#7a2e2e]" />
+              <div>
+                <div class="text-xs font-bold text-neutral-900">Female Only (Recommended)</div>
+                <div class="text-[11px] text-neutral-500 mt-0.5">Show only certified women specialists in side-scroll list</div>
+              </div>
+            </label>
+
+            <label 
+              :class="form.specialist_gender_filter === 'male' ? 'border-[#7a2e2e] bg-[#fbf5f4] ring-1 ring-[#7a2e2e]' : 'border-neutral-200 bg-neutral-50'"
+              class="border rounded-xl p-3.5 cursor-pointer transition flex items-start gap-3"
+            >
+              <input type="radio" v-model="form.specialist_gender_filter" value="male" class="mt-0.5 accent-[#7a2e2e]" />
+              <div>
+                <div class="text-xs font-bold text-neutral-900">Male Only</div>
+                <div class="text-[11px] text-neutral-500 mt-0.5">Show only male specialists</div>
+              </div>
+            </label>
+
+            <label 
+              :class="form.specialist_gender_filter === 'all' ? 'border-[#7a2e2e] bg-[#fbf5f4] ring-1 ring-[#7a2e2e]' : 'border-neutral-200 bg-neutral-50'"
+              class="border rounded-xl p-3.5 cursor-pointer transition flex items-start gap-3"
+            >
+              <input type="radio" v-model="form.specialist_gender_filter" value="all" class="mt-0.5 accent-[#7a2e2e]" />
+              <div>
+                <div class="text-xs font-bold text-neutral-900">All Specialists</div>
+                <div class="text-[11px] text-neutral-500 mt-0.5">Show both female and male specialists</div>
+              </div>
+            </label>
           </div>
         </div>
 

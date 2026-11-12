@@ -44,6 +44,7 @@ const form = useForm({
   service_radius_km: props.specialist?.service_radius_km ?? 10,
   serviceable_pincodes: props.specialist?.serviceable_pincodes || '',
   city: props.specialist?.city || 'ahmedabad',
+  gender: props.specialist?.gender || 'female',
   languages: props.specialist?.languages || ['Gujarati', 'Hindi', 'English'],
   badge: props.specialist?.badge || 'Verified Specialist',
   phone: props.specialist?.phone || '',
@@ -320,6 +321,18 @@ onMounted(() => {
                 <option value="gandhinagar">Gandhinagar</option>
                 <option value="surat">Surat</option>
                 <option value="rajkot">Rajkot</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1.5">Gender / Specialist Profile</label>
+              <select 
+                v-model="form.gender" 
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-[#7a2e2e] outline-none font-semibold"
+              >
+                <option value="female">Female (Woman Specialist)</option>
+                <option value="male">Male</option>
+                <option value="other">Other</option>
               </select>
             </div>
 

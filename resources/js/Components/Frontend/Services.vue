@@ -3,6 +3,10 @@ const props = defineProps({
   services: {
     type: Array,
     default: () => []
+  },
+  plans: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -10,9 +14,14 @@ const emit = defineEmits(['select-service']);
 
 const selectService = (serviceTitle) => {
   emit('select-service', serviceTitle);
+  const bookEl = document.getElementById('book');
+  if (bookEl) {
+    bookEl.scrollIntoView({ behavior: 'smooth' });
+  }
 };
 
 const formatPrice = (price) => {
+  if (!price) return '';
   return '₹' + Math.round(Number(price)).toLocaleString('en-IN');
 };
 </script>
@@ -20,98 +29,107 @@ const formatPrice = (price) => {
 <template>
   <section class="services" id="services">
     <div class="wrap">
-      <div class="head">
-        <div class="eyebrow">Our services</div>
-        <h2>Choose your experience</h2>
-        <p>Every visit starts with a conversation about your skin. Your specialist checks what suits you before she begins, and explains each step.</p>
+      <div class="center">
+        <h2>Choose your visit</h2>
+        <p class="lede">Every visit starts with a short skin check. Your specialist explains each step before she begins.</p>
       </div>
 
       <div class="svc-grid">
-        <article 
-          v-for="svc in services" 
-          :key="svc.id" 
-          class="svc" 
-          :class="{ feat: svc.is_featured }"
-        >
-          <div class="ph">
-            <template v-if="!svc.image">
-              Photo: gentle care at home
-            </template>
-            <img 
-              v-if="svc.image" 
-              :src="svc.image.startsWith('http') ? svc.image : '/' + svc.image" 
-              :alt="svc.title" 
-              loading="lazy" 
-              onerror="this.remove()"
-            >
-          </div>
-
-          <div class="svc-body">
-            <span 
-              v-if="svc.tag" 
-              class="tag" 
-              :class="{
-                tan: svc.tag_style === 'tan',
-                dark: svc.tag_style === 'dark'
-              }"
-            >
-              {{ svc.tag }}
-            </span>
-
+        <template v-if="services && services.length">
+          <article 
+            v-for="svc in services" 
+            :key="svc.id" 
+            class="svc"
+            :class="{ feature: svc.is_featured }"
+          >
+            <span class="tag">{{ svc.tag || (svc.is_featured ? 'Launch offer' : 'At-home care') }}</span>
             <h3>{{ svc.title }}</h3>
+            <div class="meta" v-if="svc.duration_minutes">
+              <span>⏱ About {{ svc.duration_minutes }} min</span>
+            </div>
             <p v-if="svc.description">{{ svc.description }}</p>
-
             <ul v-if="svc.features && svc.features.length">
               <li v-for="(feat, idx) in svc.features" :key="idx">{{ feat }}</li>
             </ul>
-
             <div class="price">
-              {{ formatPrice(svc.price) }}
+              <b>{{ formatPrice(svc.price) }}</b>
               <s v-if="svc.original_price">{{ formatPrice(svc.original_price) }}</s>
-              <small v-if="svc.launch_label">{{ svc.launch_label }}</small>
             </div>
-
-            <a 
-              class="btn pkg" 
-              :class="svc.is_featured ? '' : 'btn-line'" 
-              href="#book" 
-              @click.prevent="selectService(svc.title)"
+            <button 
+              type="button" 
+              class="btn" 
+              :class="svc.is_featured ? '' : 'ghost'"
+              @click="selectService(svc.title)"
             >
-              Book this service
-            </a>
-          </div>
-        </article>
+              Book {{ svc.title.replace('Nu Skin LumiSpa ', '') }}
+            </button>
+          </article>
+        </template>
+
+        <template v-else>
+          <article class="svc">
+            <span class="tag">A gentle start</span>
+            <h3>FMZ Glow Cleanse</h3>
+            <div class="meta"><span>⏱ About 45 min</span></div>
+            <p>Deep cleansing and hydration with the Nu Skin LumiSpa iO.</p>
+            <ul>
+              <li>Skin suitability check</li>
+              <li>LumiSpa iO cleanse</li>
+              <li>Moisturising finish</li>
+              <li>Simple aftercare tips</li>
+            </ul>
+            <div class="price"><b>₹799</b></div>
+            <button type="button" class="btn ghost" @click="selectService('FMZ Glow Cleanse')">Book Glow Cleanse</button>
+          </article>
+
+          <article class="svc feature">
+            <span class="tag">Launch offer</span>
+            <h3>FMZ Glow Facial</h3>
+            <div class="meta"><span>⏱ About 60 min</span></div>
+            <p>Our signature facial with the Nu Skin Galvanic Spa and selected Nu Skin products.</p>
+            <ul>
+              <li>Skin consultation</li>
+              <li>Galvanic Spa facial treatment</li>
+              <li>Leaves skin soft and refreshed</li>
+              <li>Home-care tips</li>
+            </ul>
+            <div class="price"><b>₹999</b><s>₹1,199</s></div>
+            <button type="button" class="btn" @click="selectService('FMZ Glow Facial')">Book Glow Facial</button>
+          </article>
+
+          <article class="svc">
+            <span class="tag">Most complete</span>
+            <h3>FMZ Radiance Ritual</h3>
+            <div class="meta"><span>⏱ About 75 min</span></div>
+            <p>The Glow Facial plus a 15-second Prysm iO antioxidant scan, explained by your specialist.</p>
+            <ul>
+              <li>Extended consultation</li>
+              <li>Galvanic Spa facial</li>
+              <li>Prysm iO antioxidant score</li>
+              <li>Personal skincare and food tips</li>
+            </ul>
+            <div class="price"><b>₹1,699</b></div>
+            <button type="button" class="btn ghost" @click="selectService('FMZ Radiance Ritual')">Book Radiance Ritual</button>
+          </article>
+        </template>
       </div>
 
-      <!-- Coming soon -->
-      <div class="coming">
-        <div class="coming-top">
-          <h3>Coming soon</h3>
-          <span>Opening as our specialists complete training for each one</span>
-        </div>
-        <div class="coming-grid">
+      <!-- Plan Card -->
+      <div class="plan">
+        <template v-if="plans && plans.length">
           <div>
-            <b>Glow Facial + Prysm iO Wellness Insight</b>
-            <span>Your Glow Facial plus a skin carotenoid reading, explained</span>
+            <h3>{{ plans[0].name }}: {{ formatPrice(plans[0].price) }} <span class="small">(₹{{ Math.round(Number(plans[0].price) / 3) }} per visit)</span></h3>
+            <p>{{ plans[0].description || 'Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.' }}</p>
           </div>
+          <button type="button" class="btn ghost" @click="selectService(plans[0].name)">Book the plan</button>
+        </template>
+        <template v-else>
           <div>
-            <b>Basic cleanup</b>
-            <span>A quick refresh between facials</span>
+            <h3>Glow 3-Visit Plan: ₹2,799 <span class="small">(₹933 per visit)</span></h3>
+            <p>Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.</p>
           </div>
-          <div>
-            <b>Hydration-focused facial</b>
-            <span>For skin that feels dry or tight</span>
-          </div>
-          <div>
-            <b>Event-ready skincare</b>
-            <span>Prepare your skin before a special day</span>
-          </div>
-          <div>
-            <b>Hand and foot care add-on</b>
-            <span>Add to any facial visit</span>
-          </div>
-        </div>
-        <a class="link" href="#expert">Tell me when these launch →</a>
+          <button type="button" class="btn ghost" @click="selectService('Glow 3-Visit Plan')">Book the plan</button>
+        </template>
       </div>
     </div>
   </section>

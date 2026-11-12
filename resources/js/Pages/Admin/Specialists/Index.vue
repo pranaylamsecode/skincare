@@ -57,6 +57,9 @@ const deleteSpecialist = (id, name) => {
                 <span class="text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full">
                   {{ spec.city }}
                 </span>
+                <span :class="spec.gender === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+                  {{ spec.gender || 'female' }}
+                </span>
               </div>
 
               <div class="text-xs font-semibold text-[#b60a0a]">{{ spec.qualification }}</div>

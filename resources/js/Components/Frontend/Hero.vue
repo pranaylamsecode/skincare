@@ -1,52 +1,92 @@
 <script setup>
-defineProps({
-  eyebrow: {
-    type: String,
-    default: 'At-home skincare by FMZ India'
-  },
+import { computed } from 'vue';
+
+const props = defineProps({
   title: {
     type: String,
-    default: 'Skincare that<br><em>understands</em> you.'
+    default: 'Skincare that <em>understands</em> you.'
   },
   lead: {
     type: String,
-    default: 'We listen to your skin concerns first. Then a certified woman specialist brings professional Nu Skin care to your home, explains every step, and leaves you with a routine that fits your life.'
+    default: 'A certified woman specialist comes to your home with genuine Nu Skin products and devices, listens to your skin concerns, and leaves you with a routine that fits your life.'
   },
-  tagline: {
+  whatsappNumber: {
     type: String,
-    default: 'Your Glow. Your Home. Your Time.'
+    default: '+917303706047'
+  },
+  whatsappMessage: {
+    type: String,
+    default: "Hi FMZ Glow, I'd like free advice about my skin."
   }
+});
+
+const waLink = computed(() => {
+  const num = (props.whatsappNumber || '917303706047').replace(/[^0-9]/g, '');
+  return `https://wa.me/${num}?text=${encodeURIComponent(props.whatsappMessage || "Hi FMZ Glow, I'd like free advice about my skin.")}`;
 });
 </script>
 
 <template>
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <div class="eyebrow">{{ eyebrow }}</div>
-        <h1 v-html="title"></h1>
-        <p class="lead">{{ lead }}</p>
-        <p class="tagline">{{ tagline }}</p>
-        <div class="actions">
-          <a class="btn" href="#book">Book your glow</a>
-          <a class="btn btn-line" href="#expert">Get free skin guidance</a>
+  <div>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <h1 v-html="title"></h1>
+          <p class="lede">{{ lead }}</p>
+
+          <div class="cities">
+            <span class="pin">📍 Now serving</span> Ahmedabad, Gandhinagar, Surat, Rajkot
+          </div>
+
+          <div class="cta-row">
+            <a class="btn" href="#book">Book your glow</a>
+            <a class="btn ghost" :href="waLink" target="_blank" rel="noopener">Free skin advice on WhatsApp</a>
+          </div>
+
+          <div class="tags">
+            <span>No travel charge within 8 km</span>
+            <span>Pay after your visit</span>
+          </div>
         </div>
-        <div class="chips">
-          <span class="chip">Women specialists only</span>
-          <span class="chip">Genuine Nu Skin products</span>
-          <span class="chip">Clear prices, no pressure</span>
-          <span class="chip">Pay after your visit</span>
+
+        <figure class="hero-media">
+          <img 
+            src="/images/fmz-glow-facial.png" 
+            alt="FMZ Glow at-home skincare visit" 
+            onerror="this.src='/images/Burgundy-Luxury-Skincare.png'"
+          />
+          <a href="#book" class="hero-badge">
+            <span class="tag">LAUNCH OFFER</span>
+            <b>FMZ Glow Facial</b>
+            <span class="pr">₹999 <s>₹1,199</s></span>
+            <small>Includes LumiSpa iO deep cleansing</small>
+          </a>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Trust Strip -->
+    <section class="trust" aria-label="Why families trust FMZ Glow">
+      <div class="wrap">
+        <div class="trust-grid">
+          <div>
+            <b>Genuine Nu Skin</b>
+            <span>Sealed, authentic products and devices on every visit</span>
+          </div>
+          <div>
+            <b>Qualified women specialists</b>
+            <span>Pharmacy, science and nursing backgrounds</span>
+          </div>
+          <div>
+            <b>No hidden charges</b>
+            <span>Free travel within 8 km; exact price confirmed first</span>
+          </div>
+          <div>
+            <b>Pay after your visit</b>
+            <span>UPI or cash in your hands once you’re satisfied</span>
+          </div>
         </div>
       </div>
-      <div class="ph hero-photo">
-        <img 
-          src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=85" 
-          alt="Woman relaxing at home during a facial" 
-          loading="lazy" 
-          onerror="this.remove()"
-        >
-        <span>Photo direction: an Indian woman relaxing at home with eyes closed, a specialist’s hands gently applying care. Soft natural light, warm tones, real skin, no heavy retouching.</span>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>

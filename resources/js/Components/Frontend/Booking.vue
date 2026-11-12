@@ -22,6 +22,10 @@ const props = defineProps({
     type: Object,
     default: null
   },
+  preselectedConcern: {
+    type: String,
+    default: ''
+  },
   settings: {
     type: Object,
     default: () => ({})
@@ -131,6 +135,13 @@ watch(() => props.preselectedSpecialist, (newVal) => {
     form.specialist_name = newVal.name;
     form.msg = 'Preferred specialist: ' + newVal.name;
     fetchSlots();
+  }
+}, { immediate: true });
+
+// Watch for preselected concern
+watch(() => props.preselectedConcern, (newVal) => {
+  if (newVal && !form.msg) {
+    form.msg = newVal;
   }
 }, { immediate: true });
 

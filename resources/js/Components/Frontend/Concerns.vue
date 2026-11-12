@@ -1,31 +1,89 @@
 <script setup>
-defineProps({
+const props = defineProps({
   concerns: {
     type: Array,
     default: () => []
   }
 });
+
+const emit = defineEmits(['select-concern']);
+
+const defaultConcerns = [
+  {
+    title: 'Dull, tired skin',
+    desc: 'Lacks glow, feels drained from work and travel',
+    cta: 'Cleanse & revive →',
+    service: 'FMZ Glow Cleanse',
+    is_dark: false
+  },
+  {
+    title: 'Rough texture & pores',
+    desc: 'Uneven to touch, buildup around nose and chin',
+    cta: 'Deep pores & glow →',
+    service: 'FMZ Glow Facial',
+    is_dark: true
+  },
+  {
+    title: 'Fine lines & losing firmness',
+    desc: 'Feels less elastic, needs gentle sculpting',
+    cta: 'Firm & sculpt →',
+    service: 'FMZ Radiance Ritual',
+    is_dark: false
+  },
+  {
+    title: 'Just want a healthy reset',
+    desc: 'Start fresh and learn what my skin actually needs',
+    cta: 'Reset & routine →',
+    service: 'Glow 3-Visit Plan',
+    is_dark: false
+  }
+];
+
+const pickConcern = (concern, service) => {
+  emit('select-concern', { concern, service });
+  const bookEl = document.getElementById('book');
+  if (bookEl) {
+    bookEl.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 </script>
 
 <template>
-  <section class="concerns" id="skin">
-    <div class="wrap">
-      <div class="head">
-        <div class="eyebrow">What’s on your mind?</div>
-        <h2>Tell us how your skin feels</h2>
-        <p>Every woman’s skin is different. Pick what sounds like you, and we’ll suggest where to start.</p>
-      </div>
-      <div class="concern-grid">
-        <article 
-          v-for="item in concerns" 
-          :key="item.id" 
-          class="concern" 
-          :class="{ dark: item.is_dark }"
-        >
-          <h3>{{ item.quote }}</h3>
-          <p>{{ item.solution }}</p>
-          <a class="link" :href="item.link_target">{{ item.link_text }}</a>
-        </article>
+  <section id="skin">
+    <div class="wrap center">
+      <h2>Tell us how your skin feels</h2>
+      <p class="lede">Pick what sounds most like you. Your specialist customises your visit around it.</p>
+      
+      <div class="concerns">
+        <template v-if="concerns && concerns.length">
+          <button 
+            v-for="(item, index) in concerns" 
+            :key="item.id || index"
+            type="button"
+            class="concern"
+            :class="{ dark: item.is_dark || index === 1 }"
+            @click="pickConcern(item.title || item.quote, item.service_name || defaultConcerns[index % 4].service)"
+          >
+            <q>{{ item.title || item.quote }}</q>
+            <span>{{ item.desc || item.solution || defaultConcerns[index % 4].desc }}</span>
+            <b>{{ item.cta || item.link_text || defaultConcerns[index % 4].cta }}</b>
+          </button>
+        </template>
+
+        <template v-else>
+          <button 
+            v-for="(c, i) in defaultConcerns"
+            :key="i"
+            type="button"
+            class="concern"
+            :class="{ dark: c.is_dark }"
+            @click="pickConcern(c.title, c.service)"
+          >
+            <q>{{ c.title }}</q>
+            <span>{{ c.desc }}</span>
+            <b>{{ c.cta }}</b>
+          </button>
+        </template>
       </div>
     </div>
   </section>

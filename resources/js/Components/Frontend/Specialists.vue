@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   specialists: {
@@ -10,89 +10,101 @@ const props = defineProps({
 
 const emit = defineEmits(['select-specialist']);
 
-const activeFilter = ref('all');
+const scrollContainer = ref(null);
 
-const cities = [
-  { id: 'all', label: 'All locations' },
-  { id: 'ahmedabad', label: 'Ahmedabad' },
-  { id: 'gandhinagar', label: 'Gandhinagar' },
-  { id: 'surat', label: 'Surat' },
-  { id: 'rajkot', label: 'Rajkot' }
-];
-
-const setFilter = (city) => {
-  activeFilter.value = city;
+const scrollLeft = () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollBy({ left: -300, behavior: 'smooth' });
+  }
 };
 
-const filteredSpecialists = computed(() => {
-  if (activeFilter.value === 'all') {
-    return props.specialists;
+const scrollRight = () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollBy({ left: 300, behavior: 'smooth' });
   }
-  return props.specialists.filter(s => s.city.toLowerCase() === activeFilter.value.toLowerCase());
-});
+};
 
-const bookWithSpecialist = (specialist) => {
-  emit('select-specialist', specialist);
+const getInitials = (name) => {
+  if (!name) return 'FM';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return parts[0].substring(0, 2).toUpperCase();
+};
+
+const bookWithSpecialist = (spec) => {
+  emit('select-specialist', spec);
+  const bookEl = document.getElementById('book');
+  if (bookEl) {
+    bookEl.scrollIntoView({ behavior: 'smooth' });
+  }
 };
 </script>
 
 <template>
   <section class="specialists" id="specialists">
     <div class="wrap">
-      <div class="head">
-        <div class="eyebrow">Our specialists</div>
-        <h2>Meet our certified skin specialists</h2>
-        <p>Qualified in science, biochemistry and nursing. Certified to deliver genuine Nu Skin treatments in the comfort of your home.</p>
-        <div class="spec-tags">
-          <span class="spec-tag">Women specialists only</span>
-          <span class="spec-tag">Science &amp; formulation trained</span>
-          <span class="spec-tag">Pay after service</span>
+      <div class="center">
+        <h2>Meet your specialists</h2>
+        <p class="lede">Qualified in science, pharmacy or nursing, and trained to deliver genuine Nu Skin care at home.</p>
+      </div>
+
+      <!-- Side-Scroll Specialist Track -->
+      <div class="sp-scroll-wrap">
+        <!-- Scroll navigation arrow buttons for desktop -->
+        <div class="flex items-center justify-end gap-2 mb-3">
+          <button 
+            type="button" 
+            class="w-9 h-9 rounded-full border border-[#EFDCD8] bg-white text-[#7A2A2E] hover:bg-[#F9E9E6] transition flex items-center justify-center font-bold text-base cursor-pointer shadow-xs"
+            aria-label="Scroll left"
+            @click="scrollLeft"
+          >
+            ←
+          </button>
+          <button 
+            type="button" 
+            class="w-9 h-9 rounded-full border border-[#EFDCD8] bg-white text-[#7A2A2E] hover:bg-[#F9E9E6] transition flex items-center justify-center font-bold text-base cursor-pointer shadow-xs"
+            aria-label="Scroll right"
+            @click="scrollRight"
+          >
+            →
+          </button>
         </div>
-      </div>
 
-      <div class="spec-filter" role="group" aria-label="Filter specialists by city">
-        <button 
-          v-for="c in cities" 
-          :key="c.id" 
-          type="button" 
-          :class="{ active: activeFilter === c.id }"
-          @click="setFilter(c.id)"
-        >
-          {{ c.label }}
-        </button>
-      </div>
-
-      <div class="spec-grid">
-        <article 
-          v-for="spec in filteredSpecialists" 
-          :key="spec.id" 
-          class="spec" 
-          :data-city="spec.city"
-        >
-          <div class="spec-top">
-            <img 
-              class="spec-photo" 
-              :src="spec.photo ? (spec.photo.startsWith('http') ? spec.photo : '/' + spec.photo) : '/images/Dharvi.jpg'" 
-              :alt="spec.name"
-            >
-            <span class="spec-pill">&#10003; {{ spec.badge || 'Verified Specialist' }}</span>
-          </div>
-          <div class="spec-body">
-            <h3>{{ spec.name }}</h3>
-            <div class="spec-qual">{{ spec.qualification }}</div>
-            <div class="spec-loc"><b>Location:</b> {{ spec.location }}</div>
-            <div v-if="spec.languages && spec.languages.length" class="spec-langs">
-              <span v-for="(lang, lIdx) in spec.languages" :key="lIdx">{{ lang }}</span>
+        <div class="sp-scroll-track" ref="scrollContainer">
+          <article 
+            v-for="spec in specialists" 
+            :key="spec.id" 
+            class="sp"
+          >
+            <div class="avatar">
+              <img 
+                v-if="spec.photo" 
+                :src="spec.photo.startsWith('http') ? spec.photo : '/' + spec.photo" 
+                :alt="spec.name"
+                onerror="this.style.display='none'"
+              />
+              <span v-else>{{ getInitials(spec.name) }}</span>
             </div>
-            <a 
-              class="btn btn-line spec-book" 
-              href="#book" 
-              @click.prevent="bookWithSpecialist(spec)"
+
+            <span class="verified">✓ {{ spec.badge || 'Verified specialist' }}</span>
+            <h3>{{ spec.name }}</h3>
+            <span class="cred">{{ spec.qualification }}</span>
+            <span class="area">{{ spec.location }}</span>
+            <span class="area" v-if="spec.languages && spec.languages.length">
+              {{ Array.isArray(spec.languages) ? spec.languages.join(', ') : spec.languages }}
+            </span>
+
+            <button 
+              type="button" 
+              class="btn ghost" 
+              @click="bookWithSpecialist(spec)"
             >
               Book with {{ spec.name.split(' ')[0] }}
-            </a>
-          </div>
-        </article>
+            </button>
+          </article>
+        </div>
       </div>
     </div>
   </section>

@@ -21,6 +21,7 @@ class Specialist extends Model
         'service_radius_km',
         'serviceable_pincodes',
         'city',
+        'gender',
         'languages',
         'badge',
         'photo',

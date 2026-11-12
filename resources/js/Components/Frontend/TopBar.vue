@@ -2,11 +2,11 @@
 defineProps({
   text: {
     type: String,
-    default: 'Launch offer: Nu Skin LumiSpa Glow Facial <b>₹999</b> <s>₹1,199</s> · limited period · T&C apply'
+    default: 'Launch offer: <b>FMZ Glow Facial ₹999</b> <s>₹1,199</s>, now in Ahmedabad, Gandhinagar, Surat and Rajkot'
   }
 });
 </script>
 
 <template>
-  <div class="topbar" v-html="text"></div>
+  <div class="banner" v-html="text"></div>
 </template>

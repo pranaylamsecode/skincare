@@ -35,6 +35,9 @@ const whatsappUrl = computed(() => {
   const msg = encodeURIComponent(props.settings?.whatsapp_default_message || "Hi FMZ Glow, I'd like to know more about your at-home skincare services.");
   return `https://wa.me/${phone}?text=${msg}`;
 });
+
+const businessEmail = computed(() => props.settings?.business_email || 'fmz@fmzau.com.au');
+const supportPhone = computed(() => props.settings?.whatsapp_number || '+91 73037 06047');
 </script>
 
 <template>
@@ -98,17 +101,36 @@ const whatsappUrl = computed(() => {
         </a>
       </div>
 
-      <div class="foot">
-        <img src="/images/FMZ logo.jpg" alt="FMZ Glow" width="118" height="38">
-        <nav aria-label="Footer">
-          <a href="#services">Services</a>
-          <a href="#plans">Plans</a>
-          <a href="#faq">FAQ</a>
-          <a href="/privacy-policy/">Privacy Policy</a>
-          <a href="/terms-and-conditions/">Terms</a>
-          <a href="/admin/login" style="opacity:0.6">Admin Portal</a>
-        </nav>
-        <p>© {{ currentYear }} FMZ India. All rights reserved.</p>
+      <!-- 3-Column Footer from Client Design -->
+      <div class="ft">
+        <div>
+          <a class="logo" href="#top">
+            <span class="fmz">FMZ</span><span class="glow">glow</span>
+          </a>
+          <p style="margin-top: 14px; line-height: 1.6;">
+            FMZ Glow is a service of FMZ India.<br>
+            Ahmedabad, Gujarat, India.<br>
+            {{ supportPhone }} · {{ businessEmail }}
+          </p>
+        </div>
+
+        <div>
+          <b>Services</b>
+          <a href="#services">Glow Cleanse</a>
+          <a href="#services">Glow Facial</a>
+          <a href="#services">Radiance Ritual</a>
+          <a href="#book">Book a visit</a>
+        </div>
+
+        <div>
+          <b>Policies</b>
+          <a href="/privacy-policy/">Privacy policy</a>
+          <a href="/terms-and-conditions/">Terms & Conditions</a>
+          <a href="/cancellation-and-refunds/">Cancellation and refunds</a>
+          <p style="margin-top: 14px; font-size: 12px; opacity: 0.7;">
+            © {{ currentYear }} FMZ India. All rights reserved.
+          </p>
+        </div>
       </div>
     </div>
   </footer>
@@ -120,9 +142,9 @@ const whatsappUrl = computed(() => {
   justify-content: center;
   align-items: center;
   gap: 38px;
-  padding: 10px 0 22px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  padding: 10px 0 24px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--line);
 }
 
 .social-btn {
@@ -131,7 +153,7 @@ const whatsappUrl = computed(() => {
   align-items: center;
   gap: 6px;
   text-decoration: none;
-  color: #1a1a1a;
+  color: var(--ink);
   transition: transform 0.2s ease, color 0.2s ease;
   min-width: 64px;
 }
@@ -139,14 +161,14 @@ const whatsappUrl = computed(() => {
 .social-icon {
   width: 24px;
   height: 24px;
-  color: #1a1a1a;
+  color: var(--ink);
   transition: transform 0.2s ease, color 0.2s ease, stroke 0.2s ease;
 }
 
 .social-label {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #4b5563;
+  color: var(--muted);
   letter-spacing: 0.01em;
   transition: color 0.2s ease;
 }
@@ -156,19 +178,19 @@ const whatsappUrl = computed(() => {
 }
 
 .social-btn:hover .social-icon {
-  color: #7a2e2e;
-  stroke: #7a2e2e;
+  color: var(--wine);
+  stroke: var(--wine);
 }
 
 .social-btn:hover .social-label {
-  color: #7a2e2e;
+  color: var(--wine);
 }
 
 @media (max-width: 480px) {
   .footer-social-row {
     gap: 20px;
     padding-bottom: 18px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
   .social-icon {
     width: 22px;

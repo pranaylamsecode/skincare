@@ -27,16 +27,27 @@
             padding: 24px 30px;
             text-align: center;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 1px;
+        .logo-box {
+            display: inline-block;
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            margin-bottom: 8px;
+        }
+        .logo-box img {
+            max-height: 48px;
+            max-width: 220px;
+            height: auto;
+            width: auto;
+            display: block;
+            object-fit: contain;
         }
         .header p {
             margin: 6px 0 0;
             font-size: 13px;
             color: #fbeded;
+            letter-spacing: 0.5px;
         }
         .body {
             padding: 32px 30px;
@@ -69,7 +80,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>FMZ GLOW</h1>
+            @if(!empty($logoUrl))
+                <div class="logo-box">
+                    <a href="{{ url('/') }}" target="_blank" style="text-decoration: none; display: block;">
+                        <img src="{{ $logoUrl }}" alt="{{ $siteName ?? 'FMZ Glow' }}" />
+                    </a>
+                </div>
+            @else
+                <h1 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 1px;">{{ $siteName ?? 'FMZ GLOW' }}</h1>
+            @endif
             <p>At-Home Skincare by FMZ India</p>
         </div>
         <div class="body">

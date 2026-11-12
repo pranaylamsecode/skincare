@@ -19,8 +19,17 @@ class FrontendController extends Controller
 {
     public function index()
     {
+        $settings = Setting::all()->pluck('value', 'key')->toArray();
+        $genderFilter = $settings['specialist_gender_filter'] ?? 'female';
+
         $services = Service::where('is_active', true)->orderBy('sort_order')->get();
-        $specialists = Specialist::where('is_active', true)->orderBy('sort_order')->get();
+
+        $specialistsQuery = Specialist::where('is_active', true);
+        if ($genderFilter && in_array($genderFilter, ['female', 'male'])) {
+            $specialistsQuery->where('gender', $genderFilter);
+        }
+        $specialists = $specialistsQuery->orderBy('sort_order')->get();
+
         $plans = Plan::where('is_active', true)->orderBy('sort_order')->get();
         $devices = Device::where('is_active', true)->orderBy('sort_order')->get();
         $dailyProducts = Product::where('is_active', true)->where('category', 'daily')->orderBy('sort_order')->get();
@@ -29,8 +38,6 @@ class FrontendController extends Controller
         $results = Review::where('is_active', true)->where('is_featured_result', true)->orderBy('sort_order')->get();
         $reviews = Review::where('is_active', true)->where('is_featured_result', false)->orderBy('sort_order')->get();
         $faqs = Faq::where('is_active', true)->orderBy('sort_order')->get();
-        
-        $settings = Setting::all()->pluck('value', 'key')->toArray();
 
         // Default standard active time slots
         $timeSlots = TimeSlot::where('is_active', true)->orderBy('start_time')->get()->map(function ($slot) {

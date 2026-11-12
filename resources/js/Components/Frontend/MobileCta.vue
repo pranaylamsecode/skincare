@@ -1,37 +1,26 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 
-const isHidden = ref(false);
-let observer = null;
-
-const scrollToBook = () => {
-  const el = document.getElementById('book');
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth' });
-  } else {
-    window.location.hash = '#book';
-  }
-};
-
-onMounted(() => {
-  const bookSection = document.getElementById('book');
-  if (bookSection && 'IntersectionObserver' in window) {
-    observer = new IntersectionObserver((entries) => {
-      isHidden.value = entries[0].isIntersecting;
-    }, { threshold: 0.15 });
-    observer.observe(bookSection);
+const props = defineProps({
+  whatsappNumber: {
+    type: String,
+    default: '+917303706047'
+  },
+  whatsappMessage: {
+    type: String,
+    default: 'Hi FMZ Glow, I’d like to book a visit.'
   }
 });
 
-onUnmounted(() => {
-  if (observer) {
-    observer.disconnect();
-  }
+const waLink = computed(() => {
+  const num = (props.whatsappNumber || '917303706047').replace(/[^0-9]/g, '');
+  return `https://wa.me/${num}?text=${encodeURIComponent(props.whatsappMessage || 'Hi FMZ Glow, I’d like to book a visit.')}`;
 });
 </script>
 
 <template>
-  <div class="mobile-cta" :class="{ hide: isHidden }">
-    <a class="btn" href="#book" @click="scrollToBook">Book your glow</a>
+  <div class="mbar">
+    <a class="btn ghost" :href="waLink" target="_blank" rel="noopener">WhatsApp</a>
+    <a class="btn" href="#book">Book a visit</a>
   </div>
 </template>
