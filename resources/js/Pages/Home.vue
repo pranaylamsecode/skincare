@@ -134,7 +134,7 @@ const handleSpecialistSelect = (specialist) => {
     </main>
 
     <!-- Footer -->
-    <Footer />
+    <Footer :settings="settings" />
 
     <!-- Floating WhatsApp Widget -->
     <WhatsAppFloat 

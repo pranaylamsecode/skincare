@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { useForm, Head } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Save, Phone, Mail, CreditCard, Bell, Sparkles, Image, Upload } from 'lucide-vue-next';
+import { Save, Phone, Mail, CreditCard, Bell, Sparkles, Image, Upload, Share2, Instagram, Facebook, Youtube, MessageCircle } from 'lucide-vue-next';
 
 const props = defineProps({
   settings: { type: Object, default: () => ({}) }
@@ -33,6 +33,10 @@ const form = useForm({
   zoho_merchant_id: props.settings.zoho_merchant_id || props.settings.zoho_account_id || '',
   zoho_refresh_token: props.settings.zoho_refresh_token || '',
   zoho_access_token: props.settings.zoho_access_token || '',
+  social_instagram: props.settings.social_instagram || '',
+  social_facebook: props.settings.social_facebook || '',
+  social_youtube: props.settings.social_youtube || '',
+  social_whatsapp: props.settings.social_whatsapp || '',
 });
 
 // Keep active_payment_gateway and toggle checkboxes synchronized
@@ -203,6 +207,76 @@ const submit = () => {
                 type="text" 
                 class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
               />
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Links (Footer) -->
+        <div class="bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
+            <h2 class="text-sm font-bold text-neutral-900 flex items-center gap-2">
+              <Share2 class="w-4 h-4 text-[#7a2e2e]" />
+              <span>Footer Social Media Links</span>
+            </h2>
+            <span class="text-[11px] text-neutral-400">Displayed in website footer</span>
+          </div>
+
+          <p class="text-xs text-neutral-500">
+            Configure the links for Instagram, Facebook, YouTube, and WhatsApp displayed with icons in the footer.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1 flex items-center gap-1.5">
+                <Instagram class="w-3.5 h-3.5 text-pink-600" />
+                <span>Instagram Profile URL</span>
+              </label>
+              <input 
+                v-model="form.social_instagram" 
+                type="url" 
+                placeholder="https://www.instagram.com/fmzglow"
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1 flex items-center gap-1.5">
+                <Facebook class="w-3.5 h-3.5 text-blue-600" />
+                <span>Facebook Page URL</span>
+              </label>
+              <input 
+                v-model="form.social_facebook" 
+                type="url" 
+                placeholder="https://www.facebook.com/fmzglow"
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1 flex items-center gap-1.5">
+                <Youtube class="w-3.5 h-3.5 text-red-600" />
+                <span>YouTube Channel URL</span>
+              </label>
+              <input 
+                v-model="form.social_youtube" 
+                type="url" 
+                placeholder="https://www.youtube.com/@fmzglow"
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-neutral-700 uppercase mb-1 flex items-center gap-1.5">
+                <MessageCircle class="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp URL or Phone Number</span>
+              </label>
+              <input 
+                v-model="form.social_whatsapp" 
+                type="text" 
+                placeholder="+917303706047 or https://wa.me/917303706047"
+                class="w-full px-3.5 py-2.5 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none"
+              />
+              <p class="text-[11px] text-neutral-400 mt-1">If left blank, automatically uses your WhatsApp Number above.</p>
             </div>
           </div>
         </div>
