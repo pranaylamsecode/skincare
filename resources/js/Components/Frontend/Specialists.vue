@@ -100,7 +100,7 @@ const bookWithSpecialist = (spec) => {
               class="btn ghost" 
               @click="bookWithSpecialist(spec)"
             >
-              Book with {{ spec.name.split(' ')[0] }}
+              Book Appointment
             </button>
           </article>
         </div>
