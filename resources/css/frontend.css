@@ -58,6 +58,9 @@ html {
 
 body {
   margin: 0;
+}
+
+body:has(.fmz-frontend) {
   background: var(--bg);
   color: var(--ink);
   font: 400 16px/1.6 Montserrat, "Segoe UI", Roboto, Arial, sans-serif;
@@ -86,23 +89,24 @@ body {
   color: var(--ink);
 }
 
-h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); }
-h2 { font-size: clamp(2rem, 4vw, 2.8rem); }
-h3 { font-size: 1.6rem; }
-.wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
-section { padding: 72px 0; }
-.lede { color: var(--muted); max-width: 60ch; margin-top: 12px; }
-.center { text-align: center; }
-.center .lede { margin-inline: auto; }
+.fmz-frontend h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); }
+.fmz-frontend h2 { font-size: clamp(2rem, 4vw, 2.8rem); }
+.fmz-frontend h3 { font-size: 1.6rem; }
+.fmz-frontend .wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.fmz-frontend section { padding: 72px 0; }
+.fmz-frontend .lede { color: var(--muted); max-width: 60ch; margin-top: 12px; }
+.fmz-frontend .center { text-align: center; }
+.fmz-frontend .center .lede { margin-inline: auto; }
 
-:focus-visible {
+.fmz-frontend :focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
 /* buttons */
-.btn, .fmz-frontend .btn {
+.fmz-frontend .btn,
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -118,18 +122,18 @@ section { padding: 72px 0; }
   color: var(--on-cta) !important;
   transition: filter 0.15s ease, transform 0.1s ease;
 }
-.btn:hover, .fmz-frontend .btn:hover { filter: brightness(1.08); }
-.btn.ghost, .fmz-frontend .btn.ghost {
+.fmz-frontend .btn:hover { filter: brightness(1.08); }
+.fmz-frontend .btn.ghost {
   background: transparent;
   color: var(--wine) !important;
   border-color: var(--wine);
 }
-.btn.wa, .fmz-frontend .btn.wa {
+.fmz-frontend .btn.wa {
   background: #1E9E55;
   border-color: #1E9E55;
   color: #fff !important;
 }
-.btn[disabled], .fmz-frontend .btn[disabled] {
+.fmz-frontend .btn[disabled] {
   opacity: .45;
   cursor: not-allowed;
   filter: none;
