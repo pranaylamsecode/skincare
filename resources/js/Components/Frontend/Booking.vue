@@ -16,7 +16,7 @@ const props = defineProps({
   },
   preselectedService: {
     type: String,
-    default: 'Nu Skin LumiSpa Glow Facial'
+    default: ''
   },
   preselectedSpecialist: {
     type: Object,
@@ -32,134 +32,228 @@ const props = defineProps({
   }
 });
 
-const todayDate = new Date().toISOString().split('T')[0];
+// Wizard Step: 1, 2, 3, 4 (Done)
+const currentStep = ref(1);
 
+// Client reference service catalog / dynamic services
+const defaultServices = [
+  { key: 'cleanse', name: 'FMZ Glow Cleanse', dur: 'About 45 min', price: '₹799', rawPrice: 799 },
+  { key: 'facial', name: 'FMZ Glow Facial', dur: 'About 60 min · launch offer', price: '₹999', rawPrice: 999 },
+  { key: 'ritual', name: 'FMZ Radiance Ritual', dur: 'About 75 min · includes Prysm iO scan', price: '₹1,699', rawPrice: 1699 },
+  { key: 'plan', name: 'Glow 3-Visit Plan', dur: '3 Glow Facials · valid 90 days', price: '₹2,799', rawPrice: 2799 }
+];
+
+const serviceOptions = computed(() => {
+  if (props.services && props.services.length) {
+    const list = props.services.map(s => {
+      let key = 'cleanse';
+      const t = (s.title || '').toLowerCase();
+      if (t.includes('cleanse')) key = 'cleanse';
+      else if (t.includes('facial') || t.includes('lumispa')) key = 'facial';
+      else if (t.includes('ritual') || t.includes('radiance')) key = 'ritual';
+      else if (t.includes('plan')) key = 'plan';
+      else key = 'svc-' + s.id;
+
+      const priceNum = Math.round(Number(s.price || 0));
+      return {
+        id: s.id,
+        key: key,
+        name: s.title,
+        dur: s.short_description || (s.duration_minutes ? `About ${s.duration_minutes} min` : 'Custom duration'),
+        price: '₹' + priceNum.toLocaleString('en-IN'),
+        rawPrice: priceNum
+      };
+    });
+
+    // Ensure 3-Visit plan is present
+    if (!list.some(x => x.name.toLowerCase().includes('3-visit') || x.name.toLowerCase().includes('plan'))) {
+      list.push({
+        id: null,
+        key: 'plan',
+        name: 'Glow 3-Visit Plan',
+        dur: '3 Glow Facials · valid 90 days',
+        price: '₹2,799',
+        rawPrice: 2799
+      });
+    }
+    return list;
+  }
+  return defaultServices;
+});
+
+const selectedServiceKey = ref('facial');
+const selectedSpecialistId = ref(null);
+const selectedSpecialistName = ref('');
+
+const currentService = computed(() => {
+  return serviceOptions.value.find(s => s.key === selectedServiceKey.value) || serviceOptions.value[0];
+});
+
+// Days generation (next 7 days)
+const WINDOWS = [
+  { id: 'm', label: 'Morning', sub: '9am – 12pm', end: 12, slotId: 1, slotText: 'Morning (09:00 AM - 12:00 PM)' },
+  { id: 'a', label: 'Afternoon', sub: '12pm – 4pm', end: 16, slotId: 3, slotText: 'Afternoon (12:00 PM - 04:00 PM)' },
+  { id: 'e', label: 'Evening', sub: '4pm – 7:30pm', end: 19.5, slotId: 5, slotText: 'Evening (04:30 PM - 07:30 PM)' }
+];
+
+const hoursNow = () => {
+  const n = new Date();
+  return n.getHours() + n.getMinutes() / 60;
+};
+
+const windowOpen = (dayIdx, w) => {
+  if (dayIdx > 0) return true;
+  return hoursNow() + 2 <= w.end;
+};
+
+const days = computed(() => {
+  const now = new Date();
+  const list = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() + i);
+    // If today is fully passed, skip today
+    if (i === 0 && !WINDOWS.some(w => windowOpen(0, w))) {
+      continue;
+    }
+    const dayName = i === 0 ? 'Today' : (i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-IN', { weekday: 'short' }));
+    const sub = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    list.push({ dayIdx: i, dateObj: d, label: dayName, sub: sub, iso: iso });
+  }
+  return list;
+});
+
+const selectedDayIdx = ref(0);
+const selectedWindow = ref(null);
+
+// Form Details (Step 3)
 const form = reactive({
   name: '',
   phone: '',
-  email: '',
   pin: '',
-  service_name: 'Nu Skin LumiSpa Glow Facial',
-  service_id: null,
-  specialist_id: null,
-  specialist_name: '',
-  date: todayDate,
-  time_slot_id: null,
-  time_slot_text: '',
   msg: '',
-  consent: true,
-  payment_method: 'after_visit' // 'after_visit' or 'online'
+  consent: false,
+  payment_method: 'after_visit'
 });
 
-const availableSlots = ref([]);
-const loadingSlots = ref(false);
+const PIN_PREFIX = {
+  '380': 'Ahmedabad',
+  '382': 'Gandhinagar / Ahmedabad',
+  '394': 'Surat',
+  '395': 'Surat',
+  '360': 'Rajkot'
+};
+
+const pinCity = ref(null);
+const pinHint = ref('');
+const phoneHint = ref('');
+const phoneHintErr = ref(false);
 const submitting = ref(false);
 const isRedirecting = ref(false);
-const checkoutUrl = ref('');
-const successMessage = ref('');
-const bookingResult = ref(null);
 const errorMessage = ref('');
-
+const bookingResult = ref(null);
 const pendingBooking = ref(null);
 const paymentFailed = ref(false);
 const switchingToCash = ref(false);
-const cancellingBooking = ref(false);
 
 const activeGateway = computed(() => {
-  return props.settings?.active_payment_gateway || 'zoho';
+  return props.settings?.active_payment_gateway || 'razorpay';
 });
 
 const isOnlinePaymentAvailable = computed(() => {
   return activeGateway.value !== 'none';
 });
 
-const onlinePaymentLabel = computed(() => {
-  if (activeGateway.value === 'zoho') {
-    return 'Pay Online Now (Cards / UPI / NetBanking)';
-  } else if (activeGateway.value === 'razorpay') {
-    return 'Pay Online Now (Razorpay / Cards / UPI)';
-  }
-  return 'Pay Online Now (Cards / UPI / NetBanking)';
+const waNumber = computed(() => {
+  return (props.settings?.whatsapp_number || '+917303706047').replace(/[^0-9]/g, '');
 });
 
-// Fetch slots from API based on date and specialist
-const fetchSlots = async () => {
-  if (!form.date) return;
-  loadingSlots.value = true;
-  try {
-    const params = new URLSearchParams({
-      date: form.date,
-      ...(form.specialist_id ? { specialist_id: form.specialist_id } : {})
-    });
-    const res = await fetch(`/api/available-slots?${params.toString()}`);
-    const data = await res.json();
-    if (data.success && data.slots) {
-      availableSlots.value = data.slots;
-      // If currently selected slot is not available or empty, pick the first available
-      if (!form.time_slot_id || !data.slots.some(s => s.id === form.time_slot_id && s.is_available)) {
-        const firstAvail = data.slots.find(s => s.is_available);
-        if (firstAvail) {
-          form.time_slot_id = firstAvail.id;
-          form.time_slot_text = firstAvail.display;
-        } else {
-          form.time_slot_id = null;
-          form.time_slot_text = 'No preference';
-        }
-      }
-    }
-  } catch (e) {
-    console.error('Error fetching slots:', e);
-  } finally {
-    loadingSlots.value = false;
+const waBookingLink = computed(() => {
+  return `https://wa.me/${waNumber.value}?text=${encodeURIComponent('Hi FMZ Glow, I would like to book a visit.')}`;
+});
+
+// Selection methods
+const pickSvc = (key) => {
+  selectedServiceKey.value = key;
+};
+
+const pickDay = (idx) => {
+  selectedDayIdx.value = idx;
+  selectedWindow.value = null;
+};
+
+const pickWindow = (w) => {
+  selectedWindow.value = w;
+};
+
+const goToStep = (step) => {
+  currentStep.value = step;
+  if (step === 3) {
+    validate();
   }
 };
 
-watch(() => form.date, fetchSlots);
-watch(() => form.specialist_id, fetchSlots);
-
-// Watch for preselected service
-watch(() => props.preselectedService, (newVal) => {
-  if (newVal) {
-    form.service_name = newVal;
-    const match = props.services.find(s => s.title === newVal);
-    if (match) {
-      form.service_id = match.id;
-    }
-  }
-}, { immediate: true });
-
-// Watch for preselected specialist
-watch(() => props.preselectedSpecialist, (newVal) => {
-  if (newVal) {
-    form.specialist_id = newVal.id;
-    form.specialist_name = newVal.name;
-    form.msg = 'Preferred specialist: ' + newVal.name;
-    fetchSlots();
-  }
-}, { immediate: true });
-
-// Watch for preselected concern
-watch(() => props.preselectedConcern, (newVal) => {
-  if (newVal && !form.msg) {
-    form.msg = newVal;
-  }
-}, { immediate: true });
-
-onMounted(() => {
-  fetchSlots();
+const whenText = computed(() => {
+  const d = days.value.find(x => x.dayIdx === selectedDayIdx.value);
+  if (!d || !selectedWindow.value) return '';
+  return `${d.label}, ${d.sub} · ${selectedWindow.value.label} (${selectedWindow.value.sub})`;
 });
 
-const selectSlot = (slot) => {
-  if (!slot.is_available) return;
-  form.time_slot_id = slot.id;
-  form.time_slot_text = slot.display;
+// Validation for Step 3
+const validate = () => {
+  form.phone = form.phone.replace(/\D/g, '');
+  form.pin = form.pin.replace(/\D/g, '');
+
+  const phoneOk = /^[6-9]\d{9}$/.test(form.phone);
+  if (form.phone.length === 10 && !phoneOk) {
+    phoneHint.value = 'Enter a valid 10-digit mobile number.';
+    phoneHintErr.value = true;
+  } else {
+    phoneHint.value = '';
+    phoneHintErr.value = false;
+  }
+
+  pinCity.value = null;
+  if (form.pin.length === 6) {
+    const prefix = form.pin.slice(0, 3);
+    pinCity.value = PIN_PREFIX[prefix] || null;
+    if (pinCity.value) {
+      pinHint.value = '✓ We cover ' + pinCity.value;
+    } else {
+      pinHint.value = 'We don’t cover this pincode yet. You can still send the request and we’ll tell you when we arrive.';
+    }
+  } else {
+    pinHint.value = '';
+  }
 };
 
-// Handle form submission
+const isFormValid = computed(() => {
+  const phoneOk = /^[6-9]\d{9}$/.test(form.phone);
+  return (
+    form.name.trim().length > 1 &&
+    phoneOk &&
+    form.pin.length === 6 &&
+    form.consent === true
+  );
+});
+
+// Submit booking
 const submitBooking = async () => {
+  if (!isFormValid.value || submitting.value) return;
+
   submitting.value = true;
   errorMessage.value = '';
-  successMessage.value = '';
+  paymentFailed.value = false;
+
+  const d = days.value.find(x => x.dayIdx === selectedDayIdx.value) || days.value[0];
+  const svc = currentService.value;
+  const isOnline = form.payment_method === 'online';
+
+  let notePayload = form.msg.trim();
+  if (selectedSpecialistName.value && !notePayload.includes('Preferred specialist:')) {
+    notePayload = (notePayload ? notePayload + '\n' : '') + 'Preferred specialist: ' + selectedSpecialistName.value;
+  }
 
   try {
     const res = await fetch('/api/bookings', {
@@ -170,18 +264,17 @@ const submitBooking = async () => {
         'X-Requested-With': 'XMLHttpRequest'
       },
       body: JSON.stringify({
-        name: form.name,
-        phone: form.phone,
-        email: form.email,
-        pincode: form.pin,
-        service_name: form.service_name,
-        service_id: form.service_id,
-        specialist_id: form.specialist_id,
-        specialist_name: form.specialist_name,
-        date: form.date,
-        time_slot_id: form.time_slot_id,
-        time_slot_text: form.time_slot_text,
-        msg: form.msg,
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        pincode: form.pin.trim(),
+        service_name: svc.name,
+        service_id: svc.id || null,
+        specialist_id: selectedSpecialistId.value || null,
+        specialist_name: selectedSpecialistName.value || null,
+        date: d.iso,
+        time_slot_id: selectedWindow.value?.slotId || null,
+        time_slot_text: selectedWindow.value?.slotText || '',
+        msg: notePayload,
         consent: form.consent,
         payment_method: form.payment_method
       })
@@ -191,37 +284,31 @@ const submitBooking = async () => {
 
     if (!res.ok) {
       if (data.errors) {
-        const errorList = Object.values(data.errors).flat().join(' ');
-        errorMessage.value = errorList || 'Please check your inputs.';
+        errorMessage.value = Object.values(data.errors).flat().join(' ');
       } else {
-        errorMessage.value = data.message || 'Something went wrong. Please try again.';
+        errorMessage.value = data.message || 'Something went wrong. Please check your inputs.';
       }
       submitting.value = false;
       return;
     }
 
-    const isOnline = form.payment_method === 'online' || form.payment_method === 'razorpay' || data.is_online_payment;
-
     if (!isOnline) {
+      // Pay after visit confirmed
       bookingResult.value = data.booking;
-      successMessage.value = data.message || 'Your booking request has been received!';
       pendingBooking.value = null;
-      paymentFailed.value = false;
       submitting.value = false;
+      currentStep.value = 4;
       return;
     }
 
-    // For online payment: do NOT confirm appointment until payment is verified
+    // Online payment requested: initiate gateway checkout
     pendingBooking.value = data.booking;
     bookingResult.value = null;
-    successMessage.value = '';
-    paymentFailed.value = false;
-
     await initiateOnlinePayment(data.booking.id, data.booking);
 
   } catch (err) {
     console.error('Booking submission error:', err);
-    errorMessage.value = 'Network error. Please try again or message us on WhatsApp.';
+    errorMessage.value = 'Network error. Please try again or tap the WhatsApp button.';
     submitting.value = false;
   }
 };
@@ -240,11 +327,9 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
     const orderData = await orderRes.json();
 
     if (!orderData.success) {
-      // Test mode or unpriced consultation notice
       if (orderData.mock_allowed) {
-        successMessage.value = orderData.message || 'Online payment not required; you can pay after your visit via UPI or Cash.';
         bookingResult.value = bookingData;
-        paymentFailed.value = false;
+        currentStep.value = 4;
       } else {
         paymentFailed.value = true;
         errorMessage.value = orderData.message || 'Online payment initialization failed.';
@@ -253,18 +338,16 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
       return;
     }
 
-    // 1. Zoho Checkout: Redirect customer to Zoho checkout URL
+    // Zoho Checkout Redirect
     if (orderData.gateway === 'zoho' || orderData.checkout_url) {
-      checkoutUrl.value = orderData.checkout_url;
-      successMessage.value = 'Redirecting to secure payment checkout...';
       isRedirecting.value = true;
       setTimeout(() => {
         window.location.href = orderData.checkout_url;
-      }, 700);
+      }, 500);
       return;
     }
 
-    // 2. Razorpay Checkout
+    // Razorpay Checkout Modal
     if (orderData.gateway === 'razorpay' || orderData.key) {
       if (typeof window.Razorpay === 'undefined') {
         await new Promise((resolve, reject) => {
@@ -289,18 +372,18 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
           image: '/images/FMZ logo.jpg',
           prefill: {
             name: orderData.client_name,
-            email: orderData.client_email,
+            email: orderData.client_email || '',
             contact: orderData.client_phone
           },
-          theme: {
-            color: '#7a2e2e'
-          },
+          theme: { color: '#7a2e2e' },
           handler: async function (response) {
             await verifyPaymentOnServer(bookingId, response);
           },
           modal: {
             ondismiss: function () {
-              handlePaymentDismissed();
+              submitting.value = false;
+              paymentFailed.value = true;
+              errorMessage.value = 'Payment was closed before completion. Your appointment has NOT been confirmed yet.';
             }
           }
         };
@@ -309,35 +392,23 @@ const initiateOnlinePayment = async (bookingId, bookingData) => {
         }
         const rzp = new window.Razorpay(options);
         rzp.on('payment.failed', function (resp) {
-          handlePaymentFailed(resp?.error?.description);
+          submitting.value = false;
+          paymentFailed.value = true;
+          errorMessage.value = `Payment failed (${resp?.error?.description || 'Transaction could not be processed'}).`;
         });
         rzp.open();
       } else {
         paymentFailed.value = true;
-        errorMessage.value = 'Razorpay checkout script could not be loaded. You can pay after your visit via UPI or Cash.';
+        errorMessage.value = 'Razorpay checkout script could not be loaded.';
         submitting.value = false;
       }
     }
   } catch (e) {
     console.error('Payment init error:', e);
     paymentFailed.value = true;
-    errorMessage.value = 'Could not open payment gateway. You can pay after your visit via UPI or Cash.';
+    errorMessage.value = 'Could not open payment gateway. You can confirm as Pay After Visit.';
     submitting.value = false;
   }
-};
-
-const handlePaymentDismissed = () => {
-  submitting.value = false;
-  paymentFailed.value = true;
-  successMessage.value = '';
-  errorMessage.value = 'Payment was closed before completion. Your appointment has NOT been confirmed yet.';
-};
-
-const handlePaymentFailed = (reason) => {
-  submitting.value = false;
-  paymentFailed.value = true;
-  successMessage.value = '';
-  errorMessage.value = `Payment failed (${reason || 'Transaction could not be processed'}). Your appointment has NOT been confirmed yet.`;
 };
 
 const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
@@ -352,38 +423,35 @@ const verifyPaymentOnServer = async (bookingId, razorpayResponse) => {
       },
       body: JSON.stringify({
         booking_id: bookingId,
-        razorpay_order_id: razorpayResponse.razorpay_order_id,
         razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+        razorpay_order_id: razorpayResponse.razorpay_order_id,
         razorpay_signature: razorpayResponse.razorpay_signature
       })
     });
     const verifyData = await verifyRes.json();
     if (verifyData.success) {
-      paymentFailed.value = false;
-      errorMessage.value = '';
       bookingResult.value = verifyData.booking || pendingBooking.value;
-      successMessage.value = verifyData.message || 'Payment successful! Your appointment is fully confirmed.';
       pendingBooking.value = null;
+      paymentFailed.value = false;
+      submitting.value = false;
+      currentStep.value = 4;
     } else {
       paymentFailed.value = true;
-      successMessage.value = '';
       errorMessage.value = verifyData.message || 'Payment verification failed.';
+      submitting.value = false;
     }
-  } catch (e) {
-    console.error('Payment verification error:', e);
+  } catch (err) {
+    console.error('Verify error:', err);
     paymentFailed.value = true;
-    successMessage.value = '';
-    errorMessage.value = 'Payment verification encountered a network error. Please contact us on WhatsApp with your payment details.';
-  } finally {
+    errorMessage.value = 'Payment verification request failed. Please check WhatsApp.';
     submitting.value = false;
   }
 };
 
 const retryOnlinePayment = () => {
   if (!pendingBooking.value) return;
-  errorMessage.value = '';
-  paymentFailed.value = false;
   submitting.value = true;
+  errorMessage.value = '';
   initiateOnlinePayment(pendingBooking.value.id, pendingBooking.value);
 };
 
@@ -401,302 +469,369 @@ const switchToPayAfterVisit = async () => {
     });
     const data = await res.json();
     if (data.success) {
-      paymentFailed.value = false;
-      errorMessage.value = '';
       bookingResult.value = data.booking || pendingBooking.value;
-      successMessage.value = data.message || 'Appointment scheduled! You can pay after your visit via UPI or Cash.';
       pendingBooking.value = null;
+      paymentFailed.value = false;
+      currentStep.value = 4;
     } else {
-      errorMessage.value = data.message || 'Could not switch payment method.';
+      errorMessage.value = data.message || 'Could not update payment method.';
     }
   } catch (e) {
-    console.error('Error switching payment method:', e);
-    errorMessage.value = 'Network error. Please try again or contact us on WhatsApp.';
+    errorMessage.value = 'Network error while confirming payment method.';
   } finally {
     switchingToCash.value = false;
   }
 };
 
-const cancelPendingBooking = async () => {
-  if (!pendingBooking.value) return;
-  cancellingBooking.value = true;
-  try {
-    const res = await fetch(`/api/bookings/${pendingBooking.value.id}/cancel`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify({ reason: 'Customer cancelled after payment dismissal' })
-    });
-    const data = await res.json();
-    if (data.success) {
-      paymentFailed.value = false;
-      pendingBooking.value = null;
-      bookingResult.value = null;
-      successMessage.value = '';
-      errorMessage.value = 'Your booking request has been cancelled.';
-    } else {
-      errorMessage.value = data.message || 'Could not cancel booking.';
-    }
-  } catch (e) {
-    console.error('Error cancelling booking:', e);
-  } finally {
-    cancellingBooking.value = false;
-  }
+// WhatsApp Link for Step 4
+const doneWaLink = computed(() => {
+  const svc = currentService.value;
+  const specPart = (bookingResult.value?.specialist_name || selectedSpecialistName.value)
+    ? `\nSpecialist: ${bookingResult.value?.specialist_name || selectedSpecialistName.value}`
+    : '';
+  const notePart = form.msg.trim() ? `\nNote: ${form.msg.trim()}` : '';
+  const payPart = form.payment_method === 'online' ? 'online' : 'after visit';
+  const msg = `Hi FMZ Glow, I’d like to book:\n${svc?.name} (${svc?.price})\n${whenText.value}\nName: ${form.name.trim()}\nPincode: ${form.pin}${specPart}${notePart}\nPayment: ${payPart}`;
+  return `https://wa.me/${waNumber.value}?text=${encodeURIComponent(msg)}`;
+});
+
+const doneTitle = computed(() => {
+  return pinCity.value ? 'Booking requested' : 'Request received';
+});
+
+const doneSubtitle = computed(() => {
+  return pinCity.value
+    ? 'We’ll confirm your specialist, exact time and total price on WhatsApp within 30 minutes.'
+    : 'We don’t cover your pincode yet. We’ll message you on WhatsApp as soon as a specialist is available near you.';
+});
+
+const restartWizard = () => {
+  currentStep.value = 1;
+  selectedDayIdx.value = 0;
+  selectedWindow.value = null;
+  selectedSpecialistId.value = null;
+  selectedSpecialistName.value = '';
+  form.name = '';
+  form.phone = '';
+  form.pin = '';
+  form.msg = '';
+  form.consent = false;
+  form.payment_method = 'after_visit';
+  bookingResult.value = null;
+  pendingBooking.value = null;
+  paymentFailed.value = false;
+  errorMessage.value = '';
 };
-const waBookingLink = computed(() => {
-  const num = (props.settings?.whatsapp_number || '+917303706047').replace(/[^0-9]/g, '');
-  return `https://wa.me/${num}?text=${encodeURIComponent('Hi FMZ Glow, I would like to book an at-home skincare visit.')}`;
+
+// Listen to preselected service or specialist from outside clicks
+watch(() => props.preselectedService, (newVal) => {
+  if (newVal) {
+    const match = serviceOptions.value.find(s => 
+      s.name.toLowerCase().includes(newVal.toLowerCase()) || 
+      newVal.toLowerCase().includes(s.name.toLowerCase()) ||
+      newVal.toLowerCase().includes(s.key)
+    );
+    if (match) {
+      selectedServiceKey.value = match.key;
+    }
+  }
+}, { immediate: true });
+
+watch(() => props.preselectedSpecialist, (newVal) => {
+  if (newVal) {
+    selectedSpecialistId.value = newVal.id;
+    selectedSpecialistName.value = newVal.name;
+    // Jump straight to Step 2 so user can immediately choose day & time
+    if (currentStep.value < 2) {
+      currentStep.value = 2;
+    }
+  }
+}, { immediate: true });
+
+watch(() => props.preselectedConcern, (newVal) => {
+  if (newVal && !form.msg) {
+    form.msg = newVal;
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  // Select first available window for today or tomorrow if available
+  if (days.value.length > 0) {
+    const openWin = WINDOWS.find(w => windowOpen(days.value[0].dayIdx, w));
+    if (openWin) {
+      selectedWindow.value = openWin;
+    } else if (days.value.length > 1) {
+      selectedDayIdx.value = days.value[1].dayIdx;
+      selectedWindow.value = WINDOWS[0];
+    }
+  }
 });
 </script>
 
 <template>
   <section class="booking" id="book">
     <div class="wrap bk-grid">
+      <!-- Left sidebar -->
       <div class="bk-side">
         <h2>Ready for your glow?</h2>
         <p>Three quick steps. We confirm your specialist, time and total price on WhatsApp before anyone comes to your home.</p>
         <ul>
           <li>Certified women specialists only</li>
           <li>No payment now; pay after your visit</li>
-          <li>Free cancellation up to 4 hours before</li>
+          <li>Free rescheduling up to 4 hours before</li>
         </ul>
-        <a class="btn wa" :href="waBookingLink" target="_blank" rel="noopener">Book on WhatsApp instead</a>
-        
-        <div v-if="bookingResult" style="margin-top:24px;background:rgba(255,255,255,0.08);border-radius:16px;padding:20px;border:1px solid rgba(255,255,255,0.15)">
-          <div style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--tan);font-weight:700">Latest Booking</div>
-          <div style="font-size:1.3rem;font-weight:700;margin:6px 0;color:#fff">#{{ bookingResult.booking_number }}</div>
-          <div style="font-size:0.84rem;color:#f3e4e0">
-            <div><b>Service:</b> {{ bookingResult.service }}</div>
-            <div><b>Date:</b> {{ bookingResult.date }}</div>
-            <div><b>Time:</b> {{ bookingResult.time }}</div>
-            <div v-if="Number(bookingResult.total_amount) > 0"><b>Price:</b> ₹{{ Math.round(Number(bookingResult.total_amount)).toLocaleString('en-IN') }}</div>
-            <div v-if="checkoutUrl" style="margin-top:14px">
-              <a :href="checkoutUrl" style="display:inline-block;padding:8px 18px;background:#fff;color:#7a2e2e !important;font-weight:700;border-radius:999px;text-decoration:none;font-size:0.85rem">
-                Pay Online Now &rarr;
-              </a>
-            </div>
-          </div>
-        </div>
+        <a class="btn wa" :href="waBookingLink" target="_blank" rel="noopener">Prefer WhatsApp? Chat now</a>
       </div>
 
-      <div class="bk form">
-        <form @submit.prevent="submitBooking">
-          <div class="form-grid">
-            <div class="field">
-              <label for="name">Your name</label>
-              <input
-                id="name"
-                v-model="form.name"
-                type="text"
-                autocomplete="name"
-                placeholder="e.g. Mansi Joshi"
-                required
-              >
-            </div>
+      <!-- Right Wizard Container -->
+      <div class="bk" aria-live="polite">
+        <!-- 3-Step Progress Indicator -->
+        <div class="progress" aria-hidden="true" v-if="currentStep <= 3">
+          <span id="p1" :class="{ on: currentStep >= 1 }"></span>
+          <span id="p2" :class="{ on: currentStep >= 2 }"></span>
+          <span id="p3" :class="{ on: currentStep >= 3 }"></span>
+        </div>
 
-            <div class="field">
-              <label for="phone">WhatsApp number</label>
-              <input
-                id="phone"
-                v-model="form.phone"
-                type="tel"
-                autocomplete="tel"
-                placeholder="+91"
-                required
-                pattern="[0-9+\s()-]{8,18}"
-              >
-            </div>
+        <!-- Step 1: Choose your visit -->
+        <div id="s1" v-if="currentStep === 1">
+          <h3>Choose your visit</h3>
+          <p class="sub">Step 1 of 3</p>
+          <div class="opts" id="svcOpts">
+            <button
+              v-for="svc in serviceOptions"
+              :key="svc.key"
+              type="button"
+              class="opt"
+              :aria-pressed="selectedServiceKey === svc.key"
+              @click="pickSvc(svc.key)"
+            >
+              <span>
+                <b>{{ svc.name }}</b>
+                <small>{{ svc.dur }}</small>
+              </span>
+              <span class="p">{{ svc.price }}</span>
+            </button>
+          </div>
+          <div class="nav-row">
+            <button class="btn" id="to2" type="button" :disabled="!selectedServiceKey" @click="goToStep(2)">
+              Continue
+            </button>
+          </div>
+        </div>
 
-            <div class="field">
-              <label for="email">Email address (optional for confirmation)</label>
-              <input
-                id="email"
-                v-model="form.email"
-                type="email"
-                placeholder="you@example.com"
-              >
-            </div>
+        <!-- Step 2: Pick a day and time -->
+        <div id="s2" v-if="currentStep === 2">
+          <h3>Pick a day and time</h3>
+          <p class="sub">Step 2 of 3 · we’ll confirm the exact time on WhatsApp</p>
+          
+          <span class="lbl">Day</span>
+          <div class="chips" id="dayChips">
+            <button
+              v-for="day in days"
+              :key="day.dayIdx"
+              type="button"
+              class="chip"
+              :aria-pressed="selectedDayIdx === day.dayIdx"
+              @click="pickDay(day.dayIdx)"
+            >
+              {{ day.label }}
+              <small>{{ day.sub }}</small>
+            </button>
+          </div>
 
-            <div class="field">
-              <label for="pin">Pincode</label>
-              <input
-                id="pin"
-                v-model="form.pin"
-                inputmode="numeric"
-                placeholder="380007"
-                required
-                pattern="[0-9]{6}"
-                maxlength="6"
-              >
-            </div>
+          <span class="lbl">Time</span>
+          <div class="chips wide" id="timeChips">
+            <button
+              v-for="win in WINDOWS"
+              :key="win.id"
+              type="button"
+              class="chip"
+              :aria-pressed="selectedWindow?.id === win.id"
+              :disabled="!windowOpen(selectedDayIdx, win)"
+              @click="pickWindow(win)"
+            >
+              {{ win.label }}
+              <small>{{ win.sub }}</small>
+            </button>
+          </div>
 
-            <div class="field">
-              <label for="service">Service</label>
-              <select 
-                id="service" 
-                v-model="form.service_name" 
-                required
-                @change="() => {
-                  const s = services.find(x => x.title === form.service_name);
-                  form.service_id = s ? s.id : null;
-                }"
-              >
-                <option v-for="svc in services" :key="svc.id" :value="svc.title">
-                  {{ svc.title }} (₹{{ Math.round(Number(svc.price)).toLocaleString('en-IN') }})
-                </option>
-                <option value="Glow 3-Visit Plan">Glow 3-Visit Plan (₹3,299)</option>
-                <option value="Not sure, help me choose">Not sure, help me choose</option>
-              </select>
-            </div>
+          <p class="hint" id="timeHint">
+            {{ selectedDayIdx === 0 ? "Same-day visits need at least 2 hours’ notice." : "" }}
+          </p>
 
-            <div class="field">
-              <label for="specialist">Preferred Specialist (optional)</label>
-              <select 
-                id="specialist" 
-                v-model="form.specialist_id"
-                @change="() => {
-                  const spec = specialists.find(s => s.id === form.specialist_id);
-                  form.specialist_name = spec ? spec.name : '';
-                }"
-              >
-                <option :value="null">Any available specialist</option>
-                <option v-for="sp in specialists" :key="sp.id" :value="sp.id">
-                  {{ sp.name }} ({{ sp.qualification }} - {{ sp.city }})
-                </option>
-              </select>
-            </div>
+          <div class="nav-row">
+            <button class="btn ghost" type="button" @click="goToStep(1)">Back</button>
+            <button class="btn" id="to3" type="button" :disabled="selectedDayIdx === null || !selectedWindow" @click="goToStep(3)">
+              Continue
+            </button>
+          </div>
+        </div>
 
-            <div class="field">
-              <label for="date">Preferred date</label>
-              <input 
-                id="date" 
-                v-model="form.date" 
-                type="date" 
-                :min="todayDate"
-                required
-              >
-            </div>
+        <!-- Step 3: Your details -->
+        <div id="s3" v-if="currentStep === 3">
+          <h3>Your details</h3>
+          <p class="sub">Step 3 of 3</p>
 
-            <div class="field">
-              <label>Select Time Slot</label>
-              <div v-if="loadingSlots" style="font-size:0.75rem;color:var(--muted)">Checking availability...</div>
-              <div v-else class="slot-pills">
-                <button
-                  v-for="slot in availableSlots"
-                  :key="slot.id"
-                  type="button"
-                  class="slot-pill"
-                  :class="{ active: form.time_slot_id === slot.id }"
-                  :disabled="!slot.is_available"
-                  @click="selectSlot(slot)"
+          <div class="summary" id="sum3">
+            <div><b>{{ currentService?.name }}</b> · {{ currentService?.price }}</div>
+            <div>{{ whenText }}</div>
+            <div v-if="selectedSpecialistName">Preferred specialist: {{ selectedSpecialistName }}</div>
+          </div>
+
+          <label class="lbl" for="fName">Your name</label>
+          <input 
+            class="field" 
+            id="fName" 
+            v-model="form.name" 
+            autocomplete="name" 
+            placeholder="e.g. Mansi Joshi" 
+            @input="validate"
+          >
+
+          <div class="row2">
+            <div>
+              <label class="lbl" for="fPhone">WhatsApp number</label>
+              <div class="prefix">
+                <span>+91</span>
+                <input 
+                  class="field" 
+                  id="fPhone" 
+                  v-model="form.phone" 
+                  inputmode="numeric" 
+                  autocomplete="tel-national" 
+                  maxlength="10" 
+                  placeholder="98765 43210" 
+                  @input="validate"
                 >
-                  {{ slot.start_time }} - {{ slot.end_time }}
-                  <span v-if="!slot.is_available" style="font-size:0.65rem"> (Full)</span>
-                </button>
               </div>
+              <p class="hint" :class="{ err: phoneHintErr }">{{ phoneHint }}</p>
             </div>
 
-            <div class="field full">
-              <label for="msg">Your skin concern (optional)</label>
-              <textarea 
-                id="msg" 
-                v-model="form.msg" 
-                rows="3" 
-                placeholder="Tell us what you'd like your specialist to focus on..."
-              ></textarea>
-            </div>
-
-            <div class="field full">
-              <label>Payment Option</label>
-              <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:6px">
-                <label style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:0.82rem;cursor:pointer">
-                  <input type="radio" v-model="form.payment_method" value="after_visit" style="width:auto">
-                  <span>Pay After Visit (UPI / Cash)</span>
-                </label>
-                <label v-if="isOnlinePaymentAvailable" style="display:flex;align-items:center;gap:6px;font-weight:500;font-size:0.82rem;cursor:pointer">
-                  <input type="radio" v-model="form.payment_method" value="online" style="width:auto">
-                  <span>{{ onlinePaymentLabel }}</span>
-                </label>
-              </div>
+            <div>
+              <label class="lbl" for="fPin">Pincode</label>
+              <input 
+                class="field" 
+                id="fPin" 
+                v-model="form.pin" 
+                inputmode="numeric" 
+                autocomplete="postal-code" 
+                maxlength="6" 
+                placeholder="380007" 
+                @input="validate"
+              >
+              <p class="hint" :class="{ ok: pinCity, err: !pinCity && form.pin.length === 6 }">{{ pinHint }}</p>
             </div>
           </div>
 
-          <label class="consent" for="consent">
-            <input
-              id="consent"
-              v-model="form.consent"
-              type="checkbox"
-              required
+          <label class="lbl" for="fNote">Anything your specialist should know? (optional)</label>
+          <input 
+            class="field" 
+            id="fNote" 
+            v-model="form.msg" 
+            placeholder="e.g. sensitive skin, pregnant, 2nd floor"
+          >
+
+          <span class="lbl">Payment</span>
+          <div class="pay">
+            <button 
+              type="button"
+              class="chip" 
+              :aria-pressed="form.payment_method === 'after_visit'"
+              @click="form.payment_method = 'after_visit'"
             >
-            <span>I agree that FMZ India may contact me on WhatsApp about this request.</span>
+              Pay after visit<small>UPI or cash</small>
+            </button>
+            <button 
+              v-if="isOnlinePaymentAvailable"
+              type="button"
+              class="chip" 
+              :aria-pressed="form.payment_method === 'online'"
+              @click="form.payment_method = 'online'"
+            >
+              Pay online now<small>UPI or card</small>
+            </button>
+          </div>
+
+          <label class="check">
+            <input type="checkbox" id="fConsent" v-model="form.consent" @change="validate">
+            <span>FMZ India can message me on WhatsApp about this booking.</span>
           </label>
 
-          <button class="btn" type="submit" :disabled="submitting">
-            <span v-if="submitting">{{ isRedirecting ? 'Opening payment gateway...' : (form.payment_method === 'online' || form.payment_method === 'razorpay' ? 'Opening payment checkout...' : 'Processing your booking...') }}</span>
-            <span v-else>Book your glow</span>
-          </button>
-
-          <div class="form-note">
-            <svg class="form-note-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-            </svg>
-            <div>
-              <strong>Please note:</strong> This request does not confirm an appointment. Price, specialist and any travel charges are confirmed in writing before your visit. You pay after your visit.
-            </div>
-          </div>
-
-          <div v-if="successMessage" class="success-box" role="status">
-            <b>Thank you!</b> {{ successMessage }}
-            <div v-if="checkoutUrl" style="margin-top:12px">
-              <a :href="checkoutUrl" class="btn" style="display:inline-block;padding:8px 18px;background:#7a2e2e;color:#fff !important;font-weight:700;border-radius:999px;text-decoration:none;font-size:0.85rem">
-                Proceed to Payment &rarr;
-              </a>
-            </div>
-          </div>
-
-          <div v-if="errorMessage" class="error-box" role="alert">
+          <div v-if="errorMessage" class="hint err" style="margin-top:12px;font-size:0.9rem">
             {{ errorMessage }}
           </div>
 
-          <!-- Actions if online payment was closed or failed -->
-          <div v-if="paymentFailed && pendingBooking" style="margin-top:14px;padding:14px 16px;background:#fff5f5;border:1px solid #fecaca;border-radius:12px">
-            <div style="font-size:0.86rem;font-weight:700;color:#991b1b;margin-bottom:6px">
+          <div class="nav-row">
+            <button class="btn ghost" type="button" @click="goToStep(2)">Back</button>
+            <button 
+              class="btn" 
+              id="submit" 
+              type="button" 
+              :disabled="!isFormValid || submitting" 
+              @click="submitBooking"
+            >
+              <span v-if="submitting">
+                {{ isRedirecting ? 'Redirecting to payment...' : (form.payment_method === 'online' ? 'Opening payment...' : 'Requesting booking...') }}
+              </span>
+              <span v-else>Request booking</span>
+            </button>
+          </div>
+
+          <p class="foot-note">No payment is taken now. Travel is free within 8 km; anything beyond is shown in your WhatsApp confirmation before you agree.</p>
+
+          <!-- Online payment closed / retry container -->
+          <div v-if="paymentFailed && pendingBooking" style="margin-top:16px;padding:16px;background:#fff5f5;border:1px solid #fecaca;border-radius:14px">
+            <div style="font-size:0.9rem;font-weight:700;color:#991b1b;margin-bottom:6px">
               Booking #{{ pendingBooking.booking_number }} is unpaid & unconfirmed.
             </div>
-            <p style="font-size:0.78rem;color:#7f1d1d;margin-bottom:12px;line-height:1.4">
-              Your appointment is not scheduled yet. You can retry paying online, or confirm this booking right now as <b>Pay After Visit (UPI / Cash)</b>.
+            <p style="font-size:0.8rem;color:#7f1d1d;margin-bottom:12px;line-height:1.4">
+              Your appointment is not scheduled yet. You can retry paying online, or confirm this booking as <b>Pay After Visit (UPI / Cash)</b>.
             </p>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
               <button 
                 type="button" 
+                class="btn" 
+                style="flex:1;min-height:42px"
                 @click="retryOnlinePayment" 
                 :disabled="submitting"
-                style="padding:8px 16px;font-size:0.82rem;background:#7a2e2e;color:#fff !important;border-radius:999px;border:none;cursor:pointer;font-weight:700"
               >
                 {{ submitting ? 'Opening Checkout...' : 'Retry Online Payment' }}
               </button>
               <button 
                 type="button" 
+                class="btn ghost" 
+                style="flex:1;min-height:42px"
                 @click="switchToPayAfterVisit" 
                 :disabled="switchingToCash"
-                style="padding:8px 16px;font-size:0.82rem;background:#fff;color:#7a2e2e !important;border:1px solid #7a2e2e;border-radius:999px;cursor:pointer;font-weight:700"
               >
                 {{ switchingToCash ? 'Confirming...' : 'Confirm as Pay After Visit' }}
               </button>
-              <button 
-                type="button" 
-                @click="cancelPendingBooking" 
-                :disabled="cancellingBooking"
-                style="padding:8px 12px;font-size:0.82rem;background:transparent;color:#991b1b;border:none;cursor:pointer;text-decoration:underline"
-              >
-                {{ cancellingBooking ? 'Cancelling...' : 'Cancel Request' }}
-              </button>
             </div>
           </div>
-        </form>
+        </div>
+
+        <!-- Step 4: Done / Booking requested state -->
+        <div id="s4" v-if="currentStep === 4" class="done">
+          <div class="tick">✓</div>
+          <h3 id="doneTitle">{{ doneTitle }}</h3>
+          <p class="sub" id="doneSub">{{ doneSubtitle }}</p>
+
+          <div class="summary" id="sum4">
+            <div><b>{{ currentService?.name }}</b> · {{ currentService?.price }}</div>
+            <div>{{ whenText }}</div>
+            <div v-if="bookingResult?.specialist_name || selectedSpecialistName">
+              <b>Specialist:</b> {{ bookingResult?.specialist_name || selectedSpecialistName }}
+            </div>
+            <div>{{ form.name }} · +91 {{ form.phone }} · {{ form.pin }}</div>
+          </div>
+
+          <a class="btn wa" :href="doneWaLink" target="_blank" rel="noopener" id="doneWa" style="width:100%">
+            Send details on WhatsApp now
+          </a>
+          <button class="btn ghost" id="restart" type="button" style="width:100%;margin-top:10px" @click="restartWizard">
+            Book another visit
+          </button>
+        </div>
       </div>
     </div>
   </section>
