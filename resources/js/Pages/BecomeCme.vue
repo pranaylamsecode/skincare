@@ -11,6 +11,7 @@ const props = defineProps({
 });
 
 const isDark = ref(false);
+const imgVersion = ref(Date.now());
 
 const toggleTheme = () => {
   isDark.value = !isDark.value;
@@ -223,7 +224,7 @@ const whatsappUrl = computed(() => {
           <div class="hero-media">
             <div class="photo-wrapper">
               <img 
-                src="/images/cme-photo.jpg" 
+                :src="`/images/cme-photo.jpg?v=${imgVersion}`" 
                 alt="A smiling FMZ specialist in uniform, with her kit" 
                 class="photo"
                 onerror="this.src='/images/Burgundy-Luxury-Skincare.png'"
