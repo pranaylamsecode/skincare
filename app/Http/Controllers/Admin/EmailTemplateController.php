@@ -69,7 +69,8 @@ class EmailTemplateController extends Controller
         if ($sent) {
             return back()->with('success', "Test email sent to {$request->test_email}.");
         } else {
-            return back()->with('error', 'Failed to send test email. Please check your mail driver settings.');
+            $err = EmailNotificationService::$lastError ?: 'Please verify your mail driver credentials in .env and run php artisan config:clear.';
+            return back()->with('error', "Failed to send test email: {$err}");
         }
     }
 }

@@ -11,15 +11,19 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailNotificationService
 {
+    public static ?string $lastError = null;
+
     /**
      * Send email based on dynamic template code
      */
     public static function send(string $templateCode, string $recipientEmail, array $variables): bool
     {
+        self::$lastError = null;
         try {
             $template = EmailTemplate::where('code', $templateCode)->where('is_active', true)->first();
             if (!$template) {
-                Log::warning("Email template '{$templateCode}' not found or inactive.");
+                self::$lastError = "Email template '{$templateCode}' not found or inactive in database.";
+                Log::warning(self::$lastError);
                 return false;
             }
 
@@ -38,6 +42,7 @@ class EmailNotificationService
             Log::info("Email '{$templateCode}' successfully sent to {$recipientEmail}.");
             return true;
         } catch (\Throwable $e) {
+            self::$lastError = $e->getMessage();
             Log::error("Failed to send email '{$templateCode}' to {$recipientEmail}: " . $e->getMessage());
             return false;
         }
