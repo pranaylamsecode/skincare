@@ -218,7 +218,7 @@ const whatsappUrl = computed(() => {
         <div class="wrap">
           <div class="center">
             <h2>Choose your path</h2>
-            <p class="lede">Register for one or more. Full training is given for each.</p>
+            <p class="lede">Train and work with genuine Nu Skin products and devices, from a global beauty and wellness company founded in the USA</p>
           </div>
 
           <div class="prog-grid">
