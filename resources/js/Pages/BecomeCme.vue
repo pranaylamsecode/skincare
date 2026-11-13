@@ -167,8 +167,8 @@ const whatsappUrl = computed(() => {
     <!-- Header -->
     <header class="cme-header">
       <div class="wrap nav">
-        <Link href="/glow" class="logo">
-          <span class="fmz">FMZ</span>
+        <Link href="/glow" class="cme-brand-logo">
+          <span class="fmz-badge">FMZ</span>
           <div class="logo-titles">
             <span class="logo-main">Certified Micro Entrepreneur</span>
             <span class="logo-sub">CME Programme</span>
@@ -842,47 +842,52 @@ section {
   gap: 12px;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
+.cme-brand-logo {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-decoration: none !important;
 }
 
-.logo .fmz {
-  background: #A31D1D;
-  color: #fff;
-  font: 700 20px/1 Montserrat, Arial, sans-serif;
-  letter-spacing: 0.02em;
-  padding: 8px 11px;
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(163, 29, 29, 0.2);
+.cme-brand-logo .fmz-badge {
+  background: #A31D1D !important;
+  color: #fff !important;
+  font: 700 20px/1 Montserrat, Arial, sans-serif !important;
+  letter-spacing: 0.02em !important;
+  padding: 8px 11px !important;
+  border-radius: 5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 6px rgba(163, 29, 29, 0.2) !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
 }
 
-.logo-titles {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
+.cme-brand-logo .logo-titles {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 2px !important;
 }
 
-.logo-main {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: #2E1A1B;
-  letter-spacing: 0.01em;
-  line-height: 1.2;
+.cme-brand-logo .logo-main {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: #2E1A1B !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
 }
 
-.logo-sub {
-  font-size: 13px;
-  font-style: italic;
-  font-weight: 500;
-  color: #5A2528;
-  line-height: 1.2;
+.cme-brand-logo .logo-sub {
+  font-size: 13px !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  color: #5A2528 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
 }
 
 .nav-right {
@@ -908,9 +913,10 @@ section {
 }
 
 @media (max-width: 600px) {
-  .logo-main { font-size: 12px; }
-  .logo-sub { font-size: 11px; }
-  .logo .fmz { font-size: 17px; padding: 6px 9px; }
+  .cme-brand-logo .logo-main { font-size: 11.5px !important; }
+  .cme-brand-logo .logo-sub { font-size: 10.5px !important; }
+  .cme-brand-logo .fmz-badge { font-size: 16px !important; padding: 5px 8px !important; }
+  .cme-brand-logo { gap: 8px !important; }
   .back-site-link { display: none; }
   .nav .btn { min-height: 38px; padding: 0 16px; font-size: 13.5px; }
 }
