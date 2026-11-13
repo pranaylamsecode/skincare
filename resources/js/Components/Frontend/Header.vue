@@ -1,27 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-
-const isDark = ref(false);
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  const theme = isDark.value ? 'dark' : 'light';
-  document.documentElement.dataset.theme = theme;
-  try {
-    localStorage.setItem('fmz-theme', theme);
-  } catch (e) {}
-};
+import { onMounted } from 'vue';
 
 onMounted(() => {
   try {
-    const saved = localStorage.getItem('fmz-theme');
-    if (saved === 'dark' || saved === 'light') {
-      isDark.value = saved === 'dark';
-      document.documentElement.dataset.theme = saved;
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      isDark.value = true;
-      document.documentElement.dataset.theme = 'dark';
-    }
+    document.documentElement.dataset.theme = 'light';
+    localStorage.removeItem('fmz-theme');
   } catch (e) {}
 });
 </script>
@@ -45,15 +28,6 @@ onMounted(() => {
       </ul>
 
       <div class="nav-right">
-        <button 
-          class="theme-btn" 
-          type="button" 
-          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" 
-          :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-          @click="toggleTheme"
-        >
-          {{ isDark ? '☀️' : '🌙' }}
-        </button>
         <a class="btn" href="#book">Book a visit</a>
       </div>
     </div>

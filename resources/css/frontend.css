@@ -22,27 +22,6 @@
   box-sizing: border-box;
 }
 
-:root[data-theme="dark"], body.dark {
-  --bg: #1B1213;
-  --surface: #251A1B;
-  --tint: #2F2122;
-  --ink: #F5E9E7;
-  --muted: #C5B0AE;
-  --wine: #E07A80;
-  --wine-deep: #3A1316;
-  --on-wine: #FFFFFF;
-  --gold: #D9B489;
-  --line: #3C2B2C;
-  --cta: #C9343C;
-  --on-cta: #FFFFFF;
-  --ok: #6FCB95;
-  --err: #FF8A80;
-  --note: #3A3016;
-  --note-ink: #F6DE9C;
-  --note-line: #7A6326;
-  color-scheme: dark;
-}
-
 *, *::before, *::after { box-sizing: inherit; }
 
 html {
@@ -231,21 +210,45 @@ header.site-header {
   gap: 10px;
 }
 
-.theme-btn {
-  width: 42px;
-  height: 42px;
+/* Floating WhatsApp Button */
+.wa-float {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
-  border: 1.5px solid var(--line);
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 18px;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: border-color 0.15s;
+  background: #25D366;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 18px rgba(37, 211, 102, 0.45);
+  z-index: 60;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
 }
-.theme-btn:hover {
-  border-color: var(--wine);
+.wa-float:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(37, 211, 102, 0.6);
+}
+.wa-float svg {
+  width: 32px;
+  height: 32px;
+  fill: #fff;
+}
+@media (max-width: 760px) {
+  .wa-float {
+    right: 16px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    width: 50px;
+    height: 50px;
+    z-index: 50;
+  }
+  .wa-float svg {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 /* hero */

@@ -13,6 +13,7 @@ import Booking from '@/Components/Frontend/Booking.vue';
 import Faq from '@/Components/Frontend/Faq.vue';
 import Footer from '@/Components/Frontend/Footer.vue';
 import MobileCta from '@/Components/Frontend/MobileCta.vue';
+import WhatsAppFloat from '@/Components/Frontend/WhatsAppFloat.vue';
 
 const props = defineProps({
   services: { type: Array, default: () => [] },
@@ -130,6 +131,12 @@ const handleConcernSelect = ({ concern, service }) => {
     <!-- Sticky Mobile CTA Bar -->
     <MobileCta 
       :whatsapp-number="settings.whatsapp_number" 
+    />
+
+    <!-- Floating WhatsApp Action Button -->
+    <WhatsAppFloat 
+      :whatsapp-number="settings.whatsapp_number"
+      :whatsapp-message="settings.whatsapp_default_message"
     />
   </div>
 </template>

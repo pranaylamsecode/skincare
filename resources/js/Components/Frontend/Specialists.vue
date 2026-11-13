@@ -33,6 +33,11 @@ const getInitials = (name) => {
   return parts[0].substring(0, 2).toUpperCase();
 };
 
+const getFirstName = (name) => {
+  if (!name) return '';
+  return name.trim().split(/\s+/)[0];
+};
+
 const bookWithSpecialist = (spec) => {
   emit('select-specialist', spec);
   const bookEl = document.getElementById('book');
@@ -82,14 +87,14 @@ const bookWithSpecialist = (spec) => {
               <img 
                 v-if="spec.photo" 
                 :src="spec.photo.startsWith('http') ? spec.photo : '/' + spec.photo" 
-                :alt="spec.name"
+                :alt="getFirstName(spec.name)"
                 onerror="this.style.display='none'"
               />
               <span v-else>{{ getInitials(spec.name) }}</span>
             </div>
 
             <span class="verified">✓ {{ spec.badge || 'Verified specialist' }}</span>
-            <h3>{{ spec.name }}</h3>
+            <h3>{{ getFirstName(spec.name) }}</h3>
             <span class="cred">{{ spec.qualification }}</span>
             <span class="area" v-if="spec.languages && spec.languages.length">
               {{ Array.isArray(spec.languages) ? spec.languages.join(', ') : spec.languages }}
