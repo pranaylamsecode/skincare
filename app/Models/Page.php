@@ -23,3 +23,4 @@ class Page extends Model
         'sort_order' => 'integer',
     ];
 }
+

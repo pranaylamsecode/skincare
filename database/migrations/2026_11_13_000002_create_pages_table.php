@@ -142,3 +142,4 @@ For all cancellation, rescheduling, and refund requests:
         Schema::dropIfExists('pages');
     }
 };
+
