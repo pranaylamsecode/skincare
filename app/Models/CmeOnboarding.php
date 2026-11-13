@@ -59,3 +59,4 @@ class CmeOnboarding extends Model
         return $this->whatsapp_number;
     }
 }
+

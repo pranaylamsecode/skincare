@@ -136,3 +136,4 @@ class CmeOnboardingSeeder extends Seeder
         }
     }
 }
+
