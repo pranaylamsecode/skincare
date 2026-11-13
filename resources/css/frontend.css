@@ -516,12 +516,27 @@ header.site-header {
   margin-top: 12px;
 }
 .svc ul {
-  padding-left: 18px;
-  margin: 14px 0 20px;
+  padding-left: 22px !important;
+  margin: 14px 0 20px !important;
   font-size: 14px;
-  display: grid;
-  gap: 5px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
   color: var(--ink);
+  list-style: disc !important;
+  list-style-type: disc !important;
+}
+.svc ul li {
+  display: list-item !important;
+  list-style: disc !important;
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.svc ul li::marker {
+  color: var(--wine);
+  font-size: 1.1em;
 }
 .svc .price {
   margin-top: auto;
