@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Plan;
 use App\Models\Service;
 use App\Models\Concern;
+use App\Models\Review;
 
 return new class extends Migration
 {
@@ -133,6 +134,16 @@ return new class extends Migration
         foreach ($refConcerns as $rc) {
             Concern::updateOrCreate(['quote' => $rc['quote']], $rc);
         }
+
+        // 4. Update Priya & Neha result images for Before/After Slider
+        Review::where('client_name', 'like', '%Priya%')->update([
+            'image_before' => 'images/priya-before.jpg',
+            'image_after' => 'images/priya-after.jpg',
+        ]);
+        Review::where('client_name', 'like', '%Neha%')->update([
+            'image_before' => 'images/neha-before.jpg',
+            'image_after' => 'images/neha-after.jpg',
+        ]);
     }
 
     /**
