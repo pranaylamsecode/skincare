@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Become an FMZ Certified Micro Entrepreneur · Register free</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FDF6F4; --surface:#FFFFFF; --tint:#F9E8E5; --ink:#2E1A1D; --muted:#6D5659;
+  --wine:#7A2A35; --deep:#5A1F27; --cta:#A8243A; --gold:#D9B489; --line:#EFDCD8;
+  --ok:#2F7A4F; --err:#B3261E;
+  --note:#FFF4D6; --note-ink:#5C4300; --note-line:#E9C766;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1B1214; --surface:#25191C; --tint:#302125; --ink:#F6EAE8; --muted:#C6B0B2;
+  --wine:#E58B97; --deep:#3A1419; --cta:#C9405A; --gold:#D9B489; --line:#3D2B2F;
+  --ok:#6FCB95; --err:#FF8A80; --note:#3A3016; --note-ink:#F6DE9C; --note-line:#7A6326; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1B1214; --surface:#25191C; --tint:#302125; --ink:#F6EAE8; --muted:#C6B0B2;
+  --wine:#E58B97; --deep:#3A1419; --cta:#C9405A; --gold:#D9B489; --line:#3D2B2F;
+  --ok:#6FCB95; --err:#FF8A80; --note:#3A3016; --note-ink:#F6DE9C; --note-line:#7A6326; color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.65 Montserrat,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
+h1,h2,h3{margin:0;font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;font-weight:600;line-height:1.1;color:var(--ink)}
+h1{font-size:clamp(2.6rem,6vw,4rem)} h2{font-size:clamp(2rem,4vw,2.7rem)} h3{font-size:1.55rem}
+p{margin:0}
+.wrap{width:min(1080px,100% - 40px);margin-inline:auto}
+section{padding:80px 0}
+.lede{color:var(--muted);max-width:56ch;margin-top:14px}
+.center{text-align:center}.center .lede{margin-inline:auto}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;border:1.5px solid var(--cta);background:var(--cta);color:#fff;font:600 15px/1 Montserrat,Arial,sans-serif;text-decoration:none;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--wine);border-color:var(--wine)}
+.small{font-size:12.5px;color:var(--muted)}
+
+/* image slots: replace each .img-slot with <img> when photos are ready */
+.img-slot{display:grid;place-items:end start;background:linear-gradient(150deg,#F4D9D4,#E8C1BC 60%,#DDB0AA);color:#6B3B40;font-size:12.5px;font-weight:600;padding:14px;overflow:hidden}
+.img-slot span{background:rgba(255,255,255,.75);padding:6px 10px;border-radius:999px}
+.photo{display:block;width:100%;height:100%;object-fit:cover}
+
+/* notes */
+.note{display:none;margin:16px 0 0;padding:10px 14px;border:1px dashed var(--note-line);background:var(--note);color:var(--note-ink);border-radius:10px;font-size:13px;line-height:1.45;max-width:760px;text-align:left}
+body.show-notes .note{display:block}
+.center .note{margin-inline:auto}
+.notes-toggle{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:70;background:var(--note);color:var(--note-ink);border:1px solid var(--note-line);border-radius:999px;padding:10px 16px;font:600 13px Montserrat,Arial,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:600}
+.logo .fmz{background:#B3121B;color:#fff;font:700 18px/1 Montserrat,Arial,sans-serif;padding:5px 7px;border-radius:3px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav .btn{min-height:42px;padding:0 20px}
+.theme-btn{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-size:18px;cursor:pointer;display:grid;place-items:center}
+@media (max-width:600px){.logo .sub{display:none}}
+
+/* hero */
+.hero{background:linear-gradient(var(--tint),var(--bg));padding:64px 0 72px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1 em{font-style:italic;color:var(--wine)}
+.hero .lede{font-size:17px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-media{position:relative}
+.hero-media .img-slot,.hero-media .photo{aspect-ratio:4/4.4;border-radius:240px 240px 28px 28px}
+.hero-media .img-slot{place-items:center;text-align:center}
+.badge{position:absolute;left:-22px;bottom:30px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 20px;box-shadow:0 12px 32px rgba(70,20,30,.14)}
+.badge b{display:block;font:600 2.4rem/1 "Cormorant Garamond",Georgia,serif;color:var(--cta)}
+.badge span{font-size:13px;font-weight:600}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr;gap:36px}.badge{left:12px;bottom:12px}}
+
+/* programmes */
+.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.prog{background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.prog .img-slot,.prog .photo{aspect-ratio:4/3}
+.prog div.body{padding:22px}
+.prog p{font-size:14.5px;color:var(--muted);margin-top:8px}
+.prog .tag{display:inline-block;margin-top:14px;font-size:12px;font-weight:600;color:var(--wine);background:var(--tint);padding:6px 12px;border-radius:999px}
+@media (max-width:860px){.prog-grid{grid-template-columns:1fr}}
+
+/* steps */
+.how{background:var(--surface)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:40px}
+.step .n{font:600 2.6rem/1 "Cormorant Garamond",Georgia,serif;color:var(--cta)}
+.step b{display:block;margin-top:8px;font-size:15px}
+.step p{font-size:14px;color:var(--muted);margin-top:4px}
+@media (max-width:860px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.steps{grid-template-columns:1fr}}
+
+/* registration */
+.reg{background:var(--deep);color:#fff}
+.reg h2{color:#fff}
+.reg-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;align-items:start}
+.reg-side p{color:#F2DADA;margin-top:12px}
+.reg-side ul{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px;font-size:14.5px}
+.reg-side li{display:flex;gap:10px}
+.reg-side li::before{content:"✓";color:var(--gold);font-weight:700}
+.form{background:var(--surface);color:var(--ink);border-radius:24px;padding:28px}
+.progress{display:flex;gap:8px;margin-bottom:20px}
+.progress span{flex:1;height:5px;border-radius:5px;background:var(--line)}
+.progress span.on{background:var(--cta)}
+.form h3{font-size:1.7rem}
+.form .sub{font-size:13.5px;color:var(--muted);margin:2px 0 16px}
+.lbl{display:block;font-size:13px;font-weight:600;margin:18px 0 8px}
+.lbl em{font-style:normal;font-weight:400;color:var(--muted)}
+.field{width:100%;min-height:50px;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font:16px Montserrat,Arial,sans-serif;background:var(--surface);color:var(--ink)}
+.field:focus{outline:none;border-color:var(--wine)}
+select.field{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 22px,calc(100% - 14px) 22px;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.prefix{display:flex}
+.prefix span{display:grid;place-items:center;padding:0 12px;border:1.5px solid var(--line);border-right:0;border-radius:14px 0 0 14px;font-weight:600;color:var(--muted);background:var(--tint)}
+.prefix .field{border-radius:0 14px 14px 0}
+.cards{display:grid;gap:10px}
+.card-opt{display:flex;gap:14px;align-items:center;text-align:left;width:100%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:14px 16px;font:inherit;cursor:pointer}
+.card-opt .box{flex:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;color:#fff}
+.card-opt b{display:block;font-size:15px}
+.card-opt small{font-size:12.5px;color:var(--muted)}
+.card-opt[aria-pressed="true"]{border-color:var(--cta);background:var(--tint)}
+.card-opt[aria-pressed="true"] .box{background:var(--cta);border-color:var(--cta)}
+.card-opt[aria-pressed="true"] .box::after{content:"✓"}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:10px 16px;font:600 14px Montserrat,Arial,sans-serif;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--cta);border-color:var(--cta);color:#fff}
+.hint{font-size:12.5px;margin-top:6px;min-height:1em}
+.hint.err{color:var(--err)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;margin-top:12px;cursor:pointer}
+.check input{flex:none;width:20px;height:20px;margin-top:1px;accent-color:var(--cta)}
+.check a{color:var(--wine)}
+.conds{background:var(--tint);border-radius:14px;padding:12px 16px;margin-top:18px;font-size:13px}
+.conds summary{cursor:pointer;font-weight:600}
+.conds ul{margin:10px 0 0;padding-left:18px;display:grid;gap:5px;color:var(--muted)}
+.nav-row{display:flex;gap:10px;margin-top:24px}
+.nav-row .btn{flex:1}
+.err-box{display:none;margin-top:14px;font-size:13px;color:var(--err);font-weight:600}
+.done{text-align:center}
+.done .tick{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:30px;margin:0 auto 14px}
+.done .id{display:inline-block;margin:14px 0;font-weight:700;font-size:18px;letter-spacing:.04em;background:var(--tint);padding:10px 16px;border-radius:12px}
+.done ol{text-align:left;font-size:14px;display:grid;gap:6px;margin:16px 0;padding-left:20px}
+[hidden]{display:none!important}
+@media (max-width:900px){.reg-grid{grid-template-columns:1fr;gap:28px}.form{padding:22px}}
+@media (max-width:480px){.row2,.row3{grid-template-columns:1fr}}
+
+/* faq */
+.faq{max-width:720px;margin:32px auto 0}
+.faq details{border-bottom:1px solid var(--line);padding:16px 0}
+.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::after{content:"+";font-size:22px;line-height:1;color:var(--cta)}
+.faq details[open] summary::after{content:"−"}
+.faq summary::-webkit-details-marker{display:none}
+.faq p{margin-top:10px;color:var(--muted);font-size:14.5px}
+footer{background:var(--surface);border-top:1px solid var(--line);padding:32px 0 100px;font-size:13.5px;color:var(--muted)}
+.ft{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+.ft a{color:inherit;margin-right:16px}
+.mbar{display:none}
+@media (max-width:760px){
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:55;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  .mbar .btn{flex:1}
+  .notes-toggle{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+}
+</style>
+</head>
+<body>
+<button class="notes-toggle" id="notesToggle" aria-pressed="false">Show review notes</button>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top"><span class="fmz">FMZ</span><span class="sub">Certified Micro Entrepreneur programme</span></a>
+    <div class="nav-right">
+      <button class="theme-btn" id="themeBtn" aria-label="Switch to dark mode">🌙</button>
+      <a class="btn" href="#register">Register free</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Your skills. <em>Your business.</em> Our support.</h1>
+      <p class="lede">Become an FMZ Certified Micro Entrepreneur. We train you, help you get equipped and send you customers, so you can earn from beauty, wellness and care services near home.</p>
+      <div class="cta-row"><a class="btn" href="#register">Register your interest</a><a class="btn ghost" href="#how">How it works</a></div>
+      <p class="small" style="margin-top:16px">Free to register · takes about 3 minutes</p>
+      <p class="note"><b>Simplified:</b> shorter headline and one sentence of explanation. Navigation links removed, so the only action is to register.</p>
+    </div>
+    <div class="hero-media">
+      <div class="img-slot"><span>Photo: a smiling FMZ specialist in uniform, with her kit</span></div>
+      <div class="badge"><b>150</b><span>places in the first intake</span></div>
+      <p class="note"><b>Image needed:</b> yes, here most of all. A real woman CME, confident, in FMZ uniform, ideally holding a device or kit. Candidates need to picture themselves in the role; avoid a client-lying-down photo, which is about the customer, not the CME.</p>
+    </div>
+  </div>
+</section>
+
+<section id="programmes">
+  <div class="wrap">
+    <div class="center"><h2>Choose your path</h2><p class="lede">Register for one or more. Full training is given for each.</p></div>
+    <div class="prog-grid">
+      <article class="prog"><div class="img-slot"><span>Photo: specialist giving an at-home facial</span></div><div class="body"><h3>Beauty &amp; Wellness</h3><p>At-home skincare with genuine Nu Skin products and devices, under FMZ Glow.</p><span class="tag">No experience needed</span></div></article>
+      <article class="prog"><div class="img-slot"><span>Photo: nurse checking an older patient at home</span></div><div class="body"><h3>Nursing &amp; Healthcare</h3><p>Home nursing visits and health screening, such as iBreastExam.</p><span class="tag">Nursing registration needed</span></div></article>
+      <article class="prog"><div class="img-slot"><span>Photo: carer with an elderly woman</span></div><div class="body"><h3>Carer &amp; Aged Care</h3><p>Daily care and companionship for older people and their families.</p><span class="tag">No experience needed</span></div></article>
+    </div>
+    <p class="note center"><b>Images:</b> one photo per programme helps people choose faster than reading. Use real FMZ people where you can; if stock, choose Indian women in home settings, not hospital or salon stock. <b>Simplified:</b> bullet lists removed; one line and one tag per card.</p>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="center"><h2>How it works</h2></div>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><b>Register</b><p>A short, free form.</p></div>
+      <div class="step"><span class="n">2</span><b>Meet us and get verified</b><p>An information meeting, then ID and police checks.</p></div>
+      <div class="step"><span class="n">3</span><b>Train and get equipped</b><p>Training, a certificate, and equipment through our finance partners.</p></div>
+      <div class="step"><span class="n">4</span><b>Start earning</b><p>Bookings come through FMZ and your own web page.</p></div>
+    </div>
+    <p class="note center"><b>Simplified:</b> the 6-step journey, the “What FMZ gives you” grid and the eligibility cards are folded into these 4 steps and the FAQ. Same information, about half the reading.</p>
+  </div>
+</section>
+
+<section class="reg" id="register">
+  <div class="wrap reg-grid">
+    <div class="reg-side">
+      <h2>Join the first 150</h2>
+      <p>Three short steps. If you’re shortlisted, we’ll invite you to an information meeting on WhatsApp.</p>
+      <ul><li>Free; FMZ never asks for money to register</li><li>Your own business, not a salaried job</li><li>Registering doesn’t guarantee selection</li></ul>
+    </div>
+
+    <div class="form" aria-live="polite">
+      <div class="progress" aria-hidden="true"><span id="p1"></span><span id="p2"></span><span id="p3"></span></div>
+
+      <div id="s1">
+        <h3>What interests you?</h3>
+        <p class="sub">Step 1 of 3 · choose one or more</p>
+        <div class="cards" id="progOpts">
+          <button class="card-opt" data-prog="Beauty & Wellness" aria-pressed="false"><span class="box"></span><span><b>Beauty &amp; Wellness</b><small>At-home skincare with Nu Skin</small></span></button>
+          <button class="card-opt" data-prog="Nursing & Healthcare" aria-pressed="false"><span class="box"></span><span><b>Nursing &amp; Healthcare</b><small>Home nursing and screening</small></span></button>
+          <button class="card-opt" data-prog="Carer & Aged Care" aria-pressed="false"><span class="box"></span><span><b>Carer &amp; Aged Care</b><small>Daily care for older people</small></span></button>
+        </div>
+        <div id="nurseQ" hidden>
+          <label class="lbl" for="fNurse">Your nursing or health qualification</label>
+          <select class="field" id="fNurse"><option value="">Select</option><option>GNM</option><option>ANM</option><option>B.Sc Nursing</option><option>Post-basic / M.Sc Nursing</option><option>Other health qualification</option><option>Not yet qualified</option></select>
+        </div>
+        <div class="row3">
+          <div><label class="lbl" for="fPin">PIN code</label><input class="field" id="fPin" inputmode="numeric" maxlength="6" placeholder="380007" autocomplete="postal-code"></div>
+          <div><label class="lbl" for="fCity">City / town</label><input class="field" id="fCity" placeholder="Ahmedabad" autocomplete="address-level2"></div>
+          <div><label class="lbl" for="fState">State</label><select class="field" id="fState" autocomplete="address-level1"><option value="">Select</option><option>Gujarat</option><option>Maharashtra</option><option>Rajasthan</option><option>Madhya Pradesh</option><option>Other</option></select></div>
+        </div>
+        <p class="hint" id="h1"></p>
+        <div class="nav-row"><button class="btn" id="to2" disabled>Continue</button></div>
+      </div>
+
+      <div id="s2" hidden>
+        <h3>About you</h3>
+        <p class="sub">Step 2 of 3</p>
+        <div class="row2">
+          <div><label class="lbl" for="fFirst">First name</label><input class="field" id="fFirst" autocomplete="given-name"></div>
+          <div><label class="lbl" for="fLast">Last name</label><input class="field" id="fLast" autocomplete="family-name"></div>
+        </div>
+        <span class="lbl">Age group</span>
+        <div class="chips" data-group="age"><button class="chip" aria-pressed="false">Under 18</button><button class="chip" aria-pressed="false">18–24</button><button class="chip" aria-pressed="false">25–34</button><button class="chip" aria-pressed="false">35–44</button><button class="chip" aria-pressed="false">45+</button></div>
+        <p class="hint err" id="ageHint"></p>
+        <span class="lbl">Gender</span>
+        <div class="chips" data-group="gender"><button class="chip" aria-pressed="false">Female</button><button class="chip" aria-pressed="false">Male</button><button class="chip" aria-pressed="false">Other</button><button class="chip" aria-pressed="false">Prefer not to say</button></div>
+        <label class="lbl" for="fEdu">Highest qualification</label>
+        <select class="field" id="fEdu"><option value="">Select</option><option>Below 10th</option><option>10th pass</option><option>12th pass</option><option>Diploma / ITI</option><option>Graduate</option><option>Postgraduate</option></select>
+        <span class="lbl">Your vehicle</span>
+        <div class="chips" data-group="vehicle"><button class="chip" aria-pressed="false">Two-wheeler</button><button class="chip" aria-pressed="false">Four-wheeler</button><button class="chip" aria-pressed="false">Both</button><button class="chip" aria-pressed="false">None</button></div>
+        <span class="lbl">Valid driving licence?</span>
+        <div class="chips" data-group="licence"><button class="chip" aria-pressed="false">Yes</button><button class="chip" aria-pressed="false">No</button></div>
+        <div class="nav-row"><button class="btn ghost" data-back="1">Back</button><button class="btn" id="to3" disabled>Continue</button></div>
+      </div>
+
+      <div id="s3" hidden>
+        <h3>How can we reach you?</h3>
+        <p class="sub">Step 3 of 3</p>
+        <label class="lbl" for="fMob">Mobile number</label>
+        <div class="prefix"><span>+91</span><input class="field" id="fMob" inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="98765 43210"></div>
+        <p class="hint" id="mobHint"></p>
+        <label class="check" style="margin-top:0"><input type="checkbox" id="fSameWa" checked> This number is on WhatsApp</label>
+        <div id="waWrap" hidden><label class="lbl" for="fWa">WhatsApp number</label><div class="prefix"><span>+91</span><input class="field" id="fWa" inputmode="numeric" maxlength="10" placeholder="98765 43210"></div></div>
+        <label class="lbl" for="fEmail">Email <em>(optional)</em></label>
+        <input class="field" id="fEmail" type="email" autocomplete="email" placeholder="you@example.com">
+        <span class="lbl">How did you hear about us?</span>
+        <div class="chips" data-group="ref"><button class="chip" aria-pressed="false">On my own</button><button class="chip" aria-pressed="false">A person referred me</button><button class="chip" aria-pressed="false">Through an organisation</button></div>
+        <div id="refPerson" hidden class="row2">
+          <div><label class="lbl" for="fRefName">Their name</label><input class="field" id="fRefName"></div>
+          <div><label class="lbl" for="fRefMob">Their mobile or code <em>(optional)</em></label><input class="field" id="fRefMob"></div>
+        </div>
+        <div id="refOrg" hidden><label class="lbl" for="fOrg">Organisation name</label><input class="field" id="fOrg" placeholder="e.g. self-help group, NGO, college"></div>
+        <details class="conds"><summary>Registration conditions</summary><ul>
+          <li>Registration is an expression of interest and does not guarantee selection as a CME.</li>
+          <li>The first intake is limited to 150 candidates; early registrations are screened first.</li>
+          <li>Shortlisted candidates are invited to an information and selection meeting.</li>
+          <li>Selection depends on eligibility, verification, programme requirements and FMZ’s terms.</li>
+          <li>Selected CMEs can access equipment through FMZ’s finance partners, subject to their approval.</li>
+          <li>FMZ never charges a fee to register.</li></ul></details>
+        <label class="check"><input type="checkbox" class="decl"> My details are accurate and complete.</label>
+        <label class="check"><input type="checkbox" class="decl"> I accept the conditions and understand registering doesn’t guarantee selection.</label>
+        <label class="check"><input type="checkbox" class="decl"> FMZ may contact me by phone, WhatsApp or email about my registration. <a href="#">Privacy notice</a></label>
+        <p class="err-box" id="err3"></p>
+        <div class="nav-row"><button class="btn ghost" data-back="2">Back</button><button class="btn" id="submit">Submit registration</button></div>
+      </div>
+
+      <div id="s4" hidden class="done">
+        <div class="tick">✓</div>
+        <h3 id="doneT">Thank you for registering</h3>
+        <div class="id" id="regId"></div>
+        <p class="sub">Keep this registration ID. Your interest: <b id="doneProg"></b></p>
+        <ol><li>We review registrations in the order received.</li><li>If shortlisted, you’ll get a WhatsApp invitation to an information meeting.</li><li>Bring a photo ID and any certificates to that meeting.</li></ol>
+        <p class="small">FMZ will never ask you for money to register or be selected.</p>
+      </div>
+    </div>
+  </div>
+  <div class="wrap"><p class="note" style="margin-top:20px"><b>Form:</b> same 3 steps and fields as before, restyled to match. “Submit” is a demo until it’s connected to Zoho CRM. The CRM field suggestions from the previous version still apply: lead source and campaign, referrer mobile or code, nursing qualification, age group, duplicate check on mobile, and a status pipeline from New to Active.</p></div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="center"><h2>Questions</h2></div>
+    <div class="faq">
+      <details><summary>Is registration free?</summary><p>Yes. FMZ never charges a fee to register or to be selected. If anyone asks you for money in FMZ’s name, please report it to us.</p></details>
+      <details><summary>Is this a job?</summary><p>No. As a CME you run your own small service business, and FMZ supports you with training, a certificate, equipment finance, customers and the booking platform.</p></details>
+      <details><summary>Do I need experience?</summary><p>Not for Beauty &amp; Wellness or Carer programmes; full training is given. Nursing services need a valid nursing or health registration.</p></details>
+      <details><summary>Do I have to buy the equipment?</summary><p>Selected CMEs can get equipment financed through FMZ’s bank and NBFC partners, subject to their approval. Instalments come out of your earnings on the platform. All terms are explained before you commit.</p></details>
+      <details><summary>How much can I earn, and where?</summary><p>It depends on your programme, area and how many visits you take. We share realistic figures, and the areas in the first intake, at the information meeting.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap ft"><span>© 2026 FMZ India · [Registered company name and address]</span><span><a href="#">Privacy notice</a><a href="#">Terms</a><a href="#">Contact</a></span></div></footer>
+
+<div class="mbar"><a class="btn" href="#register">Register free · 150 places</a></div>
+
+<script>
+(function(){
+  var root=document.documentElement, tb=document.getElementById("themeBtn");
+  function cur(){ return root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"); }
+  function paint(){ var d=cur()==="dark"; tb.textContent=d?"☀️":"🌙"; tb.setAttribute("aria-label", d?"Switch to light mode":"Switch to dark mode"); }
+  try{ var s=localStorage.getItem("fmz-theme"); if(s==="dark"||s==="light") root.dataset.theme=s; }catch(e){}
+  tb.addEventListener("click",function(){ var n=cur()==="dark"?"light":"dark"; root.dataset.theme=n; try{localStorage.setItem("fmz-theme",n);}catch(e){} paint(); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change",paint); paint();
+
+  var nt=document.getElementById("notesToggle");
+  nt.addEventListener("click",function(){ var on=document.body.classList.toggle("show-notes"); nt.setAttribute("aria-pressed",on); nt.textContent=on?"Hide review notes":"Show review notes"; });
+
+  var st={prog:[], age:null, gender:null, vehicle:null, licence:null, ref:null};
+  function $(id){ return document.getElementById(id); }
+  function show(n){
+    [1,2,3,4].forEach(function(k){ $("s"+k).hidden = k!==n; });
+    [1,2,3].forEach(function(k){ $("p"+k).className = k<=Math.min(n,3)?"on":""; });
+    $("register").scrollIntoView({block:"start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+  }
+  document.querySelectorAll("#progOpts .card-opt").forEach(function(b){
+    b.addEventListener("click",function(){
+      b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true");
+      st.prog=[].slice.call(document.querySelectorAll('#progOpts [aria-pressed="true"]')).map(function(x){return x.dataset.prog;});
+      $("nurseQ").hidden = st.prog.indexOf("Nursing & Healthcare")<0; v1();
+    });
+  });
+  function v1(){
+    var pin=$("fPin"); pin.value=pin.value.replace(/\D/g,"");
+    var pinOk=/^[1-9]\d{5}$/.test(pin.value);
+    $("h1").textContent = pin.value.length===6 && !pinOk ? "Please check the PIN code." : "";
+    $("h1").className="hint"+($("h1").textContent?" err":"");
+    $("to2").disabled=!(st.prog.length && pinOk && $("fCity").value.trim().length>1 && $("fState").value);
+  }
+  ["fPin","fCity"].forEach(function(id){ $(id).addEventListener("input",v1); }); $("fState").addEventListener("change",v1);
+  $("to2").addEventListener("click",function(){ show(2); });
+  document.querySelectorAll(".chips[data-group]").forEach(function(g){
+    g.querySelectorAll(".chip").forEach(function(c){
+      c.addEventListener("click",function(){
+        g.querySelectorAll(".chip").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+        c.setAttribute("aria-pressed","true"); st[g.dataset.group]=c.textContent;
+        if(g.dataset.group==="ref"){ $("refPerson").hidden = c.textContent!=="A person referred me"; $("refOrg").hidden = c.textContent!=="Through an organisation"; }
+        v2();
+      });
+    });
+  });
+  function v2(){
+    var minor = st.age==="Under 18";
+    $("ageHint").textContent = minor ? "Sorry, you need to be 18 or older to register." : "";
+    $("to3").disabled = !( $("fFirst").value.trim() && $("fLast").value.trim() && st.age && !minor && st.gender && $("fEdu").value && st.vehicle && st.licence );
+  }
+  ["fFirst","fLast"].forEach(function(id){ $(id).addEventListener("input",v2); }); $("fEdu").addEventListener("change",v2);
+  $("to3").addEventListener("click",function(){ show(3); });
+  document.querySelectorAll("[data-back]").forEach(function(b){ b.addEventListener("click",function(){ show(+b.dataset.back); }); });
+  $("fSameWa").addEventListener("change",function(){ $("waWrap").hidden=this.checked; });
+  $("fMob").addEventListener("input",function(){ this.value=this.value.replace(/\D/g,""); var h=$("mobHint"); h.textContent = this.value.length===10 && !/^[6-9]\d{9}$/.test(this.value) ? "Please enter a valid 10-digit mobile number." : ""; h.className="hint"+(h.textContent?" err":""); });
+  $("fWa").addEventListener("input",function(){ this.value=this.value.replace(/\D/g,""); });
+  $("submit").addEventListener("click",function(){
+    var errs=[];
+    if(!/^[6-9]\d{9}$/.test($("fMob").value)) errs.push("a valid mobile number");
+    if(!$("fSameWa").checked && !/^[6-9]\d{9}$/.test($("fWa").value)) errs.push("a valid WhatsApp number");
+    var em=$("fEmail").value.trim(); if(em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) errs.push("a valid email (or leave it blank)");
+    if(!st.ref) errs.push("how you heard about us");
+    if(st.ref==="A person referred me" && !$("fRefName").value.trim()) errs.push("the name of the person who referred you");
+    if(st.ref==="Through an organisation" && !$("fOrg").value.trim()) errs.push("the organisation name");
+    if([].some.call(document.querySelectorAll(".decl"),function(c){return !c.checked;})) errs.push("all three confirmations");
+    var eb=$("err3");
+    if(errs.length){ eb.textContent="Please add "+errs.join(", ")+"."; eb.style.display="block"; return; }
+    eb.style.display="none";
+    var d=new Date(), id="FMZ-CME-"+String(d.getFullYear()).slice(2)+String(d.getMonth()+1).padStart(2,"0")+"-"+String(Math.floor(1000+Math.random()*9000));
+    $("regId").textContent=id; $("doneProg").textContent=st.prog.join(", ");
+    $("doneT").textContent="Thank you, "+$("fFirst").value.trim()+"!";
+    show(4);
+  });
+})();
+</script>
+</body>
+</html>

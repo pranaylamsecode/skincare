@@ -15,7 +15,8 @@ import {
   Menu, 
   X,
   ExternalLink,
-  MapPin 
+  MapPin,
+  UserCheck 
 } from 'lucide-vue-next';
 
 const page = usePage();
@@ -44,6 +45,7 @@ const navigation = computed(() => {
     { name: 'Services', href: '/admin/services', icon: Sparkles },
     { name: 'Products', href: '/admin/content?tab=products', icon: Package },
     { name: 'Specialists & Staff', href: '/admin/specialists', icon: Users },
+    { name: 'CME Onboarding', href: '/admin/cme-onboardings', icon: UserCheck },
     { name: 'Time Slots', href: '/admin/time-slots', icon: Clock },
     { name: 'Email Templates', href: '/admin/email-templates', icon: Mail },
     { name: 'Site Content', href: '/admin/content', icon: Sliders },

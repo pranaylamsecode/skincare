@@ -109,7 +109,105 @@ const bookWithSpecialist = (spec) => {
             </button>
           </article>
         </div>
+
+        <!-- Become a CME Callout -->
+        <div class="cme-callout">
+          <div class="cme-text">
+            <span class="cme-tag">Join as a Specialist</span>
+            <h4>Qualified in science, pharmacy, or nursing?</h4>
+            <p>Become an FMZ Certified Micro Entrepreneur (CME). We provide training, Nu Skin equipment support, and direct customer bookings.</p>
+          </div>
+          <a href="/become-a-cme" class="cme-action">
+            <span>Apply as CME · Free</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+.cme-callout {
+  margin-top: 36px;
+  background: #FFFFFF;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.cme-text {
+  flex: 1;
+}
+
+.cme-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--wine);
+  margin-bottom: 6px;
+}
+
+.cme-text h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.cme-text p {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cme-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: var(--wine);
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(122, 42, 46, 0.2);
+}
+
+.cme-action:hover {
+  background: #5a1f27;
+  transform: translateY(-1px);
+}
+
+.cme-action .arrow {
+  transition: transform 0.2s;
+}
+
+.cme-action:hover .arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 768px) {
+  .cme-callout {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+  .cme-action {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>

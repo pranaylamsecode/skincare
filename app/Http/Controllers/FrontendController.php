@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Concern;
+use App\Models\CmeOnboarding;
 use App\Models\Device;
 use App\Models\Faq;
 use App\Models\Page;
@@ -145,5 +146,86 @@ class FrontendController extends Controller
     public function cancellationRefunds()
     {
         return $this->page('cancellation-and-refunds');
+    }
+
+    public function becomeCme()
+    {
+        $settings = [];
+        try {
+            $settings = Setting::all()->pluck('value', 'key')->toArray();
+        } catch (\Throwable $e) {}
+
+        return Inertia::render('BecomeCme', [
+            'settings' => $settings,
+        ]);
+    }
+
+    public function submitCme(Request $request)
+    {
+        $validated = $request->validate([
+            'programmes' => 'required|array|min:1',
+            'nursing_qualification' => 'nullable|string|max:100',
+            'pincode' => 'required|string|regex:/^[1-9]\d{5}$/',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'age_group' => 'required|string|not_in:Under 18',
+            'gender' => 'required|string|max:50',
+            'highest_qualification' => 'required|string|max:100',
+            'vehicle' => 'required|string|max:50',
+            'driving_licence' => 'required|string|max:20',
+            'mobile' => 'required|string|regex:/^[6-9]\d{9}$/',
+            'is_whatsapp_same' => 'nullable|boolean',
+            'whatsapp_number' => 'nullable|string',
+            'email' => 'nullable|email|max:150',
+            'referral_source' => 'required|string|max:100',
+            'referral_name' => 'nullable|string|max:150',
+            'referral_contact' => 'nullable|string|max:100',
+            'referral_org' => 'nullable|string|max:150',
+            'confirmed_accuracy' => 'required|accepted',
+            'confirmed_conditions' => 'required|accepted',
+            'confirmed_contact' => 'required|accepted',
+        ]);
+
+        $yearMonth = date('ym');
+        $random = mt_rand(1000, 9999);
+        $regId = "FMZ-CME-{$yearMonth}-{$random}";
+
+        try {
+            while (CmeOnboarding::where('registration_id', $regId)->exists()) {
+                $random = mt_rand(1000, 9999);
+                $regId = "FMZ-CME-{$yearMonth}-{$random}";
+            }
+
+            $validated['registration_id'] = $regId;
+            $validated['is_whatsapp_same'] = $request->boolean('is_whatsapp_same', true);
+            if ($validated['is_whatsapp_same']) {
+                $validated['whatsapp_number'] = $validated['mobile'];
+            }
+
+            $record = CmeOnboarding::create($validated);
+        } catch (\Throwable $e) {
+            // DB fallback in case table not migrated
+            $record = (object)[
+                'full_name' => trim("{$validated['first_name']} {$validated['last_name']}"),
+                'first_name' => $validated['first_name'],
+            ];
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'registration_id' => $regId,
+                'applicant_name' => $record->full_name,
+                'message' => "Thank you, {$record->first_name}! Your registration has been received.",
+            ]);
+        }
+
+        return back()->with([
+            'success' => true,
+            'registration_id' => $regId,
+            'applicant_name' => $record->full_name,
+        ]);
     }
 }

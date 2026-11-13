@@ -484,5 +484,8 @@ class DatabaseSeeder extends Seeder
 
         // 15. Legal and Policy Pages
         $this->call(PageSeeder::class);
+
+        // 16. CME Onboarding Registrations
+        $this->call(CmeOnboardingSeeder::class);
     }
 }

@@ -123,6 +123,7 @@ const supportPhone = computed(() => props.settings?.whatsapp_number || '+91 7303
           <a href="#services">Glow Facial</a>
           <a href="#services">Radiance Ritual</a>
           <a href="#book">Book a visit</a>
+          <a href="/become-a-cme">Become a CME</a>
         </div>
 
         <div>

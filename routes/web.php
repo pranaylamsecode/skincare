@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\CmeOnboardingController as AdminCmeOnboardingController;
 use App\Http\Controllers\Admin\ContentController as AdminContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EmailTemplateController as AdminEmailTemplateController;
@@ -67,6 +68,13 @@ Route::get('/terms-and-conditions/{extra?}', [FrontendController::class, 'terms'
 Route::get('/cancellation-and-refunds', [FrontendController::class, 'cancellationRefunds'])->name('policy.cancellation');
 Route::get('/cancellation-and-refunds/{extra?}', [FrontendController::class, 'cancellationRefunds'])->where('extra', '.*');
 Route::get('/pages/{slug}', [FrontendController::class, 'page'])->name('policy.page');
+
+// Become an FMZ Certified Micro Entrepreneur (CME) Onboarding
+Route::get('/become-a-cme', [FrontendController::class, 'becomeCme'])->name('cme.register');
+Route::get('/become-a-cme/{extra?}', [FrontendController::class, 'becomeCme'])->where('extra', '.*');
+Route::get('/cme-onboarding', fn () => redirect()->route('cme.register'));
+Route::get('/cme-onboarding/{extra?}', fn () => redirect()->route('cme.register'))->where('extra', '.*');
+Route::post('/become-a-cme', [FrontendController::class, 'submitCme'])->name('cme.submit');
 // Customer & Mobile App REST API
 Route::prefix('api')->group(function () {
     Route::get('/home', [ApiController::class, 'home'])->name('api.home');
@@ -127,6 +135,12 @@ Route::prefix('admin')->group(function () {
 
         // Specialists
         Route::resource('specialists', AdminSpecialistController::class)->names('admin.specialists');
+
+        // CME Onboarding Applications
+        Route::get('/cme-onboardings', [AdminCmeOnboardingController::class, 'index'])->name('admin.cme-onboardings.index');
+        Route::put('/cme-onboardings/{id}', [AdminCmeOnboardingController::class, 'update'])->name('admin.cme-onboardings.update');
+        Route::post('/cme-onboardings/{id}/promote', [AdminCmeOnboardingController::class, 'promoteToSpecialist'])->name('admin.cme-onboardings.promote');
+        Route::delete('/cme-onboardings/{id}', [AdminCmeOnboardingController::class, 'destroy'])->name('admin.cme-onboardings.destroy');
 
         // Time Slots
         Route::get('/time-slots', [AdminTimeSlotController::class, 'index'])->name('admin.time-slots.index');
