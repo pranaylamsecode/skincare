@@ -169,7 +169,10 @@ const whatsappUrl = computed(() => {
       <div class="wrap nav">
         <Link href="/glow" class="logo">
           <span class="fmz">FMZ</span>
-          <span class="sub">Certified Micro Entrepreneur programme</span>
+          <div class="logo-titles">
+            <span class="logo-main">Certified Micro Entrepreneur</span>
+            <span class="logo-sub">CME Programme</span>
+          </div>
         </Link>
         <div class="nav-right">
           <Link href="/glow" class="back-site-link">
@@ -842,19 +845,44 @@ section {
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
 }
 
 .logo .fmz {
-  background: #B3121B;
+  background: #A31D1D;
   color: #fff;
-  font: 700 18px/1 Montserrat, Arial, sans-serif;
-  padding: 5px 7px;
-  border-radius: 3px;
+  font: 700 20px/1 Montserrat, Arial, sans-serif;
+  letter-spacing: 0.02em;
+  padding: 8px 11px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(163, 29, 29, 0.2);
+}
+
+.logo-titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.logo-main {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #2E1A1B;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.logo-sub {
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 500;
+  color: #5A2528;
+  line-height: 1.2;
 }
 
 .nav-right {
@@ -880,7 +908,9 @@ section {
 }
 
 @media (max-width: 600px) {
-  .logo .sub { display: none; }
+  .logo-main { font-size: 12px; }
+  .logo-sub { font-size: 11px; }
+  .logo .fmz { font-size: 17px; padding: 6px 9px; }
   .back-site-link { display: none; }
   .nav .btn { min-height: 38px; padding: 0 16px; font-size: 13.5px; }
 }
