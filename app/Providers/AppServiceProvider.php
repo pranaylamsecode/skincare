@@ -25,13 +25,23 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        // Enhance SMTP transport with stream options to bypass hosting/proxy SSL certificate mismatches
+        // Enhance SMTP transport with stream options to bypass hosting/proxy SSL certificate mismatches and force IPv4
         Mail::extend('smtp', function (array $config = []) {
+            $rawHost = $config['host'] ?? 'smtp.gmail.com';
+            // Force IPv4 resolution for smtp.gmail.com to prevent IPv6 "Network is unreachable" on VPS
+            $host = $rawHost;
+            if ($rawHost === 'smtp.gmail.com') {
+                $resolved = gethostbyname('smtp.gmail.com');
+                if ($resolved && filter_var($resolved, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    $host = $resolved;
+                }
+            }
+
             $port = (int) ($config['port'] ?? 465);
             $isTls = ($port === 465) || (($config['encryption'] ?? '') === 'ssl');
 
             $transport = new EsmtpTransport(
-                $config['host'] ?? 'smtp.gmail.com',
+                $host,
                 $port,
                 $isTls
             );
@@ -54,6 +64,8 @@ class AppServiceProvider extends ServiceProvider
                         'allow_self_signed' => true,
                         'verify_peer' => false,
                         'verify_peer_name' => false,
+                        'peer_name' => 'smtp.gmail.com',
+                        'SNI_enabled' => true,
                     ],
                 ]);
             }
