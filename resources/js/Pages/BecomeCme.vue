@@ -187,7 +187,7 @@ const whatsappUrl = computed(() => {
       <!-- 1. Hero Section -->
       <section class="hero">
         <div class="wrap hero-grid">
-          <div>
+          <div class="hero-content">
             <div class="hero-intake-badge">
               Launch intake · First 150 places · Registrations open until 31st December
             </div>
@@ -276,23 +276,23 @@ const whatsappUrl = computed(() => {
           <div class="center">
             <h2>How it works</h2>
           </div>
-          <div class="steps">
-            <div class="step">
+          <div class="cme-how-steps">
+            <div class="cme-how-step">
               <span class="n">1</span>
               <b>Register</b>
               <p>A short, free form.</p>
             </div>
-            <div class="step">
+            <div class="cme-how-step">
               <span class="n">2</span>
               <b>Meet us and get verified</b>
               <p>An information meeting, then ID and police checks.</p>
             </div>
-            <div class="step">
+            <div class="cme-how-step">
               <span class="n">3</span>
               <b>Train and get equipped</b>
               <p>Training, a certificate, and equipment through our finance partners.</p>
             </div>
-            <div class="step">
+            <div class="cme-how-step">
               <span class="n">4</span>
               <b>Start earning</b>
               <p>Bookings come through FMZ and your own web page.</p>
@@ -1015,24 +1015,73 @@ section {
 }
 
 @media (max-width: 860px) {
+  .hero {
+    padding: 36px 0 44px;
+  }
   .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .hero-media {
+    order: -1;
+    width: 100%;
+    max-width: 290px;
+    margin: 0 auto 6px;
+  }
+  .photo-wrapper {
+    aspect-ratio: 4/4.5;
+    border-radius: 200px 200px 24px 24px;
+    box-shadow: 0 12px 30px rgba(70, 20, 30, 0.1);
+  }
+  .badge {
+    left: 8px;
+    bottom: 8px;
+    padding: 10px 14px;
+    border-radius: 14px;
+  }
+  .badge b {
+    font-size: 1.85rem;
+  }
+  .badge span {
+    font-size: 11px;
+    line-height: 1.25;
+  }
+  .hero-content {
+    width: 100%;
   }
   .hero-intake-badge {
     font-size: 12px;
     padding: 7px 14px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     line-height: 1.4;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 7vw, 2.5rem);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .hero .lede {
+    font-size: 15.5px;
+    line-height: 1.55;
   }
   .hero-callout {
     font-size: 14px;
-    margin: 18px 0 22px 0;
-    padding-left: 14px;
+    margin: 16px 0 20px 0;
+    padding: 6px 0 6px 14px;
   }
-  .badge {
-    left: 12px;
-    bottom: 12px;
+  .cta-row {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .cta-row .btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: 15px;
+    text-align: center;
+    justify-content: center;
   }
 }
 
@@ -1115,36 +1164,48 @@ section {
   background: var(--surface);
 }
 
-.steps {
+.cme-how-steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 28px;
   margin-top: 40px;
 }
 
-.step .n {
-  font: 600 2.6rem/1 "Cormorant Garamond", Georgia, serif;
-  color: var(--cta);
+.cme-how-step {
+  border-top: 2px solid var(--wine);
+  padding-top: 16px;
+  position: relative;
 }
 
-.step b {
+.cme-how-step::before {
+  content: none !important;
+  display: none !important;
+}
+
+.cme-how-step .n {
+  font: 600 2.6rem/1 "Cormorant Garamond", Georgia, serif;
+  color: var(--cta);
+  display: block;
+}
+
+.cme-how-step b {
   display: block;
   margin-top: 8px;
   font-size: 15px;
 }
 
-.step p {
+.cme-how-step p {
   font-size: 14px;
   color: var(--muted);
   margin-top: 4px;
 }
 
 @media (max-width: 860px) {
-  .steps { grid-template-columns: 1fr 1fr; }
+  .cme-how-steps { grid-template-columns: 1fr 1fr; gap: 24px; }
 }
 
 @media (max-width: 480px) {
-  .steps { grid-template-columns: 1fr; }
+  .cme-how-steps { grid-template-columns: 1fr; gap: 20px; }
 }
 
 /* Registration section */
@@ -1593,6 +1654,9 @@ select.field {
 }
 
 @media (max-width: 760px) {
+  .cme-page {
+    padding-bottom: 76px;
+  }
   .mbar {
     display: flex;
     position: fixed;
@@ -1600,12 +1664,19 @@ select.field {
     right: 0;
     bottom: 0;
     z-index: 55;
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid var(--line);
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 16px rgba(70, 20, 30, 0.08);
   }
   .mbar .btn {
     flex: 1;
+    min-height: 48px;
+    font-size: 14.5px;
+    font-weight: 600;
+    border-radius: 999px;
   }
 }
 </style>
