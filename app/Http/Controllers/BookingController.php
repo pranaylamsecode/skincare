@@ -189,7 +189,7 @@ class BookingController extends Controller
             $totalAmount = $service->price;
         } elseif (stripos($validated['service_name'], 'Plan') !== false || stripos($validated['service_name'], '3-Visit') !== false) {
             $plan = Plan::where('title', 'like', '%3-Visit%')->first();
-            $totalAmount = $plan ? $plan->price : 3299;
+            $totalAmount = ($plan && (float)$plan->price > 0 && (float)$plan->price != 3299) ? $plan->price : 2799;
         }
 
         // Find slot

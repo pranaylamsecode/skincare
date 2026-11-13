@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue';
+
 const props = defineProps({
   services: {
     type: Array,
@@ -21,9 +23,101 @@ const selectService = (serviceTitle) => {
 };
 
 const formatPrice = (price) => {
-  if (!price) return '';
+  if (!price && price !== 0) return '';
   return '₹' + Math.round(Number(price)).toLocaleString('en-IN');
 };
+
+const getDuration = (svc) => {
+  if (svc && svc.duration_minutes) return svc.duration_minutes;
+  const t = ((svc && svc.title) || '').toLowerCase();
+  if (t.includes('cleanse')) return 45;
+  if (t.includes('ritual')) return 75;
+  return 60;
+};
+
+const getTag = (svc) => {
+  if (svc && svc.is_featured) return 'Launch offer';
+  if (svc && svc.tag) {
+    const l = svc.tag.toLowerCase();
+    if (l.includes('gentle')) return 'A gentle start';
+    if (l.includes('complete') || l.includes('premium')) return 'Most complete';
+    return svc.tag;
+  }
+  const t = ((svc && svc.title) || '').toLowerCase();
+  if (t.includes('cleanse')) return 'A gentle start';
+  if (t.includes('ritual')) return 'Most complete';
+  return 'At-home care';
+};
+
+const getFeatures = (svc) => {
+  if (svc && svc.features) {
+    if (Array.isArray(svc.features) && svc.features.length) return svc.features;
+    if (typeof svc.features === 'string') {
+      try {
+        const parsed = JSON.parse(svc.features);
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      } catch (e) {
+        const lines = svc.features.split('\n').map(s => s.trim()).filter(Boolean);
+        if (lines.length) return lines;
+      }
+    }
+  }
+  const t = ((svc && svc.title) || '').toLowerCase();
+  if (t.includes('cleanse')) {
+    return [
+      'Skin suitability check',
+      'LumiSpa iO cleanse',
+      'Moisturising finish',
+      'Simple aftercare tips'
+    ];
+  } else if (t.includes('ritual')) {
+    return [
+      'Extended consultation',
+      'Galvanic Spa facial',
+      'Prysm iO antioxidant score',
+      'Personal skincare and food tips'
+    ];
+  } else {
+    return [
+      'Skin consultation',
+      'Galvanic Spa facial treatment',
+      'Leaves skin soft and refreshed',
+      'Home-care tips'
+    ];
+  }
+};
+
+const getButtonLabel = (title) => {
+  if (!title) return 'Book now';
+  const clean = title.replace(/^FMZ\s+/i, '').replace('Nu Skin LumiSpa ', '').trim();
+  return `Book ${clean}`;
+};
+
+const activePlan = computed(() => {
+  if (props.plans && props.plans.length) {
+    const p = props.plans.find(x => (x.title || x.name || '').toLowerCase().includes('3-visit')) || props.plans[0];
+    if (p) {
+      const rawPrice = Number(p.price);
+      const price = rawPrice === 3299 || !rawPrice ? 2799 : rawPrice;
+      const perVisit = Math.round(price / 3);
+      const desc = (p.description && !p.description.includes('3299') && !p.description.includes('298'))
+        ? p.description
+        : 'Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.';
+      return {
+        title: p.title || p.name || 'Glow 3-Visit Plan',
+        price: price,
+        subtext: `₹${perVisit} per visit`,
+        description: desc
+      };
+    }
+  }
+  return {
+    title: 'Glow 3-Visit Plan',
+    price: 2799,
+    subtext: '₹933 per visit',
+    description: 'Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.'
+  };
+});
 </script>
 
 <template>
@@ -42,14 +136,14 @@ const formatPrice = (price) => {
             class="svc"
             :class="{ feature: svc.is_featured }"
           >
-            <span class="tag">{{ svc.tag || (svc.is_featured ? 'Launch offer' : 'At-home care') }}</span>
+            <span class="tag">{{ getTag(svc) }}</span>
             <h3>{{ svc.title }}</h3>
-            <div class="meta" v-if="svc.duration_minutes">
-              <span>⏱ About {{ svc.duration_minutes }} min</span>
+            <div class="meta">
+              <span>⏱ About {{ getDuration(svc) }} min</span>
             </div>
             <p v-if="svc.description">{{ svc.description }}</p>
-            <ul v-if="svc.features && svc.features.length">
-              <li v-for="(feat, idx) in svc.features" :key="idx">{{ feat }}</li>
+            <ul>
+              <li v-for="(feat, idx) in getFeatures(svc)" :key="idx">{{ feat }}</li>
             </ul>
             <div class="price">
               <b>{{ formatPrice(svc.price) }}</b>
@@ -61,7 +155,7 @@ const formatPrice = (price) => {
               :class="svc.is_featured ? '' : 'ghost'"
               @click="selectService(svc.title)"
             >
-              Book {{ svc.title.replace('Nu Skin LumiSpa ', '') }}
+              {{ getButtonLabel(svc.title) }}
             </button>
           </article>
         </template>
@@ -116,20 +210,11 @@ const formatPrice = (price) => {
 
       <!-- Plan Card -->
       <div class="plan">
-        <template v-if="plans && plans.length">
-          <div>
-            <h3>{{ plans[0].name }}: {{ formatPrice(plans[0].price) }} <span class="small">(₹{{ Math.round(Number(plans[0].price) / 3) }} per visit)</span></h3>
-            <p>{{ plans[0].description || 'Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.' }}</p>
-          </div>
-          <button type="button" class="btn ghost" @click="selectService(plans[0].name)">Book the plan</button>
-        </template>
-        <template v-else>
-          <div>
-            <h3>Glow 3-Visit Plan: ₹2,799 <span class="small">(₹933 per visit)</span></h3>
-            <p>Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.</p>
-          </div>
-          <button type="button" class="btn ghost" @click="selectService('Glow 3-Visit Plan')">Book the plan</button>
-        </template>
+        <div>
+          <h3>{{ activePlan.title }}: {{ formatPrice(activePlan.price) }} <span class="small">({{ activePlan.subtext }})</span></h3>
+          <p>{{ activePlan.description }}</p>
+        </div>
+        <button type="button" class="btn ghost" @click="selectService(activePlan.title)">Book the plan</button>
       </div>
     </div>
   </section>

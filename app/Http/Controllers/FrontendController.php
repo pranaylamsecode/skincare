@@ -30,7 +30,18 @@ class FrontendController extends Controller
         }
         $specialists = $specialistsQuery->orderBy('sort_order')->get();
 
-        $plans = Plan::where('is_active', true)->orderBy('sort_order')->get();
+        $plans = Plan::where('is_active', true)->orderBy('sort_order')->get()->map(function ($plan) {
+            if (str_contains($plan->title, '3-Visit') || (float)$plan->price == 3299) {
+                if ((float)$plan->price != 2799 || str_contains($plan->description, 'Save ₹298') || str_contains($plan->description, 'LumiSpa')) {
+                    $plan->title = 'Glow 3-Visit Plan';
+                    $plan->price = 2799;
+                    $plan->price_subtext = '₹933 per visit';
+                    $plan->description = 'Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.';
+                    $plan->save();
+                }
+            }
+            return $plan;
+        });
         $devices = Device::where('is_active', true)->orderBy('sort_order')->get();
         $dailyProducts = Product::where('is_active', true)->where('category', 'daily')->orderBy('sort_order')->get();
         $wellnessProducts = Product::where('is_active', true)->where('category', 'wellness')->orderBy('sort_order')->get();

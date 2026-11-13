@@ -66,14 +66,12 @@ class DatabaseSeeder extends Seeder
                 'slug' => 'fmz-glow-cleanse',
                 'tag' => 'A gentle start',
                 'tag_style' => 'normal',
-                'description' => 'A refreshing cleansing and hydration-focused care, using approved products suited to your skin.',
+                'description' => 'Deep cleansing and hydration with the Nu Skin LumiSpa iO.',
                 'features' => [
-                    'Skin and product suitability consultation',
-                    'Gentle cleansing with LumiSpa iO',
-                    'Helps remove daily dirt and impurities',
-                    'Skin feels clean, soft and refreshed',
+                    'Skin suitability check',
+                    'LumiSpa iO cleanse',
                     'Moisturising finish',
-                    'Simple aftercare and skincare tips',
+                    'Simple aftercare tips',
                 ],
                 'price' => 799,
                 'original_price' => null,
@@ -83,18 +81,16 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 1,
             ],
             [
-                'title' => 'FMZ Galvanic Glow Facial',
-                'slug' => 'fmz-galvanic-glow-facial',
-                'tag' => 'Signature · Launch offer',
+                'title' => 'FMZ Glow Facial',
+                'slug' => 'fmz-glow-facial',
+                'tag' => 'Launch offer',
                 'tag_style' => 'tan',
-                'description' => 'A premium facial experience using the Nu Skin Galvanic Spa device and selected skincare products.',
+                'description' => 'Our signature facial with the Nu Skin Galvanic Spa and selected Nu Skin products.',
                 'features' => [
-                    'Skin consultation and suitability check',
-                    'Facial treatment using the Galvanic Spa device',
-                    'Uses selected Nu Skin skincare products',
-                    'Helps skin feel soft and smooth',
-                    'Leaves skin feeling refreshed and nourished',
-                    'Moisturising finish and home-care tips',
+                    'Skin consultation',
+                    'Galvanic Spa facial treatment',
+                    'Leaves skin soft and refreshed',
+                    'Home-care tips',
                 ],
                 'price' => 999,
                 'original_price' => 1199,
@@ -104,18 +100,16 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 2,
             ],
             [
-                'title' => 'FMZ Prysm iO Radiance Ritual',
-                'slug' => 'fmz-prysm-io-radiance-ritual',
-                'tag' => 'Premium',
+                'title' => 'FMZ Radiance Ritual',
+                'slug' => 'fmz-radiance-ritual',
+                'tag' => 'Most complete',
                 'tag_style' => 'dark',
-                'description' => 'A personalised wellness experience combining a quick skin antioxidant scan with tailored skincare and wellness guidance.',
+                'description' => 'The Glow Facial plus a 15-second Prysm iO antioxidant scan, explained by your specialist.',
                 'features' => [
-                    'Extended personal consultation',
-                    'Quick 15-second finger scan',
-                    'Get your personal Prysm Score',
-                    'Understand your skin\'s antioxidant level',
-                    'Track changes in your score over time',
-                    'Personalised wellness and skincare guidance',
+                    'Extended consultation',
+                    'Galvanic Spa facial',
+                    'Prysm iO antioxidant score',
+                    'Personal skincare and food tips',
                 ],
                 'price' => 1699,
                 'original_price' => null,
@@ -127,7 +121,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($services as $svc) {
-            Service::firstOrCreate(['slug' => $svc['slug']], $svc);
+            Service::updateOrCreate(['slug' => $svc['slug']], $svc);
         }
 
         // 4. Specialists
@@ -286,27 +280,16 @@ class DatabaseSeeder extends Seeder
         }
 
         // 6. Plans
-        Plan::firstOrCreate(
+        Plan::updateOrCreate(
             ['title' => 'Glow 3-Visit Plan'],
             [
-                'tag' => 'First plan',
-                'price' => 3299,
-                'price_subtext' => '₹1,100 per visit',
-                'description' => 'Three LumiSpa Glow Facials, spaced to suit your skin. Valid 90 days. Save ₹298.',
+                'tag' => 'Launch plan',
+                'price' => 2799,
+                'price_subtext' => '₹933 per visit',
+                'description' => 'Three Glow Facials with the same specialist, spaced to suit your skin. Valid 90 days.',
                 'is_featured' => true,
+                'is_active' => true,
                 'sort_order' => 1,
-            ]
-        );
-
-        Plan::firstOrCreate(
-            ['title' => 'Memberships and family plans'],
-            [
-                'tag' => 'Coming soon',
-                'price' => 0,
-                'price_subtext' => 'Tailored packages',
-                'description' => 'Six-visit memberships, monthly plans and bundles for mothers, daughters and friends.',
-                'is_featured' => false,
-                'sort_order' => 2,
             ]
         );
 
