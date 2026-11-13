@@ -185,10 +185,16 @@ const whatsappUrl = computed(() => {
       <section class="hero">
         <div class="wrap hero-grid">
           <div>
+            <div class="hero-intake-badge">
+              Launch intake · First 150 places · Registrations open until 31st December
+            </div>
             <h1>Your skills. <em>Your business.</em> Our support.</h1>
             <p class="lede">
               Become an FMZ Certified Micro Entrepreneur. We train you, help you get equipped and send you customers, so you can earn from beauty, wellness and care services near home.
             </p>
+            <div class="hero-callout">
+              Built for women who want to earn on their own terms: flexible hours, work near home, and FMZ support at every step.
+            </div>
             <div class="cta-row">
               <a class="btn" href="#register">Register your interest</a>
               <a class="btn ghost" href="#how">How it works</a>
@@ -885,6 +891,29 @@ section {
   padding: 64px 0 72px;
 }
 
+.hero-intake-badge {
+  display: inline-block;
+  background: #E8CDBB;
+  color: #5A2528;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 8px 18px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+  box-shadow: 0 2px 8px rgba(90, 37, 40, 0.06);
+}
+
+.hero-callout {
+  border-left: 3px solid #C99A63;
+  padding: 6px 0 6px 18px;
+  margin: 22px 0 26px 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
@@ -953,6 +982,17 @@ section {
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 36px;
+  }
+  .hero-intake-badge {
+    font-size: 12px;
+    padding: 7px 14px;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  .hero-callout {
+    font-size: 14px;
+    margin: 18px 0 22px 0;
+    padding-left: 14px;
   }
   .badge {
     left: 12px;
