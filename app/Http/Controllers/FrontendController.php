@@ -14,6 +14,7 @@ use App\Models\Service;
 use App\Models\Setting;
 use App\Models\Specialist;
 use App\Models\TimeSlot;
+use App\Services\EmailNotificationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -208,9 +209,28 @@ class FrontendController extends Controller
         } catch (\Throwable $e) {
             // DB fallback in case table not migrated
             $record = (object)[
+                'registration_id' => $regId,
                 'full_name' => trim("{$validated['first_name']} {$validated['last_name']}"),
                 'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'] ?? null,
+                'mobile' => $validated['mobile'] ?? null,
+                'city' => $validated['city'] ?? '',
+                'state' => $validated['state'] ?? 'Gujarat',
+                'pincode' => $validated['pincode'] ?? '',
+                'programmes' => $validated['programmes'] ?? [],
+                'highest_qualification' => $validated['highest_qualification'] ?? 'N/A',
+                'vehicle' => $validated['vehicle'] ?? 'N/A',
+                'driving_licence' => $validated['driving_licence'] ?? 'N/A',
+                'referral_source' => $validated['referral_source'] ?? 'Direct',
             ];
+        }
+
+        // Send Thank You confirmation email to applicant & notification to admin
+        try {
+            EmailNotificationService::notifyCmeRegistered($record);
+        } catch (\Throwable $mailErr) {
+            \Illuminate\Support\Facades\Log::warning("CME email sending error: " . $mailErr->getMessage());
         }
 
         if ($request->wantsJson()) {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Check, ShieldCheck, ArrowRight, ArrowLeft, MessageSquare, ExternalLink } from 'lucide-vue-next';
 
@@ -8,6 +8,29 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+});
+
+const isDark = ref(false);
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    try { localStorage.setItem('fmz-theme', 'dark'); } catch (e) {}
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    try { localStorage.setItem('fmz-theme', 'light'); } catch (e) {}
+  }
+};
+
+onMounted(() => {
+  try {
+    const saved = localStorage.getItem('fmz-theme');
+    if (saved === 'dark') {
+      isDark.value = true;
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  } catch (e) {}
 });
 
 const currentStep = ref(1);
@@ -166,6 +189,16 @@ const whatsappUrl = computed(() => {
           <Link href="/glow" class="back-site-link">
             <span>FMZ Glow Home</span>
           </Link>
+          <button 
+            type="button" 
+            class="theme-btn" 
+            id="themeBtn" 
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleTheme"
+          >
+            {{ isDark ? '☀️' : '🌙' }}
+          </button>
           <a class="btn" href="#register">Register free</a>
         </div>
       </div>
@@ -216,7 +249,7 @@ const whatsappUrl = computed(() => {
             <!-- Programme 1 -->
             <article class="prog">
               <div class="prog-img-box">
-                <img src="/images/fmz-glow-facial.png" alt="Specialist giving an at-home facial" class="prog-photo" />
+                <img src="/images/fmz-glow-facial.png" alt="Beauty and at-home skincare specialist" class="prog-photo" />
               </div>
               <div class="body">
                 <h3>Beauty &amp; Wellness</h3>
@@ -227,8 +260,8 @@ const whatsappUrl = computed(() => {
 
             <!-- Programme 2 -->
             <article class="prog">
-              <div class="prog-img-box img-placeholder">
-                <span class="placeholder-tag">Nursing &amp; Screening</span>
+              <div class="prog-img-box">
+                <img src="/images/nursing-healthcare.jpg" alt="Home nursing visits and health screening" class="prog-photo" />
               </div>
               <div class="body">
                 <h3>Nursing &amp; Healthcare</h3>
@@ -239,8 +272,8 @@ const whatsappUrl = computed(() => {
 
             <!-- Programme 3 -->
             <article class="prog">
-              <div class="prog-img-box img-placeholder carer">
-                <span class="placeholder-tag">Aged Care &amp; Companionship</span>
+              <div class="prog-img-box">
+                <img src="/images/carer-aged-care.jpg" alt="Daily care and companionship for older people" class="prog-photo" />
               </div>
               <div class="body">
                 <h3>Carer &amp; Aged Care</h3>
@@ -786,8 +819,34 @@ section {
 }
 
 .btn.ghost {
-  background: transparent;
-  color: var(--wine);
+  background: transparent !important;
+  color: var(--wine) !important;
+  border: 1.5px solid var(--wine) !important;
+}
+
+.btn.ghost:hover {
+  background: rgba(122, 42, 46, 0.08) !important;
+  color: var(--wine) !important;
+}
+
+.theme-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #C99A63;
+  background: var(--surface);
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.theme-btn:hover {
+  transform: scale(1.06);
   border-color: var(--wine);
 }
 
@@ -862,6 +921,9 @@ section {
 @media (max-width: 600px) {
   .logo .sub { display: none; }
   .back-site-link { display: none; }
+  .nav-right { gap: 8px; }
+  .theme-btn { width: 38px; height: 38px; font-size: 16px; }
+  .nav .btn { min-height: 38px; padding: 0 16px; font-size: 13px; }
 }
 
 /* Hero */

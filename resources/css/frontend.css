@@ -105,12 +105,20 @@ body:has(.fmz-frontend) {
   color: var(--on-cta) !important;
   transition: filter 0.15s ease, transform 0.1s ease;
 }
-.fmz-frontend .btn:hover { filter: brightness(1.08); }
+.fmz-frontend .btn:hover,
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost,
 .fmz-frontend .btn.ghost {
-  background: transparent;
+  background: transparent !important;
   color: var(--wine) !important;
-  border-color: var(--wine);
+  border: 1.5px solid var(--wine) !important;
 }
+.btn.ghost:hover,
+.fmz-frontend .btn.ghost:hover {
+  background: rgba(122, 42, 46, 0.08) !important;
+  color: var(--wine) !important;
+}
+.btn.wa,
 .fmz-frontend .btn.wa {
   background: #1E9E55;
   border-color: #1E9E55;

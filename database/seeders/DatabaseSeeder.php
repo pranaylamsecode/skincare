@@ -470,6 +470,20 @@ class DatabaseSeeder extends Seeder
                 'content' => "Hello {name},\n\nWe have received your payment of ₹{total_amount} for booking #{booking_number}.\n\nPayment Details:\n- Payment ID: {payment_id}\n- Service: {service}\n- Date: {date}\n- Status: Paid\n\nThank you for experiencing the glow with FMZ India!\n\nWarm regards,\nFMZ Glow Team",
                 'variables_hint' => '{name}, {booking_number}, {total_amount}, {payment_id}, {service}, {date}',
             ],
+            [
+                'code' => 'cme_registered',
+                'name' => 'CME Applicant: Registration Thank You',
+                'subject' => 'Thank you for your FMZ CME registration ({registration_id})',
+                'content' => "Hello {first_name},\n\nThank you for registering to become an FMZ Certified Micro Entrepreneur (CME)!\n\nYour Registration Details:\n- Registration ID: {registration_id}\n- Selected Programmes: {programmes}\n- Location: {city}, {state} ({pincode})\n- Contact Mobile: {mobile}\n\nWhat happens next:\n1. Shortlisting: Our recruitment team will review your application against our initial intake quota.\n2. Information Meeting: If shortlisted, you will be invited via WhatsApp to an introductory information meeting.\n3. Training & Certification: Professional hands-on training with genuine Nu Skin devices and health equipment before your first client.\n\nIf you have any questions, feel free to reply to this email or message us on WhatsApp at {whatsapp_number}.\n\nWarm regards,\nFMZ India Talent & Recruitment Team",
+                'variables_hint' => '{name}, {first_name}, {registration_id}, {programmes}, {city}, {state}, {pincode}, {mobile}, {whatsapp_number}',
+            ],
+            [
+                'code' => 'admin_new_cme',
+                'name' => 'Admin: New CME Registration Alert',
+                'subject' => '🔔 New CME Registration ({registration_id}) - {name}',
+                'content' => "A new candidate has registered for the FMZ Certified Micro Entrepreneur (CME) programme.\n\nApplicant Details:\n- Registration ID: {registration_id}\n- Name: {name}\n- Mobile/WhatsApp: {mobile}\n- Email: {email}\n- Location: {city}, {state} ({pincode})\n- Programmes: {programmes}\n- Highest Qualification: {highest_qualification}\n- Vehicle & Licence: {vehicle} ({driving_licence})\n- Referral Source: {referral_source}\n\nPlease visit the Admin Portal to review their application and update recruitment status.",
+                'variables_hint' => '{name}, {registration_id}, {mobile}, {email}, {city}, {state}, {pincode}, {programmes}, {highest_qualification}, {vehicle}, {driving_licence}, {referral_source}',
+            ],
         ];
 
         foreach ($emailTemplates as $tmpl) {
