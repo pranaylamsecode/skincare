@@ -45,7 +45,12 @@ class FrontendController extends Controller
         $devices = Device::where('is_active', true)->orderBy('sort_order')->get();
         $dailyProducts = Product::where('is_active', true)->where('category', 'daily')->orderBy('sort_order')->get();
         $wellnessProducts = Product::where('is_active', true)->where('category', 'wellness')->orderBy('sort_order')->get();
-        $concerns = Concern::where('is_active', true)->orderBy('sort_order')->get();
+        $concerns = Concern::where('is_active', true)
+            ->where('quote', 'not like', '%event%')
+            ->where('quote', 'not like', '%routine%')
+            ->orderBy('sort_order')
+            ->take(4)
+            ->get();
         $results = Review::where('is_active', true)->where('is_featured_result', true)->orderBy('sort_order')->get();
         $reviews = Review::where('is_active', true)->where('is_featured_result', false)->orderBy('sort_order')->get();
         $faqs = Faq::where('is_active', true)->orderBy('sort_order')->get();

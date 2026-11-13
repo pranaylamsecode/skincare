@@ -85,6 +85,7 @@ const handleConcernSelect = ({ concern, service }) => {
       <!-- 2. Concerns ("Tell us how your skin feels") -->
       <Concerns 
         :concerns="concerns" 
+        :whatsapp-number="settings.whatsapp_number"
         @select-concern="handleConcernSelect"
       />
 

@@ -390,34 +390,48 @@ header.site-header {
 .concerns {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  gap: 16px;
   margin-top: 32px;
+  align-items: stretch;
 }
 .concern {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 18px;
+  padding: 24px 22px;
   text-align: left;
   cursor: pointer;
   font: inherit;
   color: inherit;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: border-color 0.15s, transform 0.15s;
+  gap: 10px;
+  min-height: 175px;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 .concern:hover {
   border-color: var(--wine);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 .concern q {
-  font: 600 1.35rem/1.2 "Cormorant Garamond", Georgia, serif;
+  font: 600 1.35rem/1.25 "Cormorant Garamond", Georgia, serif;
   quotes: "“" "”";
   color: var(--ink);
+  margin: 0;
 }
-.concern span { font-size: 13.5px; color: var(--muted); }
-.concern b { font-size: 13.5px; color: var(--wine); margin-top: auto; }
+.concern span { 
+  font-size: 13.5px; 
+  line-height: 1.45;
+  color: var(--muted); 
+}
+.concern b { 
+  font-size: 13.5px; 
+  font-weight: 700;
+  color: var(--wine); 
+  margin-top: auto; 
+  padding-top: 6px;
+}
 .concern.dark {
   background: var(--wine-deep);
   border-color: var(--wine-deep);

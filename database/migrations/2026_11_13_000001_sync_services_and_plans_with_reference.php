@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use App\Models\Plan;
 use App\Models\Service;
+use App\Models\Concern;
 
 return new class extends Migration
 {
@@ -118,6 +119,20 @@ return new class extends Migration
                 'sort_order' => 3,
             ]);
         }
+
+        // 3. Sync Concerns to exactly 4 cards matching reference HTML
+        Concern::where('quote', 'like', '%event%')->orWhere('quote', 'like', '%routine%')->delete();
+        
+        $refConcerns = [
+            ['quote' => '“My skin looks dull and tired”', 'solution' => 'The Glow Facial brings back a fresh, bright look.', 'link_text' => 'Book the Glow Facial', 'link_target' => '#book', 'is_dark' => false, 'sort_order' => 1],
+            ['quote' => '“I want a gentle first step”', 'solution' => 'Start with the Glow Cleanse: cleansing, hydration and advice.', 'link_text' => 'Book the Glow Cleanse', 'link_target' => '#book', 'is_dark' => false, 'sort_order' => 2],
+            ['quote' => '“I deserve a proper pamper”', 'solution' => 'The Radiance Ritual is our most complete visit.', 'link_text' => 'Book the Radiance Ritual', 'link_target' => '#book', 'is_dark' => false, 'sort_order' => 3],
+            ['quote' => '“I’m not sure what my skin needs”', 'solution' => 'Chat with us first. It’s free, with no obligation.', 'link_text' => 'Chat on WhatsApp', 'link_target' => 'whatsapp', 'is_dark' => true, 'sort_order' => 4],
+        ];
+
+        foreach ($refConcerns as $rc) {
+            Concern::updateOrCreate(['quote' => $rc['quote']], $rc);
+        }
     }
 
     /**
@@ -128,3 +143,4 @@ return new class extends Migration
         // No reversal needed
     }
 };
+

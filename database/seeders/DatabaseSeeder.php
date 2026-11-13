@@ -354,18 +354,17 @@ class DatabaseSeeder extends Seeder
             Product::firstOrCreate(['name' => $p['name']], $p);
         }
 
-        // 9. Concerns
+        // 9. Concerns (Exactly 4 cards matching client reference design)
         $concerns = [
-            ['quote' => '“My skin looks dull and tired”', 'solution' => 'Try the Nu Skin LumiSpa Glow Facial for a fresh, bright look.', 'link_text' => 'See the facial →', 'link_target' => '#services', 'is_dark' => false, 'sort_order' => 1],
-            ['quote' => '“I want a gentle first step”', 'solution' => 'Start with the FMZ Glow Cleanse: simple cleansing, hydration and advice.', 'link_text' => 'See the cleanse →', 'link_target' => '#services', 'is_dark' => false, 'sort_order' => 2],
-            ['quote' => '“I deserve a proper pamper”', 'solution' => 'The Nu Skin Radiance Ritual is our most complete experience.', 'link_text' => 'See the ritual →', 'link_target' => '#services', 'is_dark' => false, 'sort_order' => 3],
-            ['quote' => '“I have an event coming up”', 'solution' => 'Event-ready skincare is coming soon. Ask us what works best for now.', 'link_text' => 'Ask us →', 'link_target' => '#expert', 'is_dark' => false, 'sort_order' => 4],
-            ['quote' => '“I need a routine I can keep”', 'solution' => 'Get a simple daily routine with products chosen for your skin.', 'link_text' => 'Build my routine →', 'link_target' => '#products', 'is_dark' => false, 'sort_order' => 5],
-            ['quote' => '“I’m not sure what my skin needs”', 'solution' => 'That’s completely fine. Chat with us first, free, no obligation.', 'link_text' => 'Get guidance →', 'link_target' => '#expert', 'is_dark' => true, 'sort_order' => 6],
+            ['quote' => '“My skin looks dull and tired”', 'solution' => 'The Glow Facial brings back a fresh, bright look.', 'link_text' => 'Book the Glow Facial', 'link_target' => '#book', 'is_dark' => false, 'sort_order' => 1],
+            ['quote' => '“I want a gentle first step”', 'solution' => 'Start with the Glow Cleanse: cleansing, hydration and advice.', 'link_text' => 'Book the Glow Cleanse', 'link_target' => '#book', 'is_dark' => false, 'sort_order' => 2],
+            ['quote' => '“I deserve a proper pamper”', 'solution' => 'The Radiance Ritual is our most complete visit.', 'link_text' => 'Book the Radiance Ritual', 'link_target' => '#book', 'is_dark' => false, 'sort_order' => 3],
+            ['quote' => '“I’m not sure what my skin needs”', 'solution' => 'Chat with us first. It’s free, with no obligation.', 'link_text' => 'Chat on WhatsApp', 'link_target' => 'whatsapp', 'is_dark' => true, 'sort_order' => 4],
         ];
 
+        Concern::where('quote', 'like', '%event%')->orWhere('quote', 'like', '%routine%')->delete();
         foreach ($concerns as $c) {
-            Concern::firstOrCreate(['quote' => $c['quote']], $c);
+            Concern::updateOrCreate(['quote' => $c['quote']], $c);
         }
 
         // 10. Reviews & Results
