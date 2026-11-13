@@ -42,6 +42,11 @@ const waLink = computed(() => {
             <a class="btn" href="#book">Book your glow</a>
             <a class="btn ghost" :href="waLink" target="_blank" rel="noopener">Free skin advice on WhatsApp</a>
           </div>
+
+          <div class="tags">
+            <span>No travel charge within 8 km</span>
+            <span>Pay after your visit</span>
+          </div>
         </div>
 
         <figure class="hero-media">

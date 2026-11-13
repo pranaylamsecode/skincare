@@ -63,8 +63,8 @@ const displayConcerns = computed(() => {
       return !q.includes('event') && !q.includes('routine');
     });
 
-    if (filtered.length === 4) {
-      return filtered.map((item, idx) => {
+    if (filtered.length >= 4) {
+      return filtered.slice(0, 4).map((item, idx) => {
         const isDark = Boolean(item.is_dark) || idx === 3;
         const ref = defaultConcerns[idx] || defaultConcerns[3];
         const quoteText = cleanQuote(item.quote || item.title || ref.quote);

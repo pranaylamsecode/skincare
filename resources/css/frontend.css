@@ -672,7 +672,7 @@ header.site-header {
 .ba {
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 420px;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
@@ -688,7 +688,7 @@ header.site-header {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 30%;
   pointer-events: none;
 }
 .ba-overlay {
@@ -701,7 +701,7 @@ header.site-header {
 }
 .ba-pill {
   position: absolute;
-  bottom: 12px;
+  bottom: 14px;
   z-index: 4;
   font-size: 11px;
   font-weight: 700;
@@ -711,6 +711,7 @@ header.site-header {
   border-radius: 999px;
   pointer-events: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
 }
 .ba-pill-before {
   left: 12px;
@@ -721,6 +722,25 @@ header.site-header {
   right: 12px;
   background: rgba(201, 154, 99, 0.95);
   color: #2b180d;
+}
+
+@media (max-width: 640px) {
+  .ba-pill {
+    bottom: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    letter-spacing: 0.3px;
+  }
+  .ba-pill-before {
+    left: 8px;
+  }
+  .ba-pill-after {
+    right: 8px;
+  }
+  .ba-pill .pill-sub {
+    display: none !important;
+  }
 }
 .ba-handle {
   position: absolute;
@@ -770,12 +790,12 @@ header.site-header {
 }
 @media (max-width: 760px) {
   .ba {
-    height: 350px;
+    height: 380px;
   }
 }
 @media (max-width: 480px) {
   .ba {
-    height: 310px;
+    height: 360px;
   }
 }
 .res-body { padding: 20px; }
@@ -1138,20 +1158,39 @@ footer.site-footer {
 .ft b {
   color: var(--ink);
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 .ft a {
   display: block;
   text-decoration: none;
-  margin: 6px 0;
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
   transition: color 0.15s;
 }
 .ft a:hover {
   color: var(--wine);
 }
 @media (max-width: 760px) {
-  .ft { grid-template-columns: 1fr; }
+  footer.site-footer {
+    padding: 36px 0 110px;
+  }
+  .ft { 
+    grid-template-columns: 1fr; 
+    gap: 24px;
+  }
+  .ft b {
+    margin-bottom: 8px;
+    font-size: 13.5px;
+  }
+  .ft a {
+    margin: 6px 0;
+    font-size: 13.5px;
+  }
 }
 
 /* sticky mobile CTA */

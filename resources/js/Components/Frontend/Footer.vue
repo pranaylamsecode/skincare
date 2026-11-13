@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
   settings: {
@@ -123,14 +124,14 @@ const supportPhone = computed(() => props.settings?.whatsapp_number || '+91 7303
           <a href="#services">Glow Facial</a>
           <a href="#services">Radiance Ritual</a>
           <a href="#book">Book a visit</a>
-          <a href="/become-a-cme">Become a CME</a>
+          <Link href="/become-a-cme">Become a CME</Link>
         </div>
 
         <div>
           <b>Policies</b>
-          <a href="/privacy-policy/">Privacy policy</a>
-          <a href="/terms-and-conditions/">Terms & Conditions</a>
-          <a href="/cancellation-and-refunds/">Cancellation and refunds</a>
+          <Link href="/privacy-policy">Privacy policy</Link>
+          <Link href="/terms-and-conditions">Terms &amp; Conditions</Link>
+          <Link href="/cancellation-and-refunds">Cancellation and refunds</Link>
           <p style="margin-top: 14px; font-size: 12px; opacity: 0.7;">
             © {{ currentYear }} FMZ India. All rights reserved.
           </p>
@@ -205,6 +206,43 @@ const supportPhone = computed(() => props.settings?.whatsapp_number || '+91 7303
   }
   .social-btn {
     min-width: 52px;
+  }
+}
+
+.ft b {
+  color: var(--ink);
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ft a {
+  display: block;
+  text-decoration: none;
+  margin: 8px 0;
+  color: var(--muted) !important;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  transition: color 0.15s;
+}
+
+.ft a:hover,
+.ft a:focus {
+  color: var(--wine) !important;
+}
+
+.ft a:visited {
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .ft a {
+    margin: 6px 0;
+    font-size: 13.5px;
   }
 }
 </style>

@@ -206,7 +206,9 @@ onBeforeUnmount(() => {
                 class="ba-img"
                 draggable="false"
               />
-              <span class="ba-pill ba-pill-before">Before (client photo)</span>
+              <span class="ba-pill ba-pill-before">
+                <span class="pill-word">Before</span><span class="pill-sub"> (client photo)</span>
+              </span>
 
               <!-- After Image (Overlay with horizontal clip) -->
               <div 
@@ -219,7 +221,9 @@ onBeforeUnmount(() => {
                   class="ba-img"
                   draggable="false"
                 />
-                <span class="ba-pill ba-pill-after">After (client photo)</span>
+                <span class="ba-pill ba-pill-after">
+                  <span class="pill-word">After</span><span class="pill-sub"> (client photo)</span>
+                </span>
               </div>
 
               <!-- Draggable Divider Line & Knob -->
@@ -299,3 +303,50 @@ onBeforeUnmount(() => {
     </section>
   </div>
 </template>
+
+<style scoped>
+.ba-pill {
+  position: absolute;
+  bottom: 14px;
+  z-index: 4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+}
+.ba-pill-before {
+  left: 12px;
+  background: rgba(90, 37, 40, 0.9);
+  color: #fff;
+}
+.ba-pill-after {
+  right: 12px;
+  background: rgba(201, 154, 99, 0.95);
+  color: #2b180d;
+}
+
+@media (max-width: 640px) {
+  .ba-pill {
+    bottom: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    letter-spacing: 0.3px;
+  }
+  .ba-pill-before {
+    left: 8px;
+  }
+  .ba-pill-after {
+    right: 8px;
+  }
+  .ba-pill :deep(.pill-sub),
+  .ba-pill .pill-sub {
+    display: none !important;
+  }
+}
+</style>

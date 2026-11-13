@@ -287,40 +287,40 @@ const whatsappUrl = computed(() => {
 }
 
 :deep(.policy-h3) {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 24px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 22px;
   font-weight: 600;
-  color: var(--ink);
-  margin: 32px 0 12px;
+  color: var(--wine);
+  margin: 30px 0 10px;
   padding-bottom: 6px;
   border-bottom: 1px dashed var(--line);
 }
 
 :deep(.policy-h2) {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 26px;
   font-weight: 600;
   color: var(--wine);
-  margin: 36px 0 14px;
+  margin: 34px 0 12px;
 }
 
 :deep(.policy-p) {
   font-size: 15px;
-  line-height: 1.75;
-  color: #3b3534;
-  margin: 0 0 18px;
+  line-height: 1.7;
+  color: var(--ink);
+  margin: 0 0 16px;
 }
 
 :deep(.policy-ul) {
-  margin: 12px 0 24px 24px;
+  margin: 10px 0 20px 22px;
   padding: 0;
   list-style: disc !important;
 }
 
 :deep(.policy-ul li) {
-  font-size: 15px;
-  line-height: 1.7;
-  color: #3b3534;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
   margin-bottom: 8px;
   display: list-item !important;
 }
@@ -330,13 +330,13 @@ const whatsappUrl = computed(() => {
 }
 
 :deep(strong) {
-  color: var(--ink);
-  font-weight: 600;
+  color: #1a0f10;
+  font-weight: 700;
 }
 
 .support-card {
-  margin-top: 48px;
-  padding: 24px;
+  margin-top: 40px;
+  padding: 22px;
   background: #fdf8f6;
   border: 1px solid #fae6de;
   border-radius: 16px;
@@ -399,13 +399,90 @@ const whatsappUrl = computed(() => {
 }
 
 @media (max-width: 768px) {
+  .policy-main {
+    padding: 20px 0 44px;
+  }
+  .wrap {
+    padding: 0 16px;
+  }
+  .breadcrumb-bar {
+    font-size: 12px;
+    margin-bottom: 16px;
+    gap: 6px;
+  }
+  .policy-tabs {
+    gap: 6px;
+    margin-bottom: 20px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .policy-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
   .policy-article {
-    padding: 28px 20px;
+    padding: 22px 16px;
     border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+  }
+  .policy-header {
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+  .page-title {
+    font-size: clamp(24px, 6vw, 32px);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .eyebrow {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+  .updated-time {
+    font-size: 12px;
+  }
+  :deep(.policy-h3) {
+    font-size: 19px;
+    margin: 22px 0 8px;
+    padding-bottom: 4px;
+  }
+  :deep(.policy-h2) {
+    font-size: 22px;
+    margin: 24px 0 10px;
+  }
+  :deep(.policy-p) {
+    font-size: 13.5px;
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+  :deep(.policy-ul) {
+    margin: 8px 0 16px 18px;
+  }
+  :deep(.policy-ul li) {
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin-bottom: 6px;
   }
   .support-card {
+    margin-top: 32px;
+    padding: 16px;
+    border-radius: 14px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+  }
+  .support-icon {
+    margin-bottom: 4px;
+  }
+  .support-info h4 {
+    font-size: 14px;
+  }
+  .support-info p {
+    font-size: 12.5px;
   }
   .support-cta {
     width: 100%;
