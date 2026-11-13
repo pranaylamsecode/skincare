@@ -70,20 +70,20 @@ const waLink = computed(() => {
       <div class="wrap">
         <div class="trust-grid">
           <div>
+            <b>Women specialists only</b>
+            <span>Every specialist is a woman</span>
+          </div>
+          <div>
+            <b>Verified and certified</b>
+            <span>ID, police and skills checked</span>
+          </div>
+          <div>
             <b>Genuine Nu Skin</b>
-            <span>Sealed, authentic products and devices on every visit</span>
-          </div>
-          <div>
-            <b>Qualified women specialists</b>
-            <span>Pharmacy, science and nursing backgrounds</span>
-          </div>
-          <div>
-            <b>No hidden charges</b>
-            <span>Free travel within 8 km; exact price confirmed first</span>
+            <span>Sealed products, opened in front of you</span>
           </div>
           <div>
             <b>Pay after your visit</b>
-            <span>UPI or cash in your hands once you’re satisfied</span>
+            <span>Price confirmed in writing first</span>
           </div>
         </div>
       </div>
