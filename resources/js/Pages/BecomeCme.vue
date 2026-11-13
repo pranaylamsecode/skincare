@@ -10,27 +10,12 @@ const props = defineProps({
   },
 });
 
-const isDark = ref(false);
 const imgVersion = ref(Date.now());
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  if (isDark.value) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    try { localStorage.setItem('fmz-theme', 'dark'); } catch (e) {}
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-    try { localStorage.setItem('fmz-theme', 'light'); } catch (e) {}
-  }
-};
 
 onMounted(() => {
   try {
-    const saved = localStorage.getItem('fmz-theme');
-    if (saved === 'dark') {
-      isDark.value = true;
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.removeItem('fmz-theme');
   } catch (e) {}
 });
 
@@ -190,16 +175,6 @@ const whatsappUrl = computed(() => {
           <Link href="/glow" class="back-site-link">
             <span>FMZ Glow Home</span>
           </Link>
-          <button 
-            type="button" 
-            class="theme-btn" 
-            id="themeBtn" 
-            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-            :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-            @click="toggleTheme"
-          >
-            {{ isDark ? '☀️' : '🌙' }}
-          </button>
           <a class="btn" href="#register">Register free</a>
         </div>
       </div>
@@ -830,27 +805,6 @@ section {
   color: var(--wine) !important;
 }
 
-.theme-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid #C99A63;
-  background: var(--surface);
-  font-size: 18px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-  flex-shrink: 0;
-}
-
-.theme-btn:hover {
-  transform: scale(1.06);
-  border-color: var(--wine);
-}
-
 .btn.wa-btn {
   background: #25D366;
   border-color: #25D366;
@@ -922,9 +876,7 @@ section {
 @media (max-width: 600px) {
   .logo .sub { display: none; }
   .back-site-link { display: none; }
-  .nav-right { gap: 8px; }
-  .theme-btn { width: 38px; height: 38px; font-size: 16px; }
-  .nav .btn { min-height: 38px; padding: 0 16px; font-size: 13px; }
+  .nav .btn { min-height: 38px; padding: 0 16px; font-size: 13.5px; }
 }
 
 /* Hero */
