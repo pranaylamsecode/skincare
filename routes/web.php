@@ -58,6 +58,15 @@ Route::get('/storage/{path}', function ($path) {
 // FMZ Glow Main Page (matches /glow, /glow/, and any subpath)
 Route::match(['get', 'head'], '/glow', [FrontendController::class, 'index'])->name('home');
 Route::match(['get', 'head'], '/glow/{any}', [FrontendController::class, 'index'])->where('any', '.*');
+
+// Legal & Policy Pages (matches /privacy-policy, /terms-and-conditions, /cancellation-and-refunds with or without trailing slash)
+Route::get('/privacy-policy', [FrontendController::class, 'privacyPolicy'])->name('policy.privacy');
+Route::get('/privacy-policy/{extra?}', [FrontendController::class, 'privacyPolicy'])->where('extra', '.*');
+Route::get('/terms-and-conditions', [FrontendController::class, 'terms'])->name('policy.terms');
+Route::get('/terms-and-conditions/{extra?}', [FrontendController::class, 'terms'])->where('extra', '.*');
+Route::get('/cancellation-and-refunds', [FrontendController::class, 'cancellationRefunds'])->name('policy.cancellation');
+Route::get('/cancellation-and-refunds/{extra?}', [FrontendController::class, 'cancellationRefunds'])->where('extra', '.*');
+Route::get('/pages/{slug}', [FrontendController::class, 'page'])->name('policy.page');
 // Customer & Mobile App REST API
 Route::prefix('api')->group(function () {
     Route::get('/home', [ApiController::class, 'home'])->name('api.home');
@@ -145,5 +154,7 @@ Route::prefix('admin')->group(function () {
         Route::delete('/content/products/{id}', [AdminContentController::class, 'deleteProduct'])->name('admin.content.product.delete');
         Route::post('/content/faqs/{id?}', [AdminContentController::class, 'saveFaq'])->name('admin.content.faq.save');
         Route::delete('/content/faqs/{id}', [AdminContentController::class, 'deleteFaq'])->name('admin.content.faq.delete');
+        Route::post('/content/pages/{id?}', [AdminContentController::class, 'savePage'])->name('admin.content.page.save');
+        Route::delete('/content/pages/{id}', [AdminContentController::class, 'deletePage'])->name('admin.content.page.delete');
     });
 });

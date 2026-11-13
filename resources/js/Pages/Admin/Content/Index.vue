@@ -19,7 +19,9 @@ import {
   CheckCircle2,
   XCircle,
   Eye,
-  EyeOff
+  EyeOff,
+  FileText,
+  ExternalLink
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -30,6 +32,7 @@ const props = defineProps({
   concerns: { type: Array, default: () => [] },
   reviews: { type: Array, default: () => [] },
   faqs: { type: Array, default: () => [] },
+  pages: { type: Array, default: () => [] },
 });
 
 const activeTab = ref(props.initialTab || 'products');
@@ -37,7 +40,7 @@ const activeTab = ref(props.initialTab || 'products');
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search);
   const tab = urlParams.get('tab');
-  if (tab && ['plans', 'faqs', 'products', 'devices'].includes(tab)) {
+  if (tab && ['plans', 'faqs', 'products', 'devices', 'policies'].includes(tab)) {
     activeTab.value = tab;
   }
 });
@@ -83,6 +86,160 @@ const deletePlan = (id) => {
   if (confirm('Delete this Plan?')) {
     router.delete(`/admin/content/plans/${id}`);
   }
+};
+
+// ==================== POLICY PAGES MANAGEMENT ====================
+const defaultPolicies = [
+  {
+    id: null,
+    title: 'Privacy Policy',
+    slug: 'privacy-policy',
+    meta_description: 'Privacy Policy for FMZ Glow at-home skincare services. How we protect your data and personal information.',
+    sort_order: 1,
+    is_active: true,
+    content: `### 1. Introduction
+Welcome to FMZ Glow ("FMZ India", "we", "our", or "us"). We provide certified at-home skincare and wellness services delivered by trained women specialists in Ahmedabad, Gandhinagar, Surat, Rajkot, and surrounding areas. We respect your privacy and are committed to protecting your personal data.
+
+### 2. Information We Collect
+We collect only the information necessary to provide, confirm, and deliver our at-home skincare visits safely:
+- **Contact Details:** Your full name, mobile / WhatsApp number, and email address.
+- **Visit Address:** Your residential address, locality, and postal pincode so our certified specialist can navigate to your home.
+- **Skin & Health Information:** Optional skin concerns, allergies, or conditions shared during booking to help your specialist prepare the right Nu Skin products and ensure treatment safety (e.g., pregnancy or medical implants for Galvanic Spa).
+- **Communication History:** Booking requests, confirmations, and customer support messages exchanged via WhatsApp or email.
+
+### 3. How We Use Your Information
+Your information is used exclusively for:
+- Scheduling appointments and assigning a verified woman specialist to your home.
+- Sending written booking confirmations, specialist identity, exact arrival time, and total price via WhatsApp and email.
+- Calculating travel distance (free within 8 km; transparent nominal travel confirmed in writing for farther distances).
+- Providing aftercare tips and voluntary customer service follow-ups.
+
+### 4. Specialist Verification & Confidentiality
+All FMZ Glow specialists are verified women professionals with science, pharmacy, or nursing backgrounds. Your residential address and phone number are shared solely with the assigned specialist for the purpose of completing your visit. We never sell, rent, or trade your personal information to third-party marketers or advertisers.
+
+### 5. Secure Payments
+We offer **Pay After Your Visit** via UPI or Cash directly to your specialist once you are fully satisfied with your treatment. For customers choosing to pay online, payment transactions are encrypted and processed through RBI-approved gateways (Razorpay / Zoho Payments). We do not store your credit card numbers, debit card details, or UPI PINs.
+
+### 6. Data Security & Retention
+We maintain administrative and technical safeguards to keep your personal data secure. Booking records are retained only as long as necessary to satisfy operational, accounting, and legal requirements.
+
+### 7. Contact Us
+If you have any questions about this Privacy Policy or wish to access, correct, or delete your personal details, please contact us:
+- **WhatsApp / Phone:** +91 73037 06047
+- **Email:** fmz@fmzau.com.au
+- **Operating Hours:** 9:00 AM – 8:00 PM (Monday – Sunday)`
+  },
+  {
+    id: null,
+    title: 'Terms & Conditions',
+    slug: 'terms-and-conditions',
+    meta_description: 'Terms and Conditions for FMZ Glow at-home skincare bookings and appointments.',
+    sort_order: 2,
+    is_active: true,
+    content: `### 1. Overview & Agreement
+By booking an appointment through FMZ Glow (myfmz.com), WhatsApp, or telephone, you agree to these Terms and Conditions. Please review them carefully before scheduling a visit.
+
+### 2. Women Specialists Guarantee
+- **Exclusively Certified Women Specialists:** All at-home treatments are performed exclusively by certified women specialists with pharmacy, nursing, or science credentials.
+- **Zero Tolerance Policy:** We maintain a strict zero-tolerance policy against any inappropriate behavior, harassment, or unsafe conditions directed toward our specialists. The specialist reserves the unconditional right to leave immediately if safety or dignity is compromised, and legal action may be pursued where warranted.
+
+### 3. Genuine Nu Skin Products & Safety Protocols
+- **Authentic & Sealed:** We exclusively use authentic, genuine Nu Skin devices (LumiSpa iO, Galvanic Spa, Prysm iO) and professional skincare formulations. Products are unsealed in front of you.
+- **Pre-Visit Skin & Health Consultation:** Every visit begins with a brief consultation. Before using the Galvanic Spa, your specialist will verify contraindications (such as pregnancy, pacemakers, metal dental/facial implants, or acute skin infections). If contraindicated, she will skip or adapt that step for your safety.
+
+### 4. Appointment Booking & Confirmation
+- **Written Confirmation on WhatsApp:** Once you submit a booking request, our coordination team confirms your specialist's name, phone number, confirmed date, time slot, and total price in writing on WhatsApp within 30 minutes during operating hours (9:00 AM to 8:00 PM).
+- **Service Availability:** Services are offered across Ahmedabad, Gandhinagar, Surat, and Rajkot within serviceable pincodes.
+
+### 5. Pricing, Travel & Payment
+- **Transparent Pricing:** The price confirmed in writing is the final price. There are no hidden setup fees or surprise charges.
+- **Travel Policy:** Travel is completely **free within 8 km** of the assigned specialist. For locations beyond 8 km, any modest travel surcharge will be calculated transparently and confirmed with you in writing before dispatching the specialist.
+- **Pay After Your Visit:** You may pay by UPI or Cash after your visit once you are satisfied with your treatment. If you choose online prepayment, receipts are delivered electronically to your email.
+
+### 6. Modifications to Service
+FMZ Glow reserves the right to modify service offerings, pricing, or terms with prior notice published on this website. Confirmed bookings will always be honored at the price confirmed at the time of scheduling.`
+  },
+  {
+    id: null,
+    title: 'Cancellation and Refunds',
+    slug: 'cancellation-and-refunds',
+    meta_description: 'Cancellation and refund policies for FMZ Glow appointments and multi-visit plans.',
+    sort_order: 3,
+    is_active: true,
+    content: `### 1. Free Cancellation & Rescheduling
+We understand that plans can change. We offer complete flexibility:
+- **Free Cancellation:** You can cancel or reschedule your appointment with **no fee or penalty** up to **4 hours** before your scheduled appointment time.
+- **How to Reschedule or Cancel:** Simply message our team on WhatsApp at **+91 73037 06047** or call us with your booking ID.
+
+### 2. Late Cancellations & Doorstep No-Shows
+- If an appointment is cancelled with less than 2 hours' notice after the specialist has already commenced travel or arrived at your doorstep, a nominal travel convenience fee of **₹150** may be requested to compensate the specialist for her travel time.
+- If you are unavailable or unresponsive at the scheduled address for more than 20 minutes past the scheduled time slot, the visit may be marked as a no-show.
+
+### 3. Refund Policy for Online Prepayments
+- If you prepaid online and cancel at least 4 hours before the appointment, a **100% full refund** will be automatically initiated to your original payment method (Bank Account, UPI, or Credit/Debit Card).
+- Refunds typically reflect in your account within **5 to 7 business days**, depending on your issuing bank.
+
+### 4. Multi-Visit Plans (e.g. Glow 3-Visit Plan)
+- **Validity:** The Glow 3-Visit Plan (₹2,799 / ₹933 per visit) is valid for **90 days** from the date of the first visit.
+- **Transferability:** Visits can be shared with immediate family members (e.g., mother, sister, or daughter) residing at the same address.
+- **Plan Cancellation & Pro-Rata Refunds:** If you wish to discontinue a 3-visit plan after completing 1 visit, the completed session will be billed at the standard individual visit rate (₹999), and the entire remaining balance (₹1,800) will be promptly refunded to you.
+
+### 5. Satisfaction Guarantee
+Your comfort, safety, and glow are our highest priorities. If you are not completely satisfied with your specialist's service or if any product causes unexpected discomfort, please alert us within 24 hours of your visit. Our care coordinator will arrange a complimentary follow-up or provide an appropriate resolution.
+
+### 6. Support Contact
+For all cancellation, rescheduling, and refund requests:
+- **WhatsApp Support:** +91 73037 06047
+- **Email:** fmz@fmzau.com.au
+- **Response Time:** Typically within 30 minutes (9:00 AM – 8:00 PM)`
+  }
+];
+
+const allPolicies = computed(() => {
+  if (props.pages && props.pages.length > 0) {
+    return props.pages;
+  }
+  return defaultPolicies;
+});
+
+const selectedPolicySlug = ref('privacy-policy');
+
+const currentPolicy = computed(() => {
+  return allPolicies.value.find(p => p.slug === selectedPolicySlug.value) || allPolicies.value[0];
+});
+
+const policyForm = useForm({
+  id: null,
+  title: '',
+  slug: '',
+  content: '',
+  meta_description: '',
+  is_active: true,
+  sort_order: 1,
+});
+
+const selectPolicy = (p) => {
+  selectedPolicySlug.value = p.slug;
+  policyForm.id = p.id || null;
+  policyForm.title = p.title || '';
+  policyForm.slug = p.slug || '';
+  policyForm.content = p.content || '';
+  policyForm.meta_description = p.meta_description || '';
+  policyForm.is_active = p.is_active !== undefined ? Boolean(p.is_active) : true;
+  policyForm.sort_order = p.sort_order || 1;
+};
+
+onMounted(() => {
+  if (currentPolicy.value) {
+    selectPolicy(currentPolicy.value);
+  }
+});
+
+const savePolicy = () => {
+  const url = policyForm.id ? `/admin/content/pages/${policyForm.id}` : '/admin/content/pages';
+  policyForm.post(url, {
+    preserveScroll: true,
+  });
 };
 
 // ==================== PRODUCT MANAGEMENT ====================
@@ -279,6 +436,16 @@ const wellnessCount = computed(() => props.products.filter(p => p.category === '
         >
           <Smartphone class="w-4 h-4" />
           <span>Devices ({{ devices.length }})</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="px-4 py-2 text-xs font-bold rounded-xl transition flex items-center gap-1.5 whitespace-nowrap"
+          :class="activeTab === 'policies' ? 'bg-[#7a2e2e] text-white shadow-xs' : 'bg-white text-neutral-600 hover:bg-neutral-100'"
+          @click="activeTab = 'policies'"
+        >
+          <FileText class="w-4 h-4" />
+          <span>Policies &amp; Legal ({{ allPolicies.length }})</span>
         </button>
       </div>
 
@@ -590,6 +757,168 @@ const wellnessCount = computed(() => props.products.filter(p => p.category === '
             <ul v-if="d.features && d.features.length" class="text-[11px] space-y-1 text-neutral-500 pt-2 border-t border-neutral-100">
               <li v-for="(f, i) in d.features" :key="i">✓ {{ f }}</li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TAB: POLICIES ==================== -->
+      <div v-if="activeTab === 'policies'" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Left: Policy Selector Cards -->
+          <div class="lg:col-span-4 space-y-3">
+            <div class="bg-white p-4 rounded-2xl border border-neutral-200 shadow-xs">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3">Pages &amp; Policies</h3>
+              <div class="space-y-2">
+                <div
+                  v-for="p in allPolicies"
+                  :key="p.slug"
+                  class="p-3.5 rounded-xl border transition cursor-pointer flex flex-col gap-1.5"
+                  :class="selectedPolicySlug === p.slug ? 'border-[#7a2e2e] bg-[#7a2e2e]/5 shadow-xs' : 'border-neutral-200 bg-white hover:bg-neutral-50'"
+                  @click="selectPolicy(p)"
+                >
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-neutral-900">{{ p.title }}</span>
+                    <span 
+                      class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                      :class="p.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-neutral-100 text-neutral-500'"
+                    >
+                      {{ p.is_active ? 'Active' : 'Draft' }}
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between text-[11px] text-neutral-500">
+                    <span class="font-mono">/{{ p.slug }}</span>
+                    <a 
+                      :href="`/${p.slug}`" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-1 text-[#7a2e2e] hover:underline font-semibold"
+                      @click.stop
+                    >
+                      <span>View</span>
+                      <ExternalLink class="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Helpful Guidelines Box -->
+            <div class="bg-neutral-50 p-4 rounded-2xl border border-neutral-200 text-xs text-neutral-600 space-y-2">
+              <p class="font-bold text-neutral-800 flex items-center gap-1.5">
+                <FileText class="w-4 h-4 text-[#7a2e2e]" />
+                <span>Legal Pages Information</span>
+              </p>
+              <p class="text-[11px] leading-relaxed">
+                These legal pages are accessible directly from your website footer and comply with customer protection requirements. You can edit any page content at any time; changes take effect immediately on the live website.
+              </p>
+              <div class="pt-2 border-t border-neutral-200 text-[11px] space-y-1 text-neutral-500">
+                <p>• <strong>### Title</strong> for numbered section headers</p>
+                <p>• <strong>- Bullet</strong> for listed terms or guarantees</p>
+                <p>• <strong>**Bold**</strong> for highlighted terms</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Edit Policy Form -->
+          <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-neutral-200 shadow-xs">
+            <div class="flex items-center justify-between pb-4 mb-5 border-b border-neutral-100">
+              <div>
+                <h2 class="text-base font-bold text-neutral-900">
+                  Edit: {{ policyForm.title || 'Page Content' }}
+                </h2>
+                <p class="text-xs text-neutral-500 mt-0.5">
+                  Live URL: <a :href="`/${policyForm.slug}`" target="_blank" class="text-[#7a2e2e] underline font-mono">/{{ policyForm.slug }}</a>
+                </p>
+              </div>
+              <a 
+                :href="`/${policyForm.slug}`" 
+                target="_blank" 
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold rounded-xl transition"
+              >
+                <span>Preview Live</span>
+                <ExternalLink class="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <form @submit.prevent="savePolicy" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">
+                    Page Title <span class="text-red-500">*</span>
+                  </label>
+                  <input 
+                    v-model="policyForm.title" 
+                    type="text" 
+                    required 
+                    placeholder="e.g. Privacy Policy" 
+                    class="w-full px-3.5 py-2 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none focus:border-[#7a2e2e] focus:bg-white transition"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">
+                    URL Slug <span class="text-red-500">*</span>
+                  </label>
+                  <input 
+                    v-model="policyForm.slug" 
+                    type="text" 
+                    required 
+                    placeholder="e.g. privacy-policy" 
+                    class="w-full px-3.5 py-2 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none focus:border-[#7a2e2e] focus:bg-white transition font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">
+                  Meta Description (for SEO)
+                </label>
+                <input 
+                  v-model="policyForm.meta_description" 
+                  type="text" 
+                  placeholder="Short description for search engines and social sharing..." 
+                  class="w-full px-3.5 py-2 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none focus:border-[#7a2e2e] focus:bg-white transition"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                    Page Content (Markdown &amp; Text) <span class="text-red-500">*</span>
+                  </label>
+                  <span class="text-[10px] text-neutral-400 font-mono">
+                    {{ policyForm.content ? policyForm.content.length : 0 }} characters
+                  </span>
+                </div>
+                <textarea 
+                  v-model="policyForm.content" 
+                  rows="16" 
+                  required 
+                  placeholder="Enter page text, sections, and terms..." 
+                  class="w-full px-3.5 py-3 text-xs bg-neutral-50 border border-neutral-200 rounded-xl outline-none focus:border-[#7a2e2e] focus:bg-white transition font-mono leading-relaxed"
+                ></textarea>
+              </div>
+
+              <div class="flex items-center justify-between pt-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    v-model="policyForm.is_active" 
+                    type="checkbox" 
+                    class="w-4 h-4 rounded text-[#7a2e2e] focus:ring-[#7a2e2e]"
+                  />
+                  <span class="text-xs font-semibold text-neutral-700">Page Published &amp; Active</span>
+                </label>
+
+                <button 
+                  type="submit" 
+                  :disabled="policyForm.processing"
+                  class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#7a2e2e] text-white text-xs font-bold rounded-xl hover:bg-[#52201f] transition shadow-xs disabled:opacity-50"
+                >
+                  <Save class="w-4 h-4" />
+                  <span>{{ policyForm.processing ? 'Saving...' : 'Save Page Content' }}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

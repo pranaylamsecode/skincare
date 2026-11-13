@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Concern;
 use App\Models\Device;
 use App\Models\Faq;
+use App\Models\Page;
 use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Review;
@@ -16,6 +17,13 @@ class ContentController extends Controller
 {
     public function index(Request $request)
     {
+        $pages = [];
+        try {
+            $pages = Page::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $pages = [];
+        }
+
         return Inertia::render('Admin/Content/Index', [
             'initialTab' => $request->query('tab', 'products'),
             'plans' => Plan::orderBy('sort_order')->get(),
@@ -24,6 +32,7 @@ class ContentController extends Controller
             'concerns' => Concern::orderBy('sort_order')->get(),
             'reviews' => Review::orderBy('sort_order')->get(),
             'faqs' => Faq::orderBy('sort_order')->get(),
+            'pages' => $pages,
         ]);
     }
 
@@ -172,5 +181,39 @@ class ContentController extends Controller
     {
         Faq::findOrFail($id)->delete();
         return back()->with('success', 'FAQ deleted successfully.');
+    }
+
+    // Policy & Legal Pages
+    public function savePage(Request $request, $id = null)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:200',
+            'slug' => 'required|string|max:100',
+            'content' => 'required|string',
+            'meta_description' => 'nullable|string|max:500',
+            'is_active' => 'nullable|boolean',
+            'sort_order' => 'nullable|integer',
+        ]);
+
+        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['sort_order'] = (int) $request->input('sort_order', 0);
+
+        if ($id) {
+            $page = Page::findOrFail($id);
+            $page->update($validated);
+        } else {
+            Page::updateOrCreate(
+                ['slug' => $validated['slug']],
+                $validated
+            );
+        }
+
+        return redirect()->route('admin.content.index', ['tab' => 'policies'])->with('success', 'Page content saved successfully.');
+    }
+
+    public function deletePage($id)
+    {
+        Page::findOrFail($id)->delete();
+        return redirect()->route('admin.content.index', ['tab' => 'policies'])->with('success', 'Page deleted successfully.');
     }
 }

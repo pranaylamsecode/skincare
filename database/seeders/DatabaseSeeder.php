@@ -481,5 +481,8 @@ class DatabaseSeeder extends Seeder
 
         // 14. Customer Bookings for testing
         $this->call(FakeBookingsSeeder::class);
+
+        // 15. Legal and Policy Pages
+        $this->call(PageSeeder::class);
     }
 }
