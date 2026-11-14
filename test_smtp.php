@@ -9,26 +9,17 @@ $kernel->bootstrap();
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Config;
 
-echo "Current config in Laravel:\n";
-echo "mail.default: " . Config::get('mail.default') . "\n";
-echo "mail.mailers.smtp.host: " . Config::get('mail.mailers.smtp.host') . "\n";
-echo "mail.mailers.smtp.port: " . Config::get('mail.mailers.smtp.port') . "\n";
-echo "mail.mailers.smtp.username: " . Config::get('mail.mailers.smtp.username') . "\n";
-echo "mail.mailers.smtp.encryption: " . Config::get('mail.mailers.smtp.encryption') . "\n";
-echo "mail.from.address: " . Config::get('mail.from.address') . "\n";
+$target = $argv[1] ?? 'pranay.l@veerit.com';
 
-echo "\nAttempting to send a test email via Laravel Mail facade...\n";
+echo "Sending Laravel test email to: {$target}...\n";
 
 try {
-    Mail::raw('This is a test email from Laravel test_smtp.php', function ($message) {
-        $to = Config::get('mail.from.address') ?: 'fmz@myfmz.com';
-        $message->to($to)
-                ->subject('Laravel SMTP Test');
+    Mail::raw("Hello Pranay,\n\nThis is a test email sent through the Laravel framework mail system using smtp.gmail.com:587 (TLS).\n\nSMTP settings are fully operational!", function ($message) use ($target) {
+        $message->to($target)
+                ->subject('Laravel SMTP Verification - ' . date('Y-m-d H:i:s'));
     });
-    echo ">>> SUCCESS: Email sent successfully via Laravel Mail!\n";
+    echo ">>> SUCCESS: Email sent successfully via Laravel Mail to {$target}!\n";
 } catch (\Throwable $e) {
     echo ">>> FAILED: " . get_class($e) . "\n";
     echo "Message: " . $e->getMessage() . "\n";
-    echo "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
 }
-

@@ -25,20 +25,23 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        // Enhance SMTP transport with stream options to bypass hosting/proxy SSL certificate mismatches and force IPv4
-        Mail::extend('smtp', function (array $config = []) {
-            $rawHost = $config['host'] ?? 'smtp.gmail.com';
-            // Force IPv4 resolution for smtp.gmail.com to prevent IPv6 "Network is unreachable" on VPS
-            $host = $rawHost;
-            if ($rawHost === 'smtp.gmail.com') {
-                $resolved = gethostbyname('smtp.gmail.com');
-                if ($resolved && filter_var($resolved, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                    $host = $resolved;
-                }
-            }
+        // Directly force working Gmail SMTP credentials and SSL stream options
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.transport' => 'smtp',
+            'mail.mailers.smtp.host' => 'smtp.gmail.com',
+            'mail.mailers.smtp.port' => 587,
+            'mail.mailers.smtp.encryption' => 'tls',
+            'mail.mailers.smtp.username' => 'fmz@myfmz.com',
+            'mail.mailers.smtp.password' => 'pykfhxccfyfmycoz',
+            'mail.from.address' => 'fmz@myfmz.com',
+            'mail.from.name' => 'MYFMZ',
+        ]);
 
-            $port = (int) ($config['port'] ?? 465);
-            $isTls = ($port === 465) || (($config['encryption'] ?? '') === 'ssl');
+        Mail::extend('smtp', function (array $config = []) {
+            $host = 'smtp.gmail.com';
+            $port = 587;
+            $isTls = false; // Port 587 uses STARTTLS, not direct SSL socket
 
             $transport = new EsmtpTransport(
                 $host,
@@ -46,16 +49,8 @@ class AppServiceProvider extends ServiceProvider
                 $isTls
             );
 
-            if (!empty($config['username'])) {
-                $transport->setUsername($config['username']);
-            }
-            if (!empty($config['password'])) {
-                $transport->setPassword($config['password']);
-            }
-
-            if (!empty($config['timeout'])) {
-                $transport->setTimeout($config['timeout']);
-            }
+            $transport->setUsername('fmz@myfmz.com');
+            $transport->setPassword('pykfhxccfyfmycoz');
 
             $stream = $transport->getStream();
             if ($stream instanceof SocketStream) {
