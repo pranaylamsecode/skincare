@@ -56,6 +56,16 @@ Route::get('/storage/{path}', function ($path) {
     abort(404);
 })->where('path', '.*');
 
+// Images Fallback Route: handles requests where email clients/proxies (like Gmail) convert spaces to '+'
+Route::get('/images/{filename}', function ($filename) {
+    $clean = str_replace('+', ' ', urldecode($filename));
+    $path = public_path('images/' . $clean);
+    if (file_exists($path) && is_file($path)) {
+        return response()->file($path);
+    }
+    abort(404);
+})->where('filename', '.*');
+
 // FMZ Glow Main Page (matches /glow, /glow/, and any subpath)
 Route::match(['get', 'head'], '/glow', [FrontendController::class, 'index'])->name('home');
 Route::match(['get', 'head'], '/glow/{any}', [FrontendController::class, 'index'])->where('any', '.*');

@@ -28,8 +28,11 @@ class EmailNotificationService
             }
 
             // Merge site settings variables
-            $siteLogo = Setting::get('site_logo', 'images/FMZ Glow logo.jpg');
-            $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim($siteLogo, '/'));
+            $siteLogo = Setting::get('site_logo', 'images/fmz-glow-logo.jpg');
+            if ($siteLogo === 'images/FMZ Glow logo.jpg' && file_exists(public_path('images/fmz-glow-logo.jpg'))) {
+                $siteLogo = 'images/fmz-glow-logo.jpg';
+            }
+            $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim(str_replace(' ', '%20', $siteLogo), '/'));
             $variables['site_name'] = Setting::get('site_name', 'FMZ Glow');
             $variables['whatsapp_number'] = Setting::get('whatsapp_number', '+917303706047');
             $variables['site_logo'] = $logoUrl;
@@ -154,8 +157,11 @@ class EmailNotificationService
             if (!$sent) {
                 try {
                     $whatsappNum = Setting::get('whatsapp_number', '+917303706047');
-                    $siteLogo = Setting::get('site_logo', 'images/FMZ Glow logo.jpg');
-                    $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim($siteLogo, '/'));
+                    $siteLogo = Setting::get('site_logo', 'images/fmz-glow-logo.jpg');
+                    if ($siteLogo === 'images/FMZ Glow logo.jpg' && file_exists(public_path('images/fmz-glow-logo.jpg'))) {
+                        $siteLogo = 'images/fmz-glow-logo.jpg';
+                    }
+                    $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim(str_replace(' ', '%20', $siteLogo), '/'));
                     
                     $subject = "Thank you for your FMZ CME registration ({$regId})";
                     $content = "Hello {$cme->first_name},\n\nThank you for registering to become an FMZ Certified Micro Entrepreneur (CME)!\n\nYour Registration Details:\n- Registration ID: {$regId}\n- Selected Programmes: {$programmesList}\n- Location: {$cme->city}, {$cme->state} ({$cme->pincode})\n- Contact Mobile: {$cme->mobile}\n\nWhat happens next:\n1. Shortlisting: Our recruitment team will review your application against our initial intake quota.\n2. Information Meeting: If shortlisted, you will be invited via WhatsApp to an information meeting.\n3. Training & Certification: Comprehensive training with genuine Nu Skin devices and health equipment before your first client.\n\nIf you have any questions, feel free to reply to this email or message us on WhatsApp at {$whatsappNum}.\n\nWarm regards,\nFMZ India Talent & Recruitment Team";
@@ -174,8 +180,11 @@ class EmailNotificationService
             $sent = self::send('admin_new_cme', $adminEmail, $vars);
             if (!$sent) {
                 try {
-                    $siteLogo = Setting::get('site_logo', 'images/FMZ Glow logo.jpg');
-                    $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim($siteLogo, '/'));
+                    $siteLogo = Setting::get('site_logo', 'images/fmz-glow-logo.jpg');
+                    if ($siteLogo === 'images/FMZ Glow logo.jpg' && file_exists(public_path('images/fmz-glow-logo.jpg'))) {
+                        $siteLogo = 'images/fmz-glow-logo.jpg';
+                    }
+                    $logoUrl = filter_var($siteLogo, FILTER_VALIDATE_URL) ? $siteLogo : url('/' . ltrim(str_replace(' ', '%20', $siteLogo), '/'));
                     $subject = "🔔 New CME Registration ({$regId}) - {$fullName}";
                     $content = "A new candidate has registered for the FMZ Certified Micro Entrepreneur (CME) programme.\n\nApplicant Details:\n- Registration ID: {$regId}\n- Name: {$fullName}\n- Mobile/WhatsApp: {$cme->mobile}\n- Email: " . ($cme->email ?: 'Not provided') . "\n- Location: {$cme->city}, {$cme->state} ({$cme->pincode})\n- Programmes: {$programmesList}\n- Highest Qualification: {$cme->highest_qualification}\n- Vehicle & Licence: {$cme->vehicle} ({$cme->driving_licence})\n- Referral Source: {$cme->referral_source}\n\nPlease visit the Admin Portal to review their application and update recruitment status.";
                     

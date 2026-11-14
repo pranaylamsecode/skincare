@@ -7,18 +7,18 @@ $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Config;
+use App\Mail\TemplateMail;
 
-$target = $argv[1] ?? 'pranay.l@veerit.com';
+$target = $argv[1] ?? 'prashant@veerit.com';
 
-echo "Sending Laravel test email to: {$target}...\n";
+echo "Sending branded TemplateMail with logo to: {$target}...\n";
 
 try {
-    Mail::raw("Hello Pranay,\n\nThis is a test email sent through the Laravel framework mail system using smtp.gmail.com:587 (TLS).\n\nSMTP settings are fully operational!", function ($message) use ($target) {
-        $message->to($target)
-                ->subject('Laravel SMTP Verification - ' . date('Y-m-d H:i:s'));
-    });
-    echo ">>> SUCCESS: Email sent successfully via Laravel Mail to {$target}!\n";
+    $subject = 'FMZ Glow - Logo Display Test (' . date('H:i:s') . ')';
+    $content = "Hello,\n\nThis is a verification test to ensure the FMZ Glow logo in the header renders crisp and clean in Gmail without breaking.\n\nAll systems operational!";
+    
+    Mail::to($target)->send(new TemplateMail($subject, $content));
+    echo ">>> SUCCESS: Branded email with logo sent successfully to {$target}!\n";
 } catch (\Throwable $e) {
     echo ">>> FAILED: " . get_class($e) . "\n";
     echo "Message: " . $e->getMessage() . "\n";

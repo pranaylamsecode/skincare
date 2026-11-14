@@ -83,7 +83,7 @@
             @if(!empty($logoUrl))
                 <div class="logo-box">
                     <a href="{{ url('/') }}" target="_blank" style="text-decoration: none; display: block;">
-                        <img src="{{ $logoUrl }}" alt="{{ $siteName ?? 'FMZ Glow' }}" />
+                        <img src="{{ $logoUrl }}" alt="{{ $siteName ?? 'FMZ Glow' }}" border="0" style="display: block; max-height: 48px; max-width: 220px; height: auto; width: auto; margin: 0 auto;" />
                     </a>
                 </div>
             @else
